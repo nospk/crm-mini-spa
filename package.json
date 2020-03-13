@@ -1,0 +1,28 @@
+{
+  "name": "crm-mini-spa",
+  "version": "1.0.0",
+  "description": "application crm mini spa",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nospk/crm-mini-spa.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nospk/crm-mini-spa/issues"
+  },
+  "homepage": "https://github.com/nospk/crm-mini-spa#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}

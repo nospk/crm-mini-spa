@@ -6,9 +6,9 @@ const fs = require('fs');
 
 const app = express();
 app.use(morgan('common'));
-
+app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join('./app/views'));
-app.listen(port);
+
 
 
 
@@ -19,7 +19,8 @@ fs.readdirSync(routePath).forEach(function(file) {
     require(route)(app);
 });
 
-
+app.listen(port);
+console.log('The magic happens on port ' + port);
 
 
 exports = module.exports = app;

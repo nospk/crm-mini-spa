@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev" : "nodemon app.js"
+    "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -19,10 +19,13 @@
   "homepage": "https://github.com/nospk/crm-mini-spa#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
-    "mongoose": "^5.9.4",
-    "morgan": "^1.9.1"
+    "helmet": "^3.22.0",
+    "mongoose": "^5.9.7",
+    "morgan": "^1.9.1",
+    "passport": "^0.4.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"

@@ -1,6 +1,6 @@
 class HomePage {
     static async show(req, res) {
-        res.render('home.ejs');
+        res.render('./pages/home');
     }
 
 }

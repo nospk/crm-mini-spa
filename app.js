@@ -6,19 +6,39 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const passport = require('passport');
-const app = express();
+
 const mongoose = require('mongoose');
+
 const port = process.env.PORT || 3000;
-const error_handler = require('./core/error_handler.js')
+const error_handler = require('./core/error_handler.js');
+const app = express();
+
+/*************************** Main *******************************/
+
+
+//helmet protect express
 app.use(helmet())
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(morgan('common'));
+
+//morgan log access - except type GET
+app.use(morgan('common', {
+    skip: function (req, res) { 
+        return req.method == 'GET' 
+    }
+}))
+
+//Public file
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Set dir view and view engine
 app.set('views', path.join('./app/views'));
 app.set('view engine', 'ejs');
 
-mongoose.connect(process.env.DB_LOCALHOST, { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true }); // connect to our database  
+// connect to our database 
+mongoose.connect(process.env.DB_LOCALHOST, { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true });  
 
 
 
@@ -33,6 +53,7 @@ fs.readdirSync(routePath).forEach(function(file) {
 app.use(error_handler.notFound);
 app.use(error_handler.errorHandler);
 
+//Run server
 app.listen(port);
 console.log('The magic happens on port ' + port);
 

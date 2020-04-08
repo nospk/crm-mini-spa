@@ -1,9 +1,6 @@
-const createError = require('http-errors');
 const notFound = (req, res, next)=>{
     //const error = new Error (`Not Found - ${req.originalUrl}`);
-    res.status(404);
-    console.log(createError(404))
-    next(createError(404));
+    return res.status(404).render('404');
 };
 const errorHandler = (err, req, res, next)=>{
     res.locals.message = err.message;

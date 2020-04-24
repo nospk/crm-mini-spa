@@ -6,7 +6,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const passport = require('passport');
-
+const session = require('express-session')
 const mongoose = require('mongoose');
 
 const port = process.env.PORT || 3000;
@@ -18,7 +18,12 @@ const app = express();
 
 //helmet protect express
 app.use(helmet())
-
+app.use(session({ 
+    secret: 'this-is-a-secret-token', 
+    cookie: { maxAge: 60000 },
+    resave: true,
+    saveUninitialized: true
+}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -29,7 +34,9 @@ app.use(morgan('common', {
         return req.method == 'GET' 
     }
 }))
-
+require('./core/passport')(passport); // pass passport for configuration
+app.use(passport.initialize());
+app.use(passport.session());
 //Public file
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -46,7 +53,12 @@ mongoose.connect(process.env.DB_LOCALHOST, { useNewUrlParser: true, useFindAndMo
 const routePath="./router/"; 
 fs.readdirSync(routePath).forEach(function(file) {
     var route=routePath+file;
-    require(route)(app);
+    if(file == 'login.js' || file == 'signup.js'){
+        require(route)(app, passport);
+    }else{
+        require(route)(app, passport);
+    }
+    
 });
 
 //Catch not found

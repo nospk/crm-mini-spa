@@ -1,4 +1,4 @@
-const  home1 = require('../app/controller/homepage1');
+const  home1 = require('../app/controllers/homepage1');
 
 
 module.exports = function (app) {

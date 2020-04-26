@@ -1,16 +1,21 @@
 class Controller {
-    static setResponse(req, res){
-        this.req = req;
-        this.res = res;
-    }
-    static sendMessage(){
+    static sendMessage(res, msg){
 		let json = {
 			status : 1,
 			error : null,
-			message : 'abc',
+			message : msg,
 		}
-		this.res.send(json);
+		res.send(json);
 	};
+
+
+	static loggedIn(req, res, next) {
+		if (req.isAuthenticated()) {
+			next();
+		} else {
+			res.redirect('/logout');
+		}
+	}
 }
 
 module.exports = Controller;

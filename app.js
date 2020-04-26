@@ -8,7 +8,7 @@ const helmet = require('helmet');
 const passport = require('passport');
 const session = require('express-session')
 const mongoose = require('mongoose');
-
+const flash = require('connect-flash');
 const port = process.env.PORT || 3000;
 const error_handler = require('./core/error_handler.js');
 const app = express();
@@ -37,6 +37,7 @@ app.use(morgan('common', {
 require('./core/passport')(passport); // pass passport for configuration
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
 //Public file
 app.use(express.static(path.join(__dirname, 'public')));
 

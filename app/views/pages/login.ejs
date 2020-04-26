@@ -25,9 +25,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <div class="card-body login-card-body">
           <p class="login-box-msg">Chọn cửa hàng</p>
     
-          <form>
+          <form action="/login" method="POST">
+            <% if (error.length > 0) { %>
+              <div class="alert alert-danger"><%- error %></div>
+            <% } %>
+
+            <% if (success.length > 0) { %>
+              <div class="alert alert-success"><%- success %></div>
+            <% } %>
             <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="Cửa hàng">
+              <input type="text" id="username" name="username"class="form-control" placeholder="Tên Cửa hàng">
               <div class="input-group-append">
                 <div class="input-group-text">
                   <span class="fas fa-store"></span>
@@ -35,7 +42,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </div>
             </div>
             <div class="input-group mb-3">
-              <input type="password" class="form-control" placeholder="Mật khẩu">
+              <input type="password" id="password" name="password" class="form-control" placeholder="Mật khẩu">
               <div class="input-group-append">
                 <div class="input-group-text">
                   <span class="fas fa-lock"></span>

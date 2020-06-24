@@ -112,7 +112,7 @@ module.exports = function (passport) {
                     return done(null, false, req.flash('error', 'Your Account Not Activated ,Please Check Your Email')); // create the loginMessage and save it to session as flashdata
 
                 // all is well, return successful user
-                //req.session.user = user;
+                req.session.user = user;
                 return done(null, user);
             });
         }));

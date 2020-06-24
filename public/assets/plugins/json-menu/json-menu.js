@@ -1,12 +1,13 @@
 $(function () {
-	
 	loadMenu();
 });
-
-function loadMenu() {
-	var data = loginFull();
-	let menuStr = "";	
-	
+async function loadMenu() {
+    let data = logoutShort();
+	if(menuObj == '') {
+		data = logoutShort();
+	} else if (menuObj == "login" && user_role == '0') {
+		data = loginFull();
+    }
 	var builddata = function () {
             var source = [];
             var items = [];
@@ -95,36 +96,13 @@ function loadMenu() {
                 }
             });
         }
-
-        var source = builddata();
-        var ul = $("#sidebar-menu");
-        buildUL(ul, source);
-        getActiveItem();
-
+        if(data != ""){
+            var source = builddata();
+            var ul = $("#sidebar-menu");
+            buildUL(ul, source);
+            getActiveItem();
+        } 
 }
-
-// function setCookie(cname, cvalue, exdays) {
-//     var d = new Date();
-//     d.setTime(d.getTime() + (exdays*24*60*60*1000));
-//     var expires = "expires="+ d.toUTCString();
-//     document.cookie = cname + "=" + cvalue + ";" + expires;
-// 	//document.cookie = cname + "=" + cvalue +  ";path=/";
-// }
-
-// function getCookie(cname) {
-//     var name = cname + "=";
-//     var ca = document.cookie.split(';');
-//     for(var i = 0; i < ca.length; i++) {
-//         var c = ca[i];
-//         while (c.charAt(0) == ' ') {
-//             c = c.substring(1);
-//         }
-//         if (c.indexOf(name) == 0) {
-//             return c.substring(name.length, c.length);
-//         }
-//     }
-//     return "";
-// }
 
 function getActiveItem(){
     Array.from($("#sidebar-menu").find('a')).forEach(a => {
@@ -231,36 +209,5 @@ function loginFull() {
 }
 
 function logoutShort() {
-	return [{
-							"id" : "10",
-							"level" : "system-menu",
-							"name" : "Dashboard",
-							"url" : "/list-bot",
-							"parent_id" : "-1",
-							"css_class" : "fa fa-area-chart",
-							"authenticate" : true,
-							"plugin" : "system"		
-						},
-						{
-							"id": "250",
-							"level": "system-menu",
-							"name": "Hướng dẫn sử dụng",
-							"url": "/huong-dan.html",
-							"parent_id": "-1",
-							"css_class": "fa fa-book",
-							"authenticate": true,
-							"plugin": "system",
-							"new_windows": "_tutorial"
-						},
-						{
-							"id": "300",
-							"level": "system-menu",
-							"name": "Cộng đồng hỗ trợ",
-							"url": "https://www.facebook.com/groups/messflow/",
-							"parent_id": "-1",
-							"css_class": "fa fa-life-ring",
-							"authenticate": true,
-							"plugin": "system",
-							"new_windows": "_support_group"
-						}];
+	return [];
 }

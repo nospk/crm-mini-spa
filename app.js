@@ -12,7 +12,14 @@ const flash = require('connect-flash');
 const port = process.env.PORT || 3000;
 const error_handler = require('./core/error_handler.js');
 const app = express();
-
+const LokiStore = require('connect-loki')(session);
+const options = {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    autoIndex: true,
+    useFindAndModify: false, 
+    useUnifiedTopology: true
+}
 /*************************** Main *******************************/
 
 
@@ -22,7 +29,8 @@ app.use(session({
     secret: 'this-is-a-secret-token', 
     cookie: { maxAge: 60000 },
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store: new LokiStore({}),
 }));
 
 app.use(bodyParser.json());
@@ -46,7 +54,7 @@ app.set('views', path.join('./app/views'));
 app.set('view engine', 'ejs');
 
 // connect to our database 
-mongoose.connect(process.env.DB_LOCALHOST, { useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true });  
+mongoose.connect(process.env.DB_LOCALHOST, options);  
 
 
 

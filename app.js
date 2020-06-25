@@ -26,8 +26,8 @@ const options = {
 //helmet protect express
 app.use(helmet())
 app.use(session({ 
-    secret: 'this-is-a-secret-token', 
-    cookie: { maxAge: 60000 },
+    secret: 'this-is-a-secret-token-a-b-2-3-4', 
+    cookie: { maxAge: 86400000 },
     resave: true,
     saveUninitialized: true,
     store: new LokiStore({}),

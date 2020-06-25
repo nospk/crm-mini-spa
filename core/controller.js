@@ -17,7 +17,14 @@ class Controller {
 			res.redirect('/login');
 		}
 	}
-
+	static loggedInadmin(req, res, next) {
+		if (req.isAuthenticated() && req.session.user.role_id == '0') {
+			next();
+		} else {
+			req.logout();
+			res.redirect('/login');
+		}
+	}
 	//set menu for client
 	static setLocalValue(req, res) {
 		if(Common.isset(req.session.user) != null) { 

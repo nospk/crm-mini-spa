@@ -10,7 +10,7 @@ class Base extends Controller{
         
     }
     static logout(req, res) {
-		req.logout();
+		req.session.destroy();
 		res.redirect('/login');
     }
 }

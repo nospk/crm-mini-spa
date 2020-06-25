@@ -27,9 +27,10 @@ const options = {
 app.use(helmet())
 app.use(session({ 
     secret: 'this-is-a-secret-token-a-b-2-3-4', 
-    cookie: { maxAge: 86400000 },
-    resave: true,
+    cookie: { maxAge: 28800000 },
+    resave: false,
     saveUninitialized: true,
+	unset: 'destroy',
     store: new LokiStore({}),
 }));
 

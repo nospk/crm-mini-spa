@@ -21,7 +21,7 @@ class Controller {
 		if (req.isAuthenticated() && req.session.user.role_id == '0') {
 			next();
 		} else {
-			req.logout();
+			req.session.destroy();
 			res.redirect('/login');
 		}
 	}

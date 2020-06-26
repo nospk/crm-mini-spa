@@ -13,6 +13,9 @@ const StoreSchema = mongoose.Schema({
     money_in_month: {
         type: Number
     },
+	image_store:{
+		type: String
+	},
     product:[{
         name: String,
         amount: Number,

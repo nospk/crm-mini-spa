@@ -12,6 +12,8 @@ const flash = require('connect-flash');
 const port = process.env.PORT || 3000;
 const error_handler = require('./core/error_handler.js');
 const app = express();
+const cookieParser = require('cookie-parser');
+const csrf = require('csurf');
 const LokiStore = require('connect-loki')(session);
 const options = {
     useNewUrlParser: true,
@@ -30,7 +32,6 @@ app.use(session({
     cookie: { maxAge: 28800000 },
     resave: false,
     saveUninitialized: true,
-	unset: 'destroy',
     store: new LokiStore({}),
 }));
 
@@ -57,18 +58,26 @@ app.set('view engine', 'ejs');
 // connect to our database 
 mongoose.connect(process.env.DB_LOCALHOST, options);  
 
+app.use(cookieParser())
+app.use(csrf({ cookie: true }));
 
 
 //add one folder then put your route files there my router folder name is routers
-const routePath="./router/"; 
-fs.readdirSync(routePath).forEach(function(file) {
-    var route=routePath+file;
-    if(file == 'login.js' || file == 'signup.js'){
-        require(route)(app, passport);
-    }else{
-        require(route)(app, passport);
-    }
-    
+const routeBasePath="./router/"; 
+fs.readdirSync(routeBasePath).forEach(function(file) {
+    let route=routeBasePath+file;
+	if(fs.lstatSync(route).isFile()){
+		if(file == 'login.js' || file == 'signup.js'){
+			require(route)(app, passport);
+		}else{
+			require(route)(app);
+		}
+	}
+});
+const routeAdminPath="./router/admin/";
+fs.readdirSync(routeAdminPath).forEach(function(file) {
+    let route=routeAdminPath+file;
+    require(route)(app);
 });
 
 //Catch not found

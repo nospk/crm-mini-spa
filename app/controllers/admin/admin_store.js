@@ -2,12 +2,36 @@ const Controller = require('../../../core/controller');
 const Store = require('../../models/store');
 class Admin_store extends Controller{
     static show(req, res){
-		console.log(req.session)
         Admin_store.setLocalValue(req,res);
         res.render('./pages/admin/admin_store');
     }
-	static async getstore(req, res){
-		Store.find({'user_manager.id_admin': req.session.user._id});
+	static async get_store(req, res){
+		try{
+			let store = await Store.find({'user_manager.id_admin': req.session.user._id});
+			Admin_store.sendError(res, '123', '123');
+			//Admin_store.sendData(res, store);
+		}catch(err){
+			console.log(err.message)
+			Admin_store.sendError(res, err, err.message);
+		}
+	}
+	static async create_store(req, res){
+		Admin_store.setLocalValue(req,res);
+		try{
+			let store = Store({
+				name: req.body.name,
+				address: req.body.address,
+				user_manager: {
+					id_admin: req.session.user._id
+				},
+			});
+			await store.save()
+			Admin_store.sendMessage(res, "Đã tạo thành công");
+		}catch(err){
+			console.log(err.message)
+			Admin_store.sendError(res, err, err.message);
+		}
+		
 	}
 }
 

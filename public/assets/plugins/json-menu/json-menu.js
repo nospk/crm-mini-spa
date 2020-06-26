@@ -134,60 +134,10 @@ function loginFull() {
             {
                 "id": "7",
                 "level": "system-menu",
-                "name": "Starter Pages 1",
-                "url": "#",
+                "name": "Store",
+                "url": "/admin_store",
                 "parent_id": "-1",
-                "css_class": "nav-icon fas fa-tachometer-alt",
-                "authenticate": true,
-                "plugin": "system"
-            },
-            {
-                "id": "20",
-                "level": "system-menu",
-                "name": "Active Page 1 ",
-                "url": "/home3",
-                "parent_id": "7",
-                "css_class": "far fa-circle nav-icon",
-                "authenticate": true,
-                "plugin": "system"
-            },
-            {
-                "id": "30",
-                "level": "system-menu",
-                "name": "Inactive Page 2",
-                "url": "/home4",
-                "parent_id": "7",
-                "css_class": "far fa-circle nav-icon",
-                "authenticate": true,
-                "plugin": "system"
-            },
-            {
-                "id": "12",
-                "level": "system-menu",
-                "name": "Starter Pages",
-                "url": "#",
-                "parent_id": "-1",
-                "css_class": "nav-icon fas fa-tachometer-alt",
-                "authenticate": true,
-                "plugin": "system"
-            },
-            {
-                "id": "20",
-                "level": "system-menu",
-                "name": "Active Page",
-                "url": "/home",
-                "parent_id": "12",
-                "css_class": "far fa-circle nav-icon",
-                "authenticate": true,
-                "plugin": "system"
-            },		
-			{
-                "id": "30",
-                "level": "system-menu",
-                "name": "Inactive Page",
-                "url": "/home1",
-                "parent_id": "12",
-                "css_class": "far fa-circle nav-icon",
+                "css_class": "nav-icon fas fa-store",
                 "authenticate": true,
                 "plugin": "system"
             },

@@ -22,6 +22,6 @@ const StoreSchema = mongoose.Schema({
         description: String,
         price: Number,
     }]
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('store', StoreSchema, 'stores');

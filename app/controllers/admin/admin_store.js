@@ -8,8 +8,7 @@ class Admin_store extends Controller{
 	static async get_store(req, res){
 		try{
 			let store = await Store.find({'user_manager.id_admin': req.session.user._id});
-			Admin_store.sendError(res, '123', '123');
-			//Admin_store.sendData(res, store);
+			Admin_store.sendData(res, store);
 		}catch(err){
 			console.log(err.message)
 			Admin_store.sendError(res, err, err.message);

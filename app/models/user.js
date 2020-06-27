@@ -18,7 +18,7 @@ const UserSchema = mongoose.Schema({
 		date: Date
     },
     role_id: { type: Number, default: 1} //0: admin, 1:manager
-});
+}, { timestamps: true });
 UserSchema.methods.generateHash = function(password) {
  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };

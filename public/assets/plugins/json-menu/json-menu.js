@@ -80,7 +80,7 @@ async function loadMenu() {
                     }else{
                         str = '<li  class="nav-item"> ' +
                         '<a href="' + this.url + '" ' + getTargetWindown(this) +' class="nav-link"> ' +
-                        '   <i class="' + this.css_class + '"></i><span>' + this.label + '</span>' +
+                        '   <i class="' + this.css_class + '"></i><p>' + this.label + '</p>' +
                         '</a>' +
                         '</li>';
                         li = $(str);
@@ -137,7 +137,7 @@ function loginFull() {
                 "name": "Store",
                 "url": "/admin_store",
                 "parent_id": "-1",
-                "css_class": "nav-icon fas fa-store",
+                "css_class": "nav-icon fas fa-store ",
                 "authenticate": true,
                 "plugin": "system"
             },

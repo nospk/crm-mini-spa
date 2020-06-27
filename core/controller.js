@@ -28,11 +28,9 @@ class Controller {
 	//set menu for client
 	static setLocalValue(req, res) {
 		if(Common.isset(req.session.user) != null) {
-			res.locals.csrfToken = req.csrfToken();
 			res.locals.user_role = req.session.user.role_id;
 			res.locals.menu = "login";
 		} else {
-			res.locals.csrfToken = req.csrfToken();
 			res.locals.user_role = "";
 			res.locals.menu = "";
 		}

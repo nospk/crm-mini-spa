@@ -61,6 +61,11 @@ mongoose.connect(process.env.DB_LOCALHOST, options);
 app.use(cookieParser())
 app.use(csrf({ cookie: true }));
 
+app.use(function (req, res, next) {
+    let token = req.csrfToken();
+    res.locals.csrfToken = token;
+    next();
+});
 
 //add one folder then put your route files there my router folder name is routers
 const routeBasePath="./router/"; 

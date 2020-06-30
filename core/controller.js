@@ -29,7 +29,11 @@ class Controller {
 	static setLocalValue(req, res) {
 		if(Common.isset(req.session.user) != null) {
 			res.locals.user_role = req.session.user.role_id;
-			res.locals.menu = "login";
+			if(Common.isset(req.session.store_id) != null && req.session.user.role_id == '0'){
+				res.locals.menu = "active";
+			}else{
+				res.locals.menu = "login";
+			}
 		} else {
 			res.locals.user_role = "";
 			res.locals.menu = "";

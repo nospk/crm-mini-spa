@@ -11,7 +11,7 @@ function render_store(data){
 				  <div class="card-body">
 					<h5 class="card-title">${item.name}</h5>
 					<p class="card-text">${item.address}</p>
-					<a href="#" class="btn btn-primary float-right">Chọn cửa hàng</a>
+					<a href="#" class="btn btn-primary float-right" onClick="active_store('${item._id}'); return false;">Chọn cửa hàng</a>
 				  </div>
 				 </div>
 			   </div>`
@@ -30,10 +30,10 @@ function create_store(){
         data: data,
         success: function(data){
             if(data.status == 1){
-                swal({
+                Swal.fire({
                     title: "Cập nhật thành công",
                     text: "Nội dung này đã được lưu lại",
-                    type: "info",
+                    icon: "info",
                     showConfirmButton: false,
                     timer: 3000
                 }).then((result)=>{
@@ -71,6 +71,47 @@ function get_store(){
         success: function(data){
             if(data.status == 1){
                 render_store(data.data);
+            }else{
+                Swal.fire({
+                    title: "Phát sinh lỗi",
+                    text: "Vui lòng kiểm tra dữ liệu",
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
+}
+function active_store(id){
+    let data = {
+		id: id,
+        _csrf: $('#_csrf').val()
+    }
+    $.ajax({
+        url:'/admin_store/active',
+        method:'POST',
+        data: data,
+        success: function(data){
+            if(data.status == 1){
+                Swal.fire({
+                    title: "Cập nhật thành công",
+                    text: "Đã chọn cửa hàng",
+                    icon: "info",
+                    showConfirmButton: false,
+                    timer: 3000
+                }).then((result)=>{
+					location.reload();
+                })
+                .catch(timer => {
+					location.reload();
+                });
             }else{
                 Swal.fire({
                     title: "Phát sinh lỗi",

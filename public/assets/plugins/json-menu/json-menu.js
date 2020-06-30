@@ -7,6 +7,8 @@ async function loadMenu() {
 		data = logoutShort();
 	} else if (menuObj == "login" && user_role == '0') {
 		data = loginFull();
+    } else if (menuObj == "active" && user_role == '0') {
+		data = activeFull();
     }
 	var builddata = function () {
             var source = [];
@@ -52,7 +54,7 @@ async function loadMenu() {
             $.each(items, function () {
                 if (this.label) {
                     // var li = $("<li>" + "<a class='fa fa-area-chart' href='" + this.url + "'>" + this.label + "</a></li>");
-                    var li = $("<li class='nav-item'><a href='" + this.url + "' " + getTargetWindown(this) + " class=\"nav-link\"><i class='"  +  this.css_class +  "'></i> " + this.label + "</a></li>");
+                    var li = $("<li class='nav-item'><a href='" + this.url + "' " + getTargetWindown(this) + " class=\"nav-link\"><i class='"  +  this.css_class +  "'></i><p> " + this.label + "</p></a></li>");
                     li.appendTo(parent);
                 }
             });
@@ -134,7 +136,7 @@ function loginFull() {
             {
                 "id": "7",
                 "level": "system-menu",
-                "name": "Store",
+                "name": "Cửa hàng",
                 "url": "/admin_store",
                 "parent_id": "-1",
                 "css_class": "nav-icon fas fa-store ",
@@ -157,7 +159,64 @@ function loginFull() {
 		}
 		return menu;
 }
+function activeFull() {
+	let menu = [
+            {
+                "id": "7",
+                "level": "system-menu",
+                "name": "Cửa hàng",
+                "url": "#",
+                "parent_id": "-1",
+                "css_class": "nav-icon fas fa-store ",
+                "authenticate": true,
+                "plugin": "system"
+            },
+			{
+                "id": "8",
+                "level": "system-menu",
+                "name": "Chọn Cửa hàng",
+                "url": "/admin_store",
+                "parent_id": "7",
+                "css_class": "nav-icon fas fa-list-ol ",
+                "authenticate": true,
+                "plugin": "system"
+            },
+			{
+                "id": "9",
+                "level": "system-menu",
+                "name": "Sửa thông tin",
+                "url": "/admin_edit_store",
+                "parent_id": "7",
+                "css_class": "nav-icon fas fa-edit ",
+                "authenticate": true,
+                "plugin": "system"
+            },
+			{
+                "id": "10",
+                "level": "system-menu",
+                "name": "Quản lý",
+                "url": "/admin_manager_store",
+                "parent_id": "7",
+                "css_class": "nav-icon fas fa-tasks ",
+                "authenticate": true,
+                "plugin": "system"
+            },
+        ];
 
+		
+		try {
+			let MenuExtStr = localStorage.getItem('menuExt');
+			let menuExt = [];
+			if((MenuExtStr != undefined) && (MenuExtStr != null) && (MenuExtStr != ""))
+				menuExt = JSON.parse(MenuExtStr);
+			
+			for(let i=0; i< menuExt.length; i++) 
+				menu.push(menuExt[i]);
+		} catch(eex) { 
+			console.dir(eex);
+		}
+		return menu;
+}
 function logoutShort() {
 	return [];
 }

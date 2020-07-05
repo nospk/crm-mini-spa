@@ -14,14 +14,17 @@ const StoreSchema = mongoose.Schema({
         type: Number
     },
 	image_store:{
-		type: String
+		type: String, "default": "/dist/image/spa.jpg"
 	},
     product:[{
         name: String,
         amount: Number,
         description: String,
         price: Number,
-    }]
+    }], 
+    status:{
+        type: Number, "default" : 0 //0: active, 1: unactive
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('store', StoreSchema, 'stores');

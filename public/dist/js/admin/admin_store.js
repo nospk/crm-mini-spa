@@ -31,8 +31,8 @@ function create_store(){
         success: function(data){
             if(data.status == 1){
                 Swal.fire({
-                    title: "Cập nhật thành công",
-                    text: "Nội dung này đã được lưu lại",
+                    title: "Thao tác thành công",
+                    text: data.message,
                     icon: "info",
                     showConfirmButton: false,
                     timer: 3000
@@ -44,8 +44,8 @@ function create_store(){
                 });    
             }else{
                 Swal.fire({
-                    title: "Phát sinh lỗi",
-                    text: "Vui lòng kiểm tra dữ liệu",
+                    title: data.error,
+                    text: data.message,
                     icon: "error",
                     showConfirmButton: false,    
                     timer: 3000
@@ -73,8 +73,8 @@ function get_store(){
                 render_store(data.data);
             }else{
                 Swal.fire({
-                    title: "Phát sinh lỗi",
-                    text: "Vui lòng kiểm tra dữ liệu",
+                    title: data.error,
+                    text: data.message,
                     icon: "error",
                     showConfirmButton: false,    
                     timer: 3000
@@ -101,8 +101,8 @@ function active_store(id){
         success: function(data){
             if(data.status == 1){
                 Swal.fire({
-                    title: "Cập nhật thành công",
-                    text: "Đã chọn cửa hàng",
+                    title: "Thao tác thành công",
+                    text: data.message,
                     icon: "info",
                     showConfirmButton: false,
                     timer: 3000
@@ -114,8 +114,8 @@ function active_store(id){
                 });
             }else{
                 Swal.fire({
-                    title: "Phát sinh lỗi",
-                    text: "Vui lòng kiểm tra dữ liệu",
+                    title: data.error,
+                    text: data.message,
                     icon: "error",
                     showConfirmButton: false,    
                     timer: 3000

@@ -135,13 +135,10 @@ function loginFull() {
 	let menu = [
             {
                 "id": "7",
-                "level": "system-menu",
                 "name": "Cửa hàng",
                 "url": "/admin_store",
                 "parent_id": "-1",
                 "css_class": "nav-icon fas fa-store ",
-                "authenticate": true,
-                "plugin": "system"
             },
         ];
 
@@ -163,44 +160,53 @@ function activeFull() {
 	let menu = [
             {
                 "id": "7",
-                "level": "system-menu",
                 "name": "Cửa hàng",
                 "url": "#",
                 "parent_id": "-1",
                 "css_class": "nav-icon fas fa-store ",
-                "authenticate": true,
-                "plugin": "system"
             },
 			{
                 "id": "8",
-                "level": "system-menu",
                 "name": "Chọn Cửa hàng",
                 "url": "/admin_store",
                 "parent_id": "7",
                 "css_class": "nav-icon fas fa-list-ol ",
-                "authenticate": true,
-                "plugin": "system"
             },
 			{
                 "id": "9",
-                "level": "system-menu",
                 "name": "Sửa thông tin",
                 "url": "/admin_edit_store",
                 "parent_id": "7",
                 "css_class": "nav-icon fas fa-edit ",
-                "authenticate": true,
-                "plugin": "system"
             },
 			{
                 "id": "10",
-                "level": "system-menu",
                 "name": "Quản lý",
-                "url": "/admin_manager_store",
-                "parent_id": "7",
+                "url": "#",
+                "parent_id": "- 1",
                 "css_class": "nav-icon fas fa-tasks ",
-                "authenticate": true,
-                "plugin": "system"
             },
+            {
+                "id": "11",
+                "name": "Nhân viên",
+                "url": "/admin_manager_store/employees",
+                "parent_id": "10",
+                "css_class": "nav-icon fas fa-users",
+            },
+            {
+                "id": "12",
+                "name": "Dịch vụ - Sản phẩm",
+                "url": "/admin_manager_store/products",
+                "parent_id": "10",
+                "css_class": "nav-icon fas fas fa-boxes",
+            },
+            {
+                "id": "13",
+                "name": "Kho",
+                "url": "/admin_manager_store/stock",
+                "parent_id": "10",
+                "css_class": "nav-icon fas fa-calculator",
+            }
         ];
 
 		

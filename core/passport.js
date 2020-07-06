@@ -64,7 +64,7 @@ module.exports = function (passport) {
                         var active_code = bcrypt.hashSync(Math.floor((Math.random() * 99999999) * 54), null, null);
                         newUser.password = newUser.generateHash(password);
                         newUser.username = req.body.username;
-                        newUser.status = 'active'; //inactive for email actiavators
+                        newUser.status = 0; //inactive for email actiavators
                         newUser.active_hash = active_code;
 
                         // save the user
@@ -108,7 +108,7 @@ module.exports = function (passport) {
                 // if the user is found but the password is wrong
                 if (!user.validPassword(password))
                     return done(null, false, req.flash('error', 'Email and Password Does Not Match.')); // create the loginMessage and save it to session as flashdata
-                if (user.status === 'inactive')
+                if (user.status === 1)
                     return done(null, false, req.flash('error', 'Your Account Not Activated ,Please Check Your Email')); // create the loginMessage and save it to session as flashdata
 
                 // all is well, return successful user

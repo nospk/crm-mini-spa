@@ -17,6 +17,9 @@ const UserSchema = mongoose.Schema({
 		token: String,
 		date: Date
     },
+	status:{
+		type: Number //0: active 1: inactive
+	},
     role_id: { type: Number, default: 1} //0: admin, 1:manager
 }, { timestamps: true });
 UserSchema.methods.generateHash = function(password) {

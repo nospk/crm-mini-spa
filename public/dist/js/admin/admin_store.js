@@ -2,7 +2,7 @@
 $( document ).ready(()=>{
 	get_store();
 })
-function render_store(data){
+function render_data(data){
 	let html = '';
 	data.forEach(item =>{
 		html+=`<div class="col-6">
@@ -16,7 +16,7 @@ function render_store(data){
 				 </div>
 			   </div>`
 	})
-	$('#show_store').html(html);
+	$('#show_data').html(html);
 }
 function create_store(){
     let data = {
@@ -70,7 +70,7 @@ function get_store(){
         data: data,
         success: function(data){
             if(data.status == 1){
-                render_store(data.data);
+                render_data(data.data);
             }else{
                 Swal.fire({
                     title: data.error,

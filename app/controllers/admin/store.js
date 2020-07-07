@@ -4,7 +4,7 @@ class Admin_store extends Controller{
     static show(req, res){
         Admin_store.setLocalValue(req,res);
 		//console.log(req.session);
-        res.render('./pages/admin/admin_store');
+        res.render('./pages/admin/store');
     }
 	static async get_store(req, res){
 		try{

@@ -12,8 +12,8 @@ const Product_Service_Schema = mongoose.Schema({
     price: {
         type: Number
     },
-	image:{
-		type: String, "default": "/dist/image/default.jpg"
+	number_code:{
+		type: String,
 	},
     description:{
         type: String

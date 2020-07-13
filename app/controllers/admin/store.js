@@ -16,7 +16,6 @@ class Admin_store extends Controller{
 		}
 	}
 	static async create_store(req, res){
-		Admin_store.setLocalValue(req,res);
 		try{
 			let store = Store({
 				name: req.body.name,
@@ -34,7 +33,6 @@ class Admin_store extends Controller{
 		
 	}
 	static async active_store(req, res){
-		Admin_store.setLocalValue(req,res);
 		try{
 			let store = await Store.findOne({'user_manager.id_admin': req.session.user._id, _id: req.body.id})
 			if(store != null){

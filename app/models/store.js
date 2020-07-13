@@ -15,7 +15,10 @@ const StoreSchema = mongoose.Schema({
     },
 	image_store:{
 		type: String, "default": "/dist/image/spa.jpg"
-	},
+    },
+    number_code:{
+        type: String
+    },
     product:[{
         name: String,
         amount: Number,

@@ -15,6 +15,15 @@ class Admin_product_service extends Controller{
 			Admin_product_service.sendError(res, err, err.message);
 		}
 	}
+	static async edit_data(req, res){
+		try{
+			let data = await Product_service.findOne({admin_id: req.session.user._id, _id: req.body.id});
+			Admin_product_service.sendData(res, data);
+		}catch(err){
+			console.log(err.message)
+			Admin_product_service.sendError(res, err, err.message);
+		}
+	}
 	static async create_new(req, res){
 		try{
 			let check = await Product_service.findOne({admin_id: req.session.user._id, number_code:req.body.number_code});
@@ -31,6 +40,31 @@ class Admin_product_service extends Controller{
 				});
 				await new_product_service.save()
 				Admin_product_service.sendMessage(res, "Đã tạo thành công");
+			}
+		}catch(err){
+			console.log(err.message)
+			Admin_product_service.sendError(res, err, err.message);
+		}
+		
+	}
+	static async update_data(req, res){
+		try{
+			let find = await Product_service.findOne({admin_id: req.session.user._id, _id: req.body.id});
+			if(find){
+				let check = await Product_service.findOne({admin_id: req.session.user._id, number_code:req.body.number_code});
+				if(check && find.number_code != req.body.number_code){
+					return Admin_product_service.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
+				}else{
+					find.name = req.body.name;
+					find.type = req.body.type;
+					find.price = req.body.price;
+					find.description = req.body.description;
+					find.number_code = req.body.number_code;
+					await find.save();
+					Admin_product_service.sendMessage(res, "Đã thay đổi thành công");
+				}
+			}else{
+					Admin_product_service.sendError(res, "Không tìm thấy sản phẩm", "Vui lòng thử lại");
 			}
 		}catch(err){
 			console.log(err.message)

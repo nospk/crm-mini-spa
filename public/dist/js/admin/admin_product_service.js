@@ -67,6 +67,7 @@ function render_data(data){
 		                        <thead>
                                     <tr>
                                     <th>Tên</th>
+									<th>Loại</th>
                                     <th>Giá</th>
                                     <th>Mã số</th>
                                     <th>Thông tin</th>
@@ -77,10 +78,13 @@ function render_data(data){
 	data.forEach(item =>{
 		html+=`<tr>
                 <td>${item.name}</td>
+				<td>${item.type == 'product'? "Sản phẩm" : "Dịch vụ"}</td>
                 <td>${(item.price).toLocaleString()}</td>
                 <td>${item.number_code}</td>
                 <td>${item.description}</td>
-                <td> <span style="color:red" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i><span> </td>
+                <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;
+					<span style="color:red; cursor: pointer" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i></span>		
+				</td>
                 </tr>`
     })
     html+=`</tbody>
@@ -98,6 +102,7 @@ function get_data(){
     $('#create_new #price').val("")
     $('#create_new #number_code').val("")
     $('#create_new #description').val("")
+	$('#edit_data #edit_id').val("");
     let data = {
         _csrf: $('#_csrf').val()
     }
@@ -150,4 +155,69 @@ function comform_delete_data(id){
                 })
             }
     });
+}
+function edit_data(id){
+	$.ajax({
+		url:'/admin_product_service/edit_data',
+		method:'post',
+        data: {id: id, _csrf: $('#_csrf').val()},
+		async:false,
+        success: function(data){
+			if(data.status == 1){
+				$('#edit_data #edit_name').val(data.data.name);
+				$('#edit_data #edit_price').val(data.data.price);
+				$('#edit_data #edit_type_product_service').val(data.data.type),
+				$('#edit_data #edit_number_code').val(data.data.number_code);
+				$('#edit_data #edit_description').val(data.data.description);
+				$('#edit_data #edit_id').val(data.data._id);
+				$('#edit_data').modal('show');
+            }
+		}
+	})
+}
+function update_data(){
+	let data = {
+        name: $('#edit_data #edit_name').val().trim(),
+        type: $('#edit_data #edit_type_product_service').val(),
+        price: $('#edit_data #edit_price').val(),
+        number_code: $('#edit_data #edit_number_code').val(),
+        description: $('#edit_data #edit_description').val(),
+		id: $('#edit_data #edit_id').val(),
+        _csrf: $('#_csrf').val()
+    }
+    $.ajax({
+        url:'/admin_product_service/update_data',
+        method:'put',
+        data: data,
+        success: function(data){
+            if(data.status == 1){
+                Swal.fire({
+                    title: "Thao tác thành công",
+                    text: data.message,
+                    icon: "info",
+                    showConfirmButton: false,
+                    timer: 3000
+                }).then((result)=>{
+					get_data()
+                })
+                .catch(timer => {
+					get_data()
+                });    
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
 }

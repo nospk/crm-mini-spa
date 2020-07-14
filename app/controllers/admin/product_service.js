@@ -1,5 +1,6 @@
 const Controller = require('../../../core/controller');
 const Product_service = require('../../models/product_service');
+const mongoose = require('mongoose');
 class Admin_product_service extends Controller{
     static show(req, res){
         Admin_product_service.setLocalValue(req,res);
@@ -8,8 +9,23 @@ class Admin_product_service extends Controller{
     }
 	static async get_data(req, res){
 		try{
-			let data = await Product_service.find({admin_id: req.session.user._id});
-			Admin_product_service.sendData(res, data);
+			let {search}=req.body
+			let match = {
+				$and: [ {admin_id : mongoose.Types.ObjectId(req.session.user._id)} ] 
+			}
+			if(search){
+				match.$and.push({$or:[{'number_code': {$regex: search,$options:"xi"}},{'name': {$regex: search,$options:"xi"}}]})
+			}
+			//set default variables
+			let pageSize = 10
+			let currentPage = req.body.paging_num || 1
+	
+			// find total item
+			let pages = await Product_service.find(match).countDocuments()
+			// find total pages
+			let pageCount = Math.ceil(pages/pageSize)
+			let data = await Product_service.aggregate([{$match:match},{$skip:(pageSize * currentPage) - pageSize},{$limit:pageSize}])
+			Admin_product_service.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
 			console.log(err.message)
 			Admin_product_service.sendError(res, err, err.message);

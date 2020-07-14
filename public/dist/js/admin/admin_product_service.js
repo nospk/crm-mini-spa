@@ -1,6 +1,14 @@
 $( document ).ready(()=>{
 	get_data();
 })
+let page_now;
+const reduce_string = (string)=>{
+    if(string.length > 25){
+        return string.slice(0,25) + ' ...'
+    }else{
+        return string
+    }
+}
 function create_new(){
     let data = {
         name: $('#create_new #name').val().trim(),
@@ -46,23 +54,8 @@ function create_new(){
         }
     })
 }
-function render_data(data){
-	let html = `<div class="col-12">
-	                <div class="card">
-	                    <div class="card-header">
-                            <h3 class="card-title">Danh sách sản phẩm</h3>
-                            <div class="card-tools">
-		                        <div class="input-group input-group-sm" style="width: 150px;">
-			                        <input type="text" name="table_search" class="form-control float-right" placeholder="Tìm">
-
-			                        <div class="input-group-append">
-			                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
-			                        </div>
-		                        </div>
-		                    </div>
-                        </div>
-                        <!-- /.card-header -->
-	                    <div class="card-body table-responsive p-0">
+function render_data(data, pageCount, currentPage){
+	let html = `        
 		                    <table class="table table-hover text-nowrap">
 		                        <thead>
                                     <tr>
@@ -81,7 +74,7 @@ function render_data(data){
 				<td>${item.type == 'product'? "Sản phẩm" : "Dịch vụ"}</td>
                 <td>${(item.price).toLocaleString()}</td>
                 <td>${item.number_code}</td>
-                <td>${item.description}</td>
+                <td>${reduce_string(item.description)}</td>
                 <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;
 					<span style="color:red; cursor: pointer" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i></span>		
 				</td>
@@ -89,21 +82,55 @@ function render_data(data){
     })
     html+=`</tbody>
                 </table>
-            </div>
-            <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-            </div>
             `;
-	$('#show_data').html(html);
+    $('#show_data').html(html);
+    let pageination = ''
+
+    if (pageCount > 1) {
+        let i = Number(currentPage) > 5 ? (Number(currentPage) - 4) : 1
+        pageination += `<ul class="pagination pagination-sm m-0 float-right">`
+        if (currentPage == 1){
+            pageination += `<li class="page-item disabled"><a class="page-link" href="#"><<</a></li>`  
+        }else{
+            pageination += `<li class="page-item"><a class="page-link" onclick="get_data('1')"><<</a></li>`  
+        }
+        if (i != 1) {
+            pageination += `<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`
+        }
+        for (; i<= (Number(currentPage) + 4) && i <= pageCount; i++) {
+    
+            if (currentPage == i) {
+                pageination += `<li class="page-item active"><a class="page-link">${i}</a></li>`
+            } else {
+                    pageination += `<li class="page-item"><a class="page-link" onclick="get_data('${i}')">${i}</a></li>`
+            }
+            if (i == Number(currentPage) + 4 && i < pageCount) {
+                pageination += `<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`
+                break
+            }
+        }
+        if (currentPage == pageCount){
+            pageination += `<li class="page-item disabled"><a class="page-link"">>></a></li>`
+        }else{
+            pageination += `<li class="page-item"><a class="page-link" onclick="get_data('${i-1}')">>></a></li>`
+        }
+            
+        pageination += `</ul>`
+    }   
+    $("#pagination").html(pageination)
 }
-function get_data(){
+function get_data(paging_num){
     $('#create_new #name').val("")
     $('#create_new #price').val("")
     $('#create_new #number_code').val("")
     $('#create_new #description').val("")
-	$('#edit_data #edit_id').val("");
+    $('#edit_data #edit_id').val("");
+    if(!paging_num){
+        paging_num = page_now
+    }
     let data = {
+        search:$('#search_word').val().trim(),
+        paging_num:paging_num,
         _csrf: $('#_csrf').val()
     }
     $.ajax({
@@ -112,7 +139,8 @@ function get_data(){
         data: data,
         success: function(data){
             if(data.status == 1){
-                render_data(data.data);
+                page_now = data.data.currentPage
+                render_data(data.data.data, data.data.pageCount, data.data.currentPage);
             }else{
                 Swal.fire({
                     title: data.error,
@@ -131,6 +159,7 @@ function get_data(){
         }
     })
 }
+
 function comform_delete_data(id){
     Swal.fire({
         title: 'Bạn muốn xóa ?',

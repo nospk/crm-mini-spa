@@ -6,7 +6,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <html lang="vi">
 <head>
   <%- include ('../../partials/head') %>
-  <title>Sản phẩm và dịch vụ</title>
+  <title> Quản lý nhân sự </title>
   <style>
   .callout {
 	  padding: 10px;
@@ -54,7 +54,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<div class="col-12">
 						<div class="card">
 							<div class="card-header" style="background-color: black;">
-								<h3 class="card-title" style="color: whitesmoke;">Danh sách sản phẩm</h3>
+								<h3 class="card-title" style="color: whitesmoke;">Danh sách nhân viên</h3>
 								<div class="card-tools">
 									<div class="input-group input-group-sm" style="width: 150px;">
 										<input type="text" name="table_search" class="form-control float-right" id="search_word" placeholder="Tìm">
@@ -87,7 +87,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	  <div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
-			<h5 class="modal-title">Tạo sản phẩm - dich vụ </h5>
+			<h5 class="modal-title">Tạo nhân viên mới </h5>
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span>
 			</button>
@@ -99,33 +99,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				</div>
 				<input type="text" class="form-control" id="name" placeholder="Nhập tên" aria-label="Name" aria-describedby="btnGroupAddon1">
 			</div>
-			<div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <div class="input-group-text" for="type_product_service">Loại</div>
-                </div>
-                <select class="custom-select" id="type_product_service">
-                  <option value="product">Sản phẩm</option>
-                  <option value="service">Dịch vụ</option>
-                </select>
-			</div>
 			<div class="input-group">
 				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon2">Mã số</div>
+					<div class="input-group-text" id="btnGroupAddon2">Ngày Tháng Năm Sinh</div>
 				</div>
-				<input type="text" class="form-control" id="number_code" placeholder="Nhập mã tắt" aria-label="Number code" aria-describedby="btnGroupAddon2">
-			</div>
-            <div class="input-group">
-				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon3">Giá</div>
-				</div>
-				<input type="number" class="form-control" id="price" placeholder="Nhập giá" step="1000" aria-label="Price" aria-describedby="btnGroupAddon3">
+				<input type="text" class="form-control" id="birthday" placeholder="Nhập sinh nhật" aria-label="Birthday" aria-describedby="btnGroupAddon2">
             </div>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">Mô tả</span>
-                </div>
-                <textarea class="form-control" id="description" rows="5" aria-label="Description"></textarea>
-              </div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text" id="btnGroupAddon3">Giấy tờ tùy thân</div>
+				</div>
+				<input type="text" class="form-control" id="identity_number" placeholder="Nhập địa chỉ" aria-label="Identity_number" aria-describedby="btnGroupAddon3">
+            </div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text" id="btnGroupAddon4">Thông tin địa chỉ</div>
+				</div>
+				<input type="text" class="form-control" id="address" placeholder="Nhập địa chỉ" aria-label="Address" aria-describedby="btnGroupAddon4">
+            </div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text" id="btnGroupAddon5">Mã số</div>
+				</div>
+				<input type="text" class="form-control" id="number_code" placeholder="Nhập mã tắt" aria-label="Number code" aria-describedby="btnGroupAddon5">
+			</div>
+            
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
@@ -140,7 +138,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	  <div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
-			<h5 class="modal-title">Chỉnh sửa thông tin sản phẩm - dich vụ </h5>
+			<h5 class="modal-title">Chỉnh sửa thông tin nhân viên</h5>
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span>
 			</button>
@@ -152,33 +150,30 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				</div>
 				<input type="text" class="form-control" id="edit_name" placeholder="Nhập tên" aria-label="Name" aria-describedby="btnGroupAddon1">
 			</div>
-			<div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <div class="input-group-text" for="type_product_service">Loại</div>
-                </div>
-                <select class="custom-select" id="edit_type_product_service">
-                  <option value="product">Sản phẩm</option>
-                  <option value="service">Dịch vụ</option>
-                </select>
-			</div>
 			<div class="input-group">
 				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon2">Mã số</div>
+					<div class="input-group-text" id="btnGroupAddon2">Ngày Tháng Năm Sinh</div>
 				</div>
-				<input type="text" class="form-control" id="edit_number_code" placeholder="Nhập mã tắt" aria-label="Number code" aria-describedby="btnGroupAddon2">
-			</div>
-            <div class="input-group">
+				<input type="text" class="form-control" id="edit_birthday" placeholder="Nhập sinh nhật" aria-label="Birthday" aria-describedby="btnGroupAddon2">
+            </div>
+			<div class="input-group">
 				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon3">Giá</div>
+					<div class="input-group-text" id="btnGroupAddon3">Giấy tờ tùy thân</div>
 				</div>
-				<input type="number" class="form-control" id="edit_price" placeholder="Nhập giá" step="1000" aria-label="Price" aria-describedby="btnGroupAddon3">
+				<input type="text" class="form-control" id="edit_identity_number" placeholder="Nhập địa chỉ" aria-label="Identity_number" aria-describedby="btnGroupAddon3">
             </div>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">Mô tả</span>
-                </div>
-                <textarea class="form-control" id="edit_description" rows="5" aria-label="Description"></textarea>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text" id="btnGroupAddon4">Thông tin địa chỉ</div>
+				</div>
+				<input type="text" class="form-control" id="edit_address" placeholder="Nhập địa chỉ" aria-label="Address" aria-describedby="btnGroupAddon4">
             </div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text" id="btnGroupAddon5">Mã số</div>
+				</div>
+				<input type="text" class="form-control" id="edit_number_code" placeholder="Nhập mã tắt" aria-label="Number code" aria-describedby="btnGroupAddon5">
+			</div>
 			<input type="hidden" id="edit_id" value="" />
 		  </div>
 		  <div class="modal-footer">
@@ -191,6 +186,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	<!-- End Modal create store -->
   <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
   <%- include ('../../partials/footer') %>
-  <script src="/dist/js/admin/admin_product_service.js"></script>
+  <script src="/dist/js/admin/employees.js"></script>
 </body>
 </html>

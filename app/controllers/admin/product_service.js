@@ -14,7 +14,7 @@ class Admin_product_service extends Controller{
 				$and: [ {admin_id : mongoose.Types.ObjectId(req.session.user._id)} ] 
 			}
 			if(search){
-				match.$and.push({$or:[{'number_code': {$regex: search,$options:"xi"}},{'name': {$regex: search,$options:"xi"}}]})
+				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
 			}
 			//set default variables
 			let pageSize = 10

@@ -87,7 +87,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	  <div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
-			<h5 class="modal-title">Tạo sản phẩm - dich vụ </h5>
+			<h5 class="modal-title">Tạo sản phẩm - dịch vụ </h5>
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span>
 			</button>
@@ -114,9 +114,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				</div>
 				<input type="text" class="form-control" id="number_code" placeholder="Nhập mã tắt" aria-label="Number code" aria-describedby="btnGroupAddon2">
 			</div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text" id="btnGroupAddon4">Giá vốn</div>
+				</div>
+				<input type="number" class="form-control" id="cost_price" placeholder="Nhập giá" step="1000" aria-label="Price" aria-describedby="btnGroupAddon4">
+            </div>
             <div class="input-group">
 				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon3">Giá</div>
+					<div class="input-group-text" id="btnGroupAddon3">Giá bán</div>
 				</div>
 				<input type="number" class="form-control" id="price" placeholder="Nhập giá" step="1000" aria-label="Price" aria-describedby="btnGroupAddon3">
             </div>
@@ -140,7 +146,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	  <div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
-			<h5 class="modal-title">Chỉnh sửa thông tin sản phẩm - dich vụ </h5>
+			<h5 class="modal-title">Chỉnh sửa thông tin sản phẩm - dịch vụ </h5>
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span>
 			</button>
@@ -179,6 +185,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </div>
                 <textarea class="form-control" id="edit_description" rows="5" aria-label="Description"></textarea>
             </div>
+			<div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <div class="input-group-text" for="is_Active">Trạng thái</div>
+                </div>
+                <select class="custom-select" id="isActive">
+                  <option value="true">Đang kinh doanh</option>
+                  <option value="false">Ngừng kinh doanh</option>
+                </select>
+			</div>
 			<input type="hidden" id="edit_id" value="" />
 		  </div>
 		  <div class="modal-footer">

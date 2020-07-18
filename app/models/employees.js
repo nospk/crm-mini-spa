@@ -22,4 +22,4 @@ const EmployeesSchema = mongoose.Schema({
 		type: Number, default:0 //0: active 1: inactive
 	},
 }, { timestamps: true });
-module.exports = mongoose.model('employee', EmployeesSchema, 'employees');
+module.exports = mongoose.model('Employees', EmployeesSchema);

@@ -30,4 +30,4 @@ UserSchema.methods.generateHash = function(password) {
 UserSchema.methods.validPassword = function(password) {
  return bcrypt.compareSync(password, this.password);
 };
-module.exports = mongoose.model('user', UserSchema, 'users');
+module.exports = mongoose.model('Users', UserSchema);

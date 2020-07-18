@@ -190,6 +190,11 @@ function comform_delete_data(id){
     });
 }
 function edit_data(id){
+    $('#edit-stock-tab').html("")
+    $("#edit_data .nav-link").removeClass('active');
+    $("#edit_data .nav-link").first().addClass('active');
+    $("#edit_data .tab-pane").removeClass('active show');
+    $("#edit_data .tab-pane").first().addClass('active show');
 	$.ajax({
 		url:'/admin_product_service/edit_data',
 		method:'post',
@@ -197,13 +202,39 @@ function edit_data(id){
         success: function(data){
 			if(data.status == 1){
 				$('#edit_data #edit_name').val(data.data.name);
-				$('#edit_data #edit_price').val(data.data.price);
+                $('#edit_data #edit_price').val(data.data.price);
+                $('#edit_data #edit_cost_price').val(data.data.cost_price);
 				$('#edit_data #edit_type_product_service').val(data.data.type),
 				$('#edit_data #edit_number_code').val(data.data.number_code);
 				$('#edit_data #edit_description').val(data.data.description);
 				$('#edit_data #isActive').val(data.data.isActive.toString())
-				$('#edit_data #edit_id').val(data.data._id);
-				$('#edit_data').modal('show');
+                $('#edit_data #edit_id').val(data.data._id);
+                $('#edit_data').modal('show');
+                if(data.data.type =="service"){
+                    $('#edit_data #edit_cost_price').prop("disabled", false);
+                    $('#edit_data #edit-stock').css("display", "none");
+                }else{
+                    $('#edit_data #edit_cost_price').prop("disabled", true);
+                    $('#edit_data #edit-stock').css("display", "block");
+                    let html = `<div class="info-box">
+                                <span class="info-box-icon bg-success"><i class="fas fa-boxes"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Tổng hàng tồn</span>
+                                    <span class="info-box-number">${data.data.stocks}</span>
+                                    </div>
+                            </div>`
+                    for(let i = 0; i < data.data.stocks_in.length; i++){
+                        html += `<div class="info-box">
+                                    <span class="info-box-icon bg-success"><i class="fas fa-store"></i></span>
+                                    <div class="info-box-content">
+                                        <span class="info-box-text">${data.data.stocks_in[i].store.name}</span>
+                                        <span class="info-box-number">${data.data.stocks_in[i].stock_amount}</span>
+                                        </div>
+                                </div>`
+                    }
+                    $('#edit-stock-tab').html(html)
+                }
+                
             }
 		}
 	})
@@ -211,7 +242,7 @@ function edit_data(id){
 function update_data(){
 	let data = {
         name: $('#edit_data #edit_name').val().trim(),
-        type: $('#edit_data #edit_type_product_service').val(),
+        cost_price: $('#edit_data #edit_cost_price').val(),
         price: $('#edit_data #edit_price').val(),
         number_code: $('#edit_data #edit_number_code').val(),
         description: $('#edit_data #edit_description').val(),

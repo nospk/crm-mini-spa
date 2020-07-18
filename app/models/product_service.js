@@ -29,7 +29,14 @@ const Product_Service_Schema = mongoose.Schema({
 	},
 	isDelete:{
 		type: Boolean, default:false //0: active, 1: inactive
-	}
+	},
+	stocks:{
+		type: Number, default:0
+	},
+	stocks_in:[{
+		store: {type: mongoose.Schema.Types.ObjectId, ref:'Stores'},
+		stock_amount:{	type: Number, default: 0}
+	}]
 }, { timestamps: true });
 
-module.exports = mongoose.model('product_service', Product_Service_Schema, 'product_service');
+module.exports = mongoose.model('Product_services', Product_Service_Schema);

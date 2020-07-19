@@ -27,6 +27,11 @@ class Controller {
 	}
 	//set menu for client
 	static setLocalValue(req, res) {
+		if(Common.isset(req.session.store_name) != null){
+			res.locals.store_name = 'Cửa hàng ' + req.session.store_name;
+		}else{
+			res.locals.store_name = ""
+		}
 		if(Common.isset(req.session.user) != null) {
 			res.locals.user_role = req.session.user.role_id;
 			if(Common.isset(req.session.store_id) != null && req.session.user.role_id == '0'){

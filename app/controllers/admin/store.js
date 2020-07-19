@@ -8,7 +8,7 @@ class Admin_store extends Controller{
     }
 	static async get_store(req, res){
 		try{
-			let store = await Store.find({'user_manager.id_admin': req.session.user._id});
+			let store = await Store.find({'user_manager.admin_id': req.session.user._id});
 			Admin_store.sendData(res, store);
 		}catch(err){
 			console.log(err.message)
@@ -21,7 +21,7 @@ class Admin_store extends Controller{
 				name: req.body.name,
 				address: req.body.address,
 				user_manager: {
-					id_admin: req.session.user._id
+					admin_id: req.session.user._id
 				},
 			});
 			await store.save()
@@ -34,17 +34,16 @@ class Admin_store extends Controller{
 	}
 	static async active_store(req, res){
 		try{
-			let store = await Store.findOne({'user_manager.id_admin': req.session.user._id, _id: req.body.id})
+			let store = await Store.findOne({'user_manager.admin_id': req.session.user._id, _id: req.body.id})
 			if(store != null){
 				req.session.store_id = store._id;
-				console.log(req.session)
+				req.session.store_name = store.name;
 				res.locals.menu = "active";
 				Admin_store.sendMessage(res, "Đã active thành công");
 			}else{
 				Admin_store.sendError(res, "Lỗi chọn cửa hàng", "Cửa hàng không có thực");
 			}
 		}catch(err){
-			console.log(err.message)
 			Admin_store.sendError(res, err, err.message);
 		}
 		

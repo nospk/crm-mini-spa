@@ -202,8 +202,8 @@ function activeFull() {
             },
             {
                 "id": "10",
-                "name": "Kho",
-                "url": "/admin_stock",
+                "name": "Nhập hàng",
+                "url": "/admin_stocks",
                 "parent_id": "7",
                 "css_class": "nav-icon far fa-circle",
             },

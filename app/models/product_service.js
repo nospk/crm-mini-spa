@@ -35,7 +35,8 @@ const Product_Service_Schema = mongoose.Schema({
 	},
 	stocks_in:[{
 		store: {type: mongoose.Schema.Types.ObjectId, ref:'Stores'},
-		stock_amount:{	type: Number, default: 0}
+		stock_amount:{	type: Number, default: 0},
+		_id: false
 	}]
 }, { timestamps: true });
 

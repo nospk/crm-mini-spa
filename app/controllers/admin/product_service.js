@@ -51,7 +51,7 @@ class Admin_product_service extends Controller{
 			if(check){
 				Admin_product_service.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
 			}else{
-				let get_stores = await Store.find({'user_manager.id_admin': req.session.user._id},{_id:1})
+				let get_stores = await Store.find({'user_manager.admin_id': req.session.user._id},{_id:1})
 				let data = ({
 					name: req.body.name,
 					type: req.body.type,

@@ -7,8 +7,8 @@ const StoreSchema = mongoose.Schema({
         type: String
     },
     user_manager:{
-        id_admin: mongoose.Schema.Types.ObjectId,
-        id_mananger: mongoose.Schema.Types.ObjectId
+        admin_id: mongoose.Schema.Types.ObjectId,
+        mananger_id: mongoose.Schema.Types.ObjectId
     },
     money_in_month: {
         type: Number

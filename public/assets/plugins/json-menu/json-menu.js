@@ -161,6 +161,13 @@ function loginFull() {
                 "parent_id": "11",
                 "css_class": "nav-icon far fa-circle",
             },
+            {
+                "id": "10",
+                "name": "Nhập hàng",
+                "url": "/admin_stocks",
+                "parent_id": "11",
+                "css_class": "nav-icon far fa-circle",
+            },
         ];
 
 		
@@ -200,13 +207,6 @@ function activeFull() {
                 "parent_id": "7",
                 "css_class": "nav-icon far fa-circle",
             },
-            {
-                "id": "10",
-                "name": "Nhập hàng",
-                "url": "/admin_stocks",
-                "parent_id": "7",
-                "css_class": "nav-icon far fa-circle",
-            },
 			{
                 "id": "11",
                 "name": "Quản lý",
@@ -226,6 +226,13 @@ function activeFull() {
                 "name": "Dịch vụ - Sản phẩm",
                 "url": "/admin_product_service",
                 "parent_id": "11",
+                "css_class": "nav-icon far fa-circle",
+            },
+            {
+                "id": "10",
+                "name": "Nhập hàng",
+                "url": "/admin_stocks",
+                "parent_id": "7",
                 "css_class": "nav-icon far fa-circle",
             },
         ];

@@ -21,7 +21,7 @@ const StoreSchema = mongoose.Schema({
     },
     product:[{
         name: String,
-        amount: Number,
+        quantity: Number,
         description: String,
         price: Number,
     }], 

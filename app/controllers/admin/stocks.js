@@ -1,6 +1,6 @@
 const Controller = require('../../../core/controller');
 const Product_service = require('../../models/product_service');
-const Store = require('../../models/store');
+const Stocks = require('../../models/stocks');
 const mongoose = require('mongoose');
 class Admin_stocks extends Controller{
     static show(req, res){
@@ -18,17 +18,34 @@ class Admin_stocks extends Controller{
         }
     }
     static async create_new(req, res){
+        
 		try{
             let products = req.body.products;
+            console.log(products)
+            let reduce_products = new Array(products).map((item)=>{ //remove number_code
+                delete item.number_code; 
+                return item; 
+            });
+            console.log(products)
+            let save_socks = Stocks({
+                serial: 'QLNH1',
+                type: 'import',
+                admin_id: req.session.user._id,
+                list_products: reduce_products
+            })
+            console.log(products)
+            let id_sock= await save_socks.save();
             for (let i = 1; i < products.length; i++){
                 let find = await Product_service.findOne({admin_id: req.session.user._id, type: "product", number_code: products[i].number_code})
-                let cost_price_average = ((Number(find.stocks) * Number(find.cost_price)) + (Number(products[i].stock_amount) * Number(products[i].cost_price))) / (Number(find.stocks) + Number(products[i].stock_amount))
-                find.stocks = Number(find.stocks) + Number(products[i].stock_amount)
+                let cost_price_average = ((Number(find.stocks) * Number(find.cost_price)) + (Number(products[i].stock_quantity) * Number(products[i].cost_price))) / (Number(find.stocks) + Number(products[i].stock_quantity))
+                find.stocks = Number(find.stocks) + Number(products[i].stock_quantity)
                 find.cost_price = cost_price_average
-                for (let j = 0; j < find.stocks_in.length; j ++){
-                    if(find.stocks_in[j].store == req.session.store_id){
-                        find.stocks_in[j].stock_amount = Number(find.stocks_in[j].stock_amount) + Number(products[i].stock_amount)
-                    }
+                find.store_house = Number(find.store_house) + Number(products[i].stock_quantity)
+                if(find.last_history.length >= 10){
+                    find.last_history.shift()
+                    find.last_history.push(id_sock._id)
+                }else{
+                    find.last_history.push(id_sock._id)
                 }
                 await find.save()
             }
@@ -38,7 +55,7 @@ class Admin_stocks extends Controller{
 			Admin_stocks.sendError(res, err, err.message);
 		}
 		
-	}
+    }
 }
 
 module.exports = Admin_stocks

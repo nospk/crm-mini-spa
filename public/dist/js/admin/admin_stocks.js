@@ -14,7 +14,7 @@ function get_product(){
             if(data.status == 1){
                 let html = ""     
                 data.data.forEach(item =>{
-                    html +=`<option value="${item.name}:${item.number_code}:${item.cost_price}">${item.name}</option>`
+                    html +=`<option value="${item.name}:${item.number_code}:${item.cost_price}:${item._id}">${item.name}</option>`
                 })
                 $('#select_product').html(html)
                 $('.select2bs4').select2({
@@ -30,7 +30,7 @@ function add_product(){
     let check = $(`#stocks-${value[1]}`).val()
     if(!check){
         let html = `<tr>
-                    <td><span>${value[0]}</span></td>
+                    <td><span id="name-product-${value[1]}">${value[0]}</span><input type="hidden" id="id-product-${value[1]}" value="${value[3]}"></td>
                     <td><span class="number-code">${value[1]}</span></td>
                     <td><input class="form-control form-control-sm" id="cost-price-${value[1]}" onchange="change_cost_price('${value[1]}')" type="number" step="1000" value="${value[2]}"></td>
                     <td><input class="form-control form-control-sm" min="0" type="number" onchange="change_stocks('${value[1]}')" id="stocks-${value[1]}" value="1"></td>
@@ -40,8 +40,8 @@ function add_product(){
         $('#add_product').append(html)
         total_get_goods();
     }else{
-        let amount = $(`#stocks-${value[1]}`).val()
-        $(`#stocks-${value[1]}`).val(Number(amount)+1)
+        let quantity = $(`#stocks-${value[1]}`).val()
+        $(`#stocks-${value[1]}`).val(Number(quantity)+1)
         change_stocks(value[1])
     }
 }
@@ -82,8 +82,10 @@ function get_list_product(){
     list_product.forEach((number_code)=>{
         data.push({
             number_code : number_code,
+            name: $(`#name-product-${number_code}`).text(),
             cost_price: $(`#cost-price-${number_code}`).val(),
-            stock_amount: $(`#stocks-${number_code}`).val(),
+            stock_quantity: $(`#stocks-${number_code}`).val(),
+            product_id: $(`#id-product-${number_code}`).val()
         })
     })
     return data;

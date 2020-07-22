@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Storage_stocks_Schema = mongoose.Schema({	
+const Serial_Schema = mongoose.Schema({	
     product:{
         type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'
     },
@@ -14,4 +14,4 @@ const Storage_stocks_Schema = mongoose.Schema({
 	}]
 }, { timestamps: true });
 
-module.exports = mongoose.model('Storage_stocks', Storage_stocks_Schema);
+module.exports = mongoose.model('Storage_stocks', Serial_Schema);

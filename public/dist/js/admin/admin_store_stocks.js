@@ -7,7 +7,7 @@ function get_product(){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_stocks/get_product',
+        url:'/admin_store_stocks/get_product',
         method:'POST',
         data: data,
         success: function(data){
@@ -98,7 +98,7 @@ function create_new(){
     }
     if(data.products.length > 1){
         $.ajax({
-            url:'/admin_stocks/create',
+            url:'/admin_store_stocks/create',
             method:'POST',
             data: data,
             success: function(data){

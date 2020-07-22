@@ -164,7 +164,7 @@ function loginFull() {
             {
                 "id": "10",
                 "name": "Nhập hàng",
-                "url": "/admin_stocks",
+                "url": "/admin_store_stocks",
                 "parent_id": "11",
                 "css_class": "nav-icon far fa-circle",
             },
@@ -231,8 +231,8 @@ function activeFull() {
             {
                 "id": "10",
                 "name": "Nhập hàng",
-                "url": "/admin_stocks",
-                "parent_id": "7",
+                "url": "/admin_store_stocks",
+                "parent_id": "11",
                 "css_class": "nav-icon far fa-circle",
             },
         ];

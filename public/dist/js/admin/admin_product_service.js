@@ -227,15 +227,15 @@ function edit_data(id){
                                 <span class="info-box-icon bg-success"><i class="fas fa-warehouse"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">Kho</span>
-                                    <span class="info-box-number">${data.data.store_house}</span>
+                                    <span class="info-box-number">${data.data.stocks_in_storage.quantity}</span>
                                     </div>
                             </div>`
-                    for(let i = 0; i < data.data.stocks_in.length; i++){
+                    for(let i = 0; i < data.data.stocks_in_store.length; i++){
                         html += `<div class="info-box">
                                     <span class="info-box-icon bg-success"><i class="fas fa-store"></i></span>
                                     <div class="info-box-content">
-                                        <span class="info-box-text">${data.data.stocks_in[i].store.name}</span>
-                                        <span class="info-box-number">${data.data.stocks_in[i].stock_quantity}</span>
+                                        <span class="info-box-text">${data.data.stocks_in_store[i].store_name}</span>
+                                        <span class="info-box-number">${data.data.stocks_in_store[i].quantity}</span>
                                         </div>
                                 </div>`
                     }

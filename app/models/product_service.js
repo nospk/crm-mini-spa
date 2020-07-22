@@ -33,17 +33,13 @@ const Product_Service_Schema = mongoose.Schema({
 	stocks:{
 		type: Number, default:0
 	},
-	store_house:{
-		type: Number, default:0
+	stocks_in_storage:{
+		type: mongoose.Schema.Types.ObjectId, ref:'Storage_stocks'
 	},
-	stocks_in:[{
-		store: {type: mongoose.Schema.Types.ObjectId, ref:'Stores'},
-		stock_quantity:{	type: Number, default: 0},
+	stocks_in_store:[{
+		type: mongoose.Schema.Types.ObjectId, ref: 'Store_stocks',
 		_id: false
 	}],
-	last_history:[{
-		type: mongoose.Schema.Types.ObjectId, ref:'Stocks'
-	}]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product_services', Product_Service_Schema);

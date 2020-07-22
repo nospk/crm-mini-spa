@@ -1,6 +1,8 @@
 const Controller = require('../../../core/controller');
 const Product_service = require('../../models/product_service');
 const Store = require('../../models/store');
+const Storage_stocks = require('../../models/storage_stocks');
+const Store_stocks = require('../../models/store_stocks');
 const mongoose = require('mongoose');
 class Admin_product_service extends Controller{
     static show(req, res){
@@ -35,9 +37,13 @@ class Admin_product_service extends Controller{
 	static async edit_data(req, res){
 		try{
 			let data = await Product_service.findOne({admin_id: req.session.user._id, _id: req.body.id}).populate({
-				path: 'stocks_in.store',
+				path: 'stocks_in_store',
 				populate: { path: 'Stores' },
-				select: 'name'
+				select: 'store_name quantity'
+			}).populate({
+				path: 'stocks_in_storage',
+				populate: { path: 'Storage_stocks' },
+				select: 'quantity'
 			});
 			Admin_product_service.sendData(res, data);
 		}catch(err){
@@ -51,8 +57,8 @@ class Admin_product_service extends Controller{
 			if(check){
 				Admin_product_service.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
 			}else{
-				let get_stores = await Store.find({'user_manager.admin_id': req.session.user._id},{_id:1})
-				let data = ({
+				let get_stores = await Store.find({'user_manager.admin_id': req.session.user._id},{_id:1, name:1})
+				let data = Product_service({
 					name: req.body.name,
 					type: req.body.type,
 					cost_price: req.body.cost_price,
@@ -60,15 +66,27 @@ class Admin_product_service extends Controller{
 					description: req.body.description,
 					number_code: req.body.number_code,
 					admin_id: req.session.user._id,
-					stocks_in:[]
 				});
-				for(let i = 0; i < get_stores.length; i++){
-					data.stocks_in.push({
-						store : get_stores[i],
+				await data.save()
+				let storage_stocks = Storage_stocks({
+					product : data._id,
+					admin_id: req.session.user._id,
+				})
+				await storage_stocks.save()
+				let stocks_in_store = []
+				for (let i = 0; i < get_stores.length; i++ ){
+					let store_stocks = Store_stocks({
+						product : data._id,
+						store_name: get_stores[i].name,
+						store_id: get_stores[i]._id,
+						admin_id: req.session.user._id,
 					})
+					await store_stocks.save()
+					stocks_in_store.push(store_stocks._id)
 				}
-				let new_product_service = Product_service(data)
-				await new_product_service.save()
+				data.stocks_in_storage = storage_stocks._id
+				data.stocks_in_store = stocks_in_store
+				await data.save()
 				Admin_product_service.sendMessage(res, "Đã tạo thành công");
 			}
 		}catch(err){

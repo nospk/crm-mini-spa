@@ -9,9 +9,9 @@ const Store_stocks_Schema = mongoose.Schema({
     store_id:{
         type: mongoose.Schema.Types.ObjectId, required: true,
     },
-    admin_id:{
-        type: mongoose.Schema.Types.ObjectId, required: true
-    },
+    company:{
+		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
+	},
     quantity:{
         type: Number, default:0
     },

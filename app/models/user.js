@@ -4,6 +4,9 @@ const UserSchema = mongoose.Schema({
 	username: {
         type: String
     },
+	company:{
+		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
+	},
     address:{
         type: String
     },

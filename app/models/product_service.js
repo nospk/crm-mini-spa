@@ -6,8 +6,8 @@ const Product_Service_Schema = mongoose.Schema({
     type:{
         type: String, required: true
     },
-    admin_id:{
-        type: mongoose.Schema.Types.ObjectId, required: true
+    company:{
+        type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company'
     },
 	cost_price:{
 		type: Number, required: true

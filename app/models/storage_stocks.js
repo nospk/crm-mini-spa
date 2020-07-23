@@ -3,9 +3,9 @@ const Storage_stocks_Schema = mongoose.Schema({
     product:{
         type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'
     },
-    admin_id:{
-        type: mongoose.Schema.Types.ObjectId, required: true
-    },
+    company:{
+		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
+	},
     quantity:{
         type: Number, default:0
     },

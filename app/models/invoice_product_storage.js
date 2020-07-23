@@ -6,9 +6,9 @@ const Invoice_product_storage_Schema = mongoose.Schema({
     type:{
         type: String, required: true //import - transfer
     },
-    admin_id:{
-        type: mongoose.Schema.Types.ObjectId, required: true
-    },
+    company:{
+		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
+	},
     list_products:[{
         name: {type: String},
         product_id: {type: mongoose.Schema.Types.ObjectId, ref:'Product_services'}, 

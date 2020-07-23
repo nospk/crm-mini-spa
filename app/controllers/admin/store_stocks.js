@@ -10,7 +10,7 @@ class Admin_stocks extends Controller{
     }
 	static async get_product(req, res){
         try{
-			let data = await Product_service.find({admin_id: req.session.user._id, type: "product", isActive: true, isDelete: false});
+			let data = await Product_service.find({company: req.session.user.company._id, type: "product", isActive: true, isDelete: false});
 			Admin_stocks.sendData(res, data);
 		}catch(err){
 			console.log(err)
@@ -18,17 +18,16 @@ class Admin_stocks extends Controller{
         }
     }
     static async create_new(req, res){
-        
 		try{
             let products = req.body.products;
             for (let i = 1; i < products.length; i++){
-                let find_product = await Product_service.findOne({admin_id: req.session.user._id, type: "product", _id: products[i].product_id})
+                let find_product = await Product_service.findOne({company: req.session.user.company._id, type: "product", _id: products[i].product_id})
                 let cost_price_average = ((Number(find_product.stocks) * Number(find_product.cost_price)) + (Number(products[i].stock_quantity) * Number(products[i].cost_price))) / (Number(find_product.stocks) + Number(products[i].stock_quantity))
                 find_product.stocks = Number(find_product.stocks) + Number(products[i].stock_quantity)
                 console.log(Math.ceil(cost_price_average))
                 find_product.cost_price = Math.ceil(cost_price_average)
                 await find_product.save()
-                await Storage_stocks.findOneAndUpdate({admin_id: req.session.user._id, product: products[i].product_id},{$inc:{quantity:products[i].stock_quantity}})
+                await Storage_stocks.findOneAndUpdate({company: req.session.user.company._id, product: products[i].product_id},{$inc:{quantity:products[i].stock_quantity}})
             }
             Admin_stocks.sendMessage(res, "Đã tạo thành công");
 		}catch(err){

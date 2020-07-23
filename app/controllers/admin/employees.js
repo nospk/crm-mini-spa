@@ -9,7 +9,7 @@ class Admin_employees extends Controller{
     }
 	static async create_new(req, res){
 		try{
-			let check = await Employees.findOne({admin_id: req.session.user._id, number_code:req.body.number_code});
+			let check = await Employees.findOne({company: req.session.user.company._id, number_code:req.body.number_code});
 			if(check){
 				Admin_employees.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
 			}else{
@@ -19,7 +19,7 @@ class Admin_employees extends Controller{
 					address: req.body.address,
 					number_code: req.body.number_code,
 					identity_number: req.body.identity_number,
-					admin_id: req.session.user._id
+					company: req.session.user.company._id
 				});
 				await new_employees.save()
 				Admin_employees.sendMessage(res, "Đã tạo thành công");
@@ -34,7 +34,7 @@ class Admin_employees extends Controller{
 		try{
 			let {search}=req.body
 			let match = {
-				$and: [ {admin_id : mongoose.Types.ObjectId(req.session.user._id)} ] 
+				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id)} ] 
 			}
 			if(search){
 				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
@@ -56,7 +56,7 @@ class Admin_employees extends Controller{
 	}
 	static async edit_data(req, res){
 		try{
-			let data = await Employees.findOne({admin_id: req.session.user._id, _id: req.body.id});
+			let data = await Employees.findOne({company: req.session.user.company._id, _id: req.body.id});
 			Admin_employees.sendData(res, data);
 		}catch(err){
 			console.log(err.message)
@@ -65,9 +65,9 @@ class Admin_employees extends Controller{
 	}
 	static async update_data(req, res){
 		try{
-			let find = await Employees.findOne({admin_id: req.session.user._id, _id: req.body.id});
+			let find = await Employees.findOne({company: req.session.user.company._id, _id: req.body.id});
 			if(find){
-				let check = await Employees.findOne({admin_id: req.session.user._id, number_code:req.body.number_code});
+				let check = await Employees.findOne({company: req.session.user.company._id, number_code:req.body.number_code});
 				if(check && find.number_code != req.body.number_code){
 					return Admin_employees.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
 				}else{

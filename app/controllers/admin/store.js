@@ -8,7 +8,7 @@ class Admin_store extends Controller{
     }
 	static async get_store(req, res){
 		try{
-			let store = await Store.find({'user_manager.admin_id': req.session.user._id});
+			let store = await Store.find({company: req.session.user.company._id});
 			Admin_store.sendData(res, store);
 		}catch(err){
 			console.log(err.message)
@@ -20,9 +20,7 @@ class Admin_store extends Controller{
 			let store = Store({
 				name: req.body.name,
 				address: req.body.address,
-				user_manager: {
-					admin_id: req.session.user._id
-				},
+				company: req.session.user.company._id,
 			});
 			await store.save()
 			Admin_store.sendMessage(res, "Đã tạo thành công");
@@ -34,7 +32,7 @@ class Admin_store extends Controller{
 	}
 	static async active_store(req, res){
 		try{
-			let store = await Store.findOne({'user_manager.admin_id': req.session.user._id, _id: req.body.id})
+			let store = await Store.findOne({company: req.session.user.company._id, _id: req.body.id})
 			if(store != null){
 				req.session.store_id = store._id;
 				req.session.store_name = store.name;

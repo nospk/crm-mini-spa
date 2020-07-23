@@ -14,7 +14,7 @@ class Admin_product_service extends Controller{
 		try{
 			let {search}=req.body
 			let match = {
-				$and: [ {admin_id : mongoose.Types.ObjectId(req.session.user._id), isDelete: false} ] 
+				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id), isDelete: false} ] 
 			}
 			if(search){
 				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
@@ -36,7 +36,7 @@ class Admin_product_service extends Controller{
 	}
 	static async edit_data(req, res){
 		try{
-			let data = await Product_service.findOne({admin_id: req.session.user._id, _id: req.body.id}).populate({
+			let data = await Product_service.findOne({company: req.session.user.company._id, _id: req.body.id}).populate({
 				path: 'stocks_in_store',
 				populate: { path: 'Stores' },
 				select: 'store_name quantity'
@@ -53,11 +53,11 @@ class Admin_product_service extends Controller{
 	}
 	static async create_new(req, res){
 		try{
-			let check = await Product_service.findOne({admin_id: req.session.user._id, number_code:req.body.number_code});
+			let check = await Product_service.findOne({company: req.session.user.company._id, number_code:req.body.number_code});
 			if(check){
 				Admin_product_service.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
 			}else{
-				let get_stores = await Store.find({'user_manager.admin_id': req.session.user._id},{_id:1, name:1})
+				let get_stores = await Store.find({company: req.session.user.company._id},{_id:1, name:1})
 				let data = Product_service({
 					name: req.body.name,
 					type: req.body.type,
@@ -65,12 +65,12 @@ class Admin_product_service extends Controller{
 					price: req.body.price,
 					description: req.body.description,
 					number_code: req.body.number_code,
-					admin_id: req.session.user._id,
+					company: req.session.user.company._id,
 				});
 				await data.save()
 				let storage_stocks = Storage_stocks({
 					product : data._id,
-					admin_id: req.session.user._id,
+					company: req.session.user.company._id,
 				})
 				await storage_stocks.save()
 				let stocks_in_store = []
@@ -79,7 +79,7 @@ class Admin_product_service extends Controller{
 						product : data._id,
 						store_name: get_stores[i].name,
 						store_id: get_stores[i]._id,
-						admin_id: req.session.user._id,
+						company: req.session.user.company._id,
 					})
 					await store_stocks.save()
 					stocks_in_store.push(store_stocks._id)
@@ -97,9 +97,9 @@ class Admin_product_service extends Controller{
 	}
 	static async update_data(req, res){
 		try{
-			let find = await Product_service.findOne({admin_id: req.session.user._id, _id: req.body.id});
+			let find = await Product_service.findOne({company: req.session.user.company._id, _id: req.body.id});
 			if(find){
-				let check = await Product_service.findOne({admin_id: req.session.user._id, number_code:req.body.number_code});
+				let check = await Product_service.findOne({company: req.session.user.company._id, number_code:req.body.number_code});
 				if(check && find.number_code != req.body.number_code){
 					return Admin_product_service.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
 				}else{
@@ -125,7 +125,7 @@ class Admin_product_service extends Controller{
 	}
 	static async delete_data(req, res){
 		try{
-			await Product_service.findOneAndUpdate({admin_id: req.session.user._id, _id: req.body.id}, {isDelete: true, isActive: false});
+			await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.id}, {isDelete: true, isActive: false});
 			Admin_product_service.sendMessage(res, "Đã xóa thành công");
 		}catch(err){
 			console.log(err)

@@ -15,8 +15,8 @@ const EmployeesSchema = mongoose.Schema({
     identity_number:{
         type: String
     },
-	admin_id:{
-		type: mongoose.Schema.Types.ObjectId
+	company:{
+		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
 	},
 	status:{
 		type: Number, default:0 //0: active 1: inactive

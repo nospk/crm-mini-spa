@@ -1,10 +1,9 @@
 const Controller = require('../../../core/controller');
 const Product_service = require('../../models/product_service');
 const Storage_stocks = require('../../models/storage_stocks');
-const Company = require('../../models/company');
 const Supplier = require('../../models/supplier');
 const Invoice_product_storage = require('../../models/invoice_product_storage');
-const mongoose = require('mongoose');
+const Common = require("../../../core/common");
 class Admin_stocks extends Controller{
     static show(req, res){
         Admin_stocks.setLocalValue(req,res);
@@ -20,15 +19,44 @@ class Admin_stocks extends Controller{
 			console.log(err)
 			Admin_stocks.sendError(res, err, err.message);
         }
+	}
+	static async get_data(req, res){
+        try{
+			//let {}=req.body
+			let match = {
+				$and: [ {company :req.session.user.company._id} ] 
+			}
+			//set default variables
+			let pageSize = 10
+			let currentPage = req.body.paging_num || 1
+	
+			// find total item
+			let pages = await Invoice_product_storage.find(match).countDocuments()
+			// find total pages
+			let pageCount = Math.ceil(pages/pageSize)
+			let data = await Invoice_product_storage.find(match).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
+				path: 'supplier',
+				populate: { path: 'Suppliers'},
+				select: 'name'
+			}).populate({
+				path: 'list_products.product_id',
+				populate: { path: 'Product_services' },
+				select: 'number_code'
+			});
+			Admin_stocks.sendData(res, {data, pageCount, currentPage});
+		}catch(err){
+			console.log(err)
+			Admin_stocks.sendError(res, err, err.message);
+        }
     }
     static async create_new(req, res){
 		try{
             const {products} = req.body;
-			let company = await Company.findOneAndUpdate({_id: req.session.user.company._id},{$inc:{serial_NH:1}});
 			let list_products = [...products]
+			let serial = await Common.get_serial_company(req.session.user.company._id, 'NH')
 			list_products.shift()
 			let invoice_product_storage = Invoice_product_storage({
-				serial: 'NH_'+ (company.serial_NH - 1),
+				serial: serial,
 				type: 'import',
 				company: req.session.user.company._id,
 				price: products[0].total_get_goods,
@@ -39,12 +67,7 @@ class Admin_stocks extends Controller{
 			let supplier = await Supplier.findOne({company: req.session.user.company._id, _id: products[0].supplier})
 			supplier.totalMoney = Number(supplier.totalMoney) + Number(products[0].total_get_goods)
 			supplier.debt = Number(supplier.debt) + Number(products[0].debt || 0)
-			if(supplier.last_history.length >= 10){
-				supplier.last_history.pop();
-				supplier.last_history.unshift(invoice_product_storage._id)
-			}else{
-				supplier.last_history.unshift(invoice_product_storage._id)
-			}
+			supplier.last_history = await Common.last_history(supplier.last_history, invoice_product_storage._id)
 			supplier.save();
             for (let i = 1; i < products.length; i++){
                 let find_product = await Product_service.findOne({company: req.session.user.company._id, type: "product", _id: products[i].product_id})
@@ -54,12 +77,7 @@ class Admin_stocks extends Controller{
                 await find_product.save()
                 let store_stocks = await Storage_stocks.findOne({company: req.session.user.company._id, product: products[i].product_id})
 				store_stocks.quantity = Number(store_stocks.quantity) + Number(products[i].stock_quantity)
-				if(store_stocks.last_history.length >= 10){
-					store_stocks.last_history.pop();
-					store_stocks.last_history.unshift(invoice_product_storage._id)
-				}else{
-					store_stocks.last_history.unshift(invoice_product_storage._id)
-				}
+				store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_product_storage._id)
 				store_stocks.save();
             }
             Admin_stocks.sendMessage(res, "Đã tạo thành công");

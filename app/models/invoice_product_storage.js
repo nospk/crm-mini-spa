@@ -13,7 +13,7 @@ const Invoice_product_storage_Schema = mongoose.Schema({
 		type: Number
 	},
 	supplier:{
-		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Supplier' 
+		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Suppliers' 
 	},
     list_products:[{
         name: {type: String},

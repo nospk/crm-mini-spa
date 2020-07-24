@@ -1,4 +1,4 @@
-let Common = require("./common");
+const Common = require("./common");
 class Controller {
     static sendMessage(res, msg){
 		let json = {

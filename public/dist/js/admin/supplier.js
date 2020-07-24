@@ -59,7 +59,7 @@ function render_data(data, pageCount, currentPage){
 		                        <thead>
                                     <tr>
                                     <th>Tên</th>
-									<th>Địa chỉt</th>
+									<th>Địa chỉ</th>
                                     <th>Số điện thoại</th>
                                     <th>Email</th>
                                     <th>Công nợ</th>
@@ -74,8 +74,8 @@ function render_data(data, pageCount, currentPage){
 				<td>${reduce_string(item.address)}</td>
                 <td>${item.phone}</td>
                 <td>${item.email}</td>
-                <td>${item.debt}</td>
-				<td>${item.totalMoney}</td>
+                <td>${(item.debt).toLocaleString()}</td>
+				<td>${(item.totalMoney).toLocaleString()}</td>
                 <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;
 					<span style="color:red; cursor: pointer" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i></span>		
 				</td>

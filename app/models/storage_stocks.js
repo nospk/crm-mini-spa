@@ -10,7 +10,8 @@ const Storage_stocks_Schema = mongoose.Schema({
         type: Number, default:0
     },
     last_history:[{
-		type: mongoose.Schema.Types.ObjectId
+		type: mongoose.Schema.Types.ObjectId,
+		_id: false
 	}]
 }, { timestamps: true });
 

@@ -39,11 +39,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 //morgan log access - except type GET
-app.use(morgan('common', {
-    skip: function (req, res) { 
-        return req.method == 'GET' 
-    }
-}))
+// app.use(morgan('common', {
+    // skip: function (req, res) { 
+        // return req.method == 'GET' 
+    // }
+// }))
 require('./core/passport')(passport); // pass passport for configuration
 app.use(passport.initialize());
 app.use(passport.session());

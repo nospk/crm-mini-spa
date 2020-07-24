@@ -104,13 +104,36 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		  <div class="modal-body">
             <div class="form-group">
                 <div class="input-group mb-3">
+				    <div class="input-group-prepend">
+                        <span class="input-group-text">Sản phẩm</span>
+                    </div>
                     <select class="form-control select2bs4" id="select_product">
                         
                     </select>
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button" onclick="add_product()">Chọn</button>
                     </div>
-                </div>              
+                </div>    
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+                        <span class="input-group-text">Nhà cung cấp</span>
+                    </div>
+                    <select class="form-control select2bs4" id="select_supplier">
+                        
+                    </select>
+                </div> 	
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+                        <span class="input-group-text">Số tiền thanh toán</span>
+                    </div>
+                    <input type="number" step="1000" min="0" onchange="change_debt()" value="0" id="payment" class="form-control">
+                </div>		
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+                        <span class="input-group-text">Số tiền còn nợ</span>
+                    </div>
+                    <input type="number" disabled id="debt" value="0" class="form-control">
+                </div>				
             </div>
             <div class="card">
                 <div class="card-header">
@@ -145,28 +168,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
 			<button type="button" class="btn btn-primary" onclick="create_new();" data-dismiss="modal">Tạo</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
-	<!-- End Modal create store -->
-	<!-- Modal create store -->
-	<div class="modal fade" id="edit_data" tabindex="-1" role="dialog" aria-labelledby="create_store" data-backdrop="static">
-	  <div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<h5 class="modal-title">Chỉnh sửa thông tin sản phẩm - dịch vụ </h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-		  </div>
-		  <div class="modal-body">
-			
-			
-			<input type="hidden" id="edit_id" value="" />
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
 		  </div>
 		</div>
 	  </div>

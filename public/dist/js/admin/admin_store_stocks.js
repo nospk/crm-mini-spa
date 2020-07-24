@@ -1,7 +1,9 @@
 let money_total;
+
 $( document ).ready(()=>{
 	get_product();
 })
+
 function get_product(){
     let data = {
         _csrf: $('#_csrf').val()
@@ -12,11 +14,16 @@ function get_product(){
         data: data,
         success: function(data){
             if(data.status == 1){
-                let html = ""     
-                data.data.forEach(item =>{
-                    html +=`<option value="${item.name}:${item.number_code}:${item.cost_price}:${item._id}">${item.name}</option>`
+                let html_products = ""   
+				let html_suppliers = "" 
+                data.data.products.forEach(item =>{
+                    html_products +=`<option value="${item.name}:${item.number_code}:${item.cost_price}:${item._id}">${item.name}</option>`
                 })
-                $('#select_product').html(html)
+				data.data.suppliers.forEach(item =>{
+                    html_suppliers +=`<option value="${item._id}">${item.name}</option>`
+                })
+                $('#select_product').html(html_products)
+				$('#select_supplier').html(html_suppliers)
                 $('.select2bs4').select2({
                     theme: 'bootstrap4'
                 })
@@ -24,6 +31,7 @@ function get_product(){
         }
     })
 }
+
 function add_product(){
     let value = $('#select_product').val()
     value = value.split(':')
@@ -45,28 +53,40 @@ function add_product(){
         change_stocks(value[1])
     }
 }
+
 function delete_row_product(btn) {
     var row = btn.parentNode.parentNode;
     row.parentNode.removeChild(row);
     total_get_goods();
 }
+
 function change_cost_price(code){
 	let value = $(`#cost-price-${code}`).val()
 	let number = $(`#stocks-${code}`).val()
     $(`#total-${code}`).text(value*number)
     total_get_goods();
 }
+
 function change_stocks(code){
 	let value = $(`#cost-price-${code}`).val()
 	let number = $(`#stocks-${code}`).val()
     $(`#total-${code}`).text(value*number)
     total_get_goods();
 }
+
+function change_debt(){
+	let payment = $('#payment').val()
+    $('#debt').val(money_total - payment)
+}
+
 function total_get_goods(){
     let money = 0;
+	let payment = $('#payment').val();
     $(".total").each(function () {                  
         money+= Number($(this).text()); 
     });
+	console.log(money - payment)
+	$('#debt').val(money - payment)
     $('#total_get_goods').text(new Intl.NumberFormat().format(money))
     money_total = money;
 }
@@ -77,11 +97,12 @@ function get_list_product(){
         list_product.push($(this).text()); 
     });
     let data = [{
-        total_get_goods : money_total
+        total_get_goods : money_total,
+		debt: $('#debt').val(),
+		supplier: $('#select_supplier').val(),
     }];
     list_product.forEach((number_code)=>{
         data.push({
-            number_code : number_code,
             name: $(`#name-product-${number_code}`).text(),
             cost_price: $(`#cost-price-${number_code}`).val(),
             stock_quantity: $(`#stocks-${number_code}`).val(),

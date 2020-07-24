@@ -26,7 +26,13 @@ const StoreSchema = mongoose.Schema({
         quantity: Number,
         description: String,
         price: Number,
-    }], 
+    }],
+	serial_TT:{
+		type: Number
+	},
+	serial_BH:{
+		type: Number
+	},
     status:{
         type: Number, "default" : 0 //0: active, 1: unactive
     }

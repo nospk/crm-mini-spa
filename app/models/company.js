@@ -12,6 +12,14 @@ const CompanySchema = mongoose.Schema({
 	isActive:{
 		type: String, default:'free'
 	},
+	serial_NH:{
+		type: Number, default: 1
+	},
+	serial_XH:{
+		type: Number
+	},serial_TT:{
+		type: Number
+	},
 	status:{
 		type: Number //0: active 1: inactive
 	}

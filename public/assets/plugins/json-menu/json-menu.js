@@ -175,6 +175,13 @@ function loginFull() {
                 "parent_id": "8",
                 "css_class": "nav-icon far fa-circle",
             },
+            {
+                "id": "13",
+                "name": "Thu/Chi",
+                "url": "/admin_cash_book",
+                "parent_id": "8",
+                "css_class": "nav-icon far fa-circle",
+            },
         ];
 
 		
@@ -246,6 +253,13 @@ function activeFull() {
                 "id": "14",
                 "name": "Nhập Hàng",
                 "url": "/admin_store_stocks",
+                "parent_id": "10",
+                "css_class": "nav-icon far fa-circle",
+            },
+            {
+                "id": "15",
+                "name": "Thu/Chi",
+                "url": "/admin_cash_book",
                 "parent_id": "10",
                 "css_class": "nav-icon far fa-circle",
             },

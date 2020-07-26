@@ -10,6 +10,9 @@ class Common {
             if(chartCode == 'NH'){
 				let company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_NH:1}});
 				resolve('NH_'+Number(company.serial_NH))
+			}else if(chartCode == 'TT'){
+				let company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_TT:1}});
+				resolve('TT_'+Number(company.serial_TT))
 			}else{
 				reject(null)
 			}		

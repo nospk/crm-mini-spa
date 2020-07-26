@@ -13,12 +13,12 @@ const CompanySchema = mongoose.Schema({
 		type: String, default:'free'
 	},
 	serial_NH:{
-		type: Number, default: 0
+		type: Number, default: 1
 	},
 	serial_XH:{
-		type: Number
+		type: Number, default: 1
 	},serial_TT:{
-		type: Number
+		type: Number, default: 1
 	},
 	status:{
 		type: Number //0: active 1: inactive

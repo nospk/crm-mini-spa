@@ -77,7 +77,7 @@ function render_data(data, pageCount, currentPage){
                                     <th>Sản phẩm</th>
                                     <th>Công ty</th>
 									<th>Giá</th>
-                                    <th>Hành Động</th>
+                                    <th>Thanh toán</th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
@@ -92,9 +92,8 @@ function render_data(data, pageCount, currentPage){
         })      
         html+=        `</td>
 				<td>${(item.supplier.name)}</td>
-				<td>${(item.price).toLocaleString()}</td>
-                <td>		
-				</td>
+                <td>${(item.price).toLocaleString()} đồng</td>
+                <td>${(item.payment? item.payment.money: 0).toLocaleString()} đồng</td>
                 </tr>`
     })
     html+=`</tbody>
@@ -189,7 +188,6 @@ function total_get_goods(){
     $(".total").each(function () {                  
         money+= Number($(this).text()); 
     });
-	console.log(money - payment)
 	$('#debt').val(money - payment)
     $('#total_get_goods').text(new Intl.NumberFormat().format(money))
     money_total = money;
@@ -202,6 +200,7 @@ function get_list_product(){
     });
     let data = [{
         total_get_goods : money_total,
+        payment: $('#payment').val(),
 		debt: $('#debt').val(),
 		supplier: $('#select_supplier').val(),
     }];
@@ -215,7 +214,13 @@ function get_list_product(){
     })
     return data;
 }
-
+function clear_data(){
+    $('#add_product').empty();
+    money_total = 0;
+    $('#debt').val(0)
+    $('#payment').val(0)
+    $('#total_get_goods').text(0)
+}
 function create_new(){
     let data = {
         products: get_list_product(),
@@ -237,10 +242,12 @@ function create_new(){
                     }).then((result)=>{
                         get_product()
                         get_data()
+                        clear_data()
                     })
                     .catch(timer => {
                         get_product()
                         get_data()
+                        clear_data()
                     });    
                 }else{
                     Swal.fire({

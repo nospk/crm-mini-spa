@@ -56,13 +56,16 @@ class Admin_product_service extends Controller{
 			let check = await Product_service.findOne({company: req.session.user.company._id, number_code:req.body.number_code});
 			if(check){
 				Admin_product_service.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
-			}else{
+				return;
+			}
+			if(req.body.type == "product"){
 				let get_stores = await Store.find({company: req.session.user.company._id},{_id:1, name:1})
 				let data = Product_service({
 					name: req.body.name,
 					type: req.body.type,
 					cost_price: req.body.cost_price,
 					price: req.body.price,
+					stocks: 0,
 					description: req.body.description,
 					number_code: req.body.number_code,
 					company: req.session.user.company._id,
@@ -87,8 +90,20 @@ class Admin_product_service extends Controller{
 				data.stocks_in_storage = storage_stocks._id
 				data.stocks_in_store = stocks_in_store
 				await data.save()
-				Admin_product_service.sendMessage(res, "Đã tạo thành công");
-			}
+			}else{
+				let data = Product_service({
+					name: req.body.name,
+					type: req.body.type,
+					cost_price: req.body.cost_price,
+					price: req.body.price,
+					description: req.body.description,
+					number_code: req.body.number_code,
+					company: req.session.user.company._id,
+				});
+				await data.save()
+			}	
+			Admin_product_service.sendMessage(res, "Đã tạo thành công");
+			
 		}catch(err){
 			console.log(err)
 			Admin_product_service.sendError(res, err, err.message);

@@ -25,13 +25,13 @@ const Product_Service_Schema = mongoose.Schema({
         type: String
     },
 	isActive:{
-		type: Boolean, default:true //0: active, 1: inactive
+		type: Boolean, default:true 
 	},
 	isDelete:{
-		type: Boolean, default:false //0: active, 1: inactive
+		type: Boolean, default:false
 	},
 	stocks:{
-		type: Number, default:0
+		type: Number
 	},
 	stocks_in_storage:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Storage_stocks'

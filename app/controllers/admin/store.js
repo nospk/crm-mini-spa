@@ -1,7 +1,9 @@
 const Controller = require('../../../core/controller');
 const Store = require('../../models/store');
-const bcrypt = require('bcrypt-nodejs');
 const Common = require("../../../core/common");
+const Product_service = require('../../models/product_service');
+const Store_stocks = require('../../models/store_stocks');
+const bcrypt = require('bcrypt-nodejs');
 class Admin_store extends Controller{
     static show(req, res){
         Admin_store.setLocalValue(req,res);
@@ -23,24 +25,38 @@ class Admin_store extends Controller{
 				Admin_store.sendError(res, "Lỗi thiếu thông tin", "Vui lòng nhập đầy đủ các thông tin");
 				return;
 			}
-			let useraccount = req.body.username+req.session.user.company.name_account
 			let check = await Store.findOne({company: req.session.user.company._id, username: req.body.username+req.session.user.company.name_account});
 			if(check){
 				Admin_store.sendError(res, "Đã có tên tài khoản", "Vui lòng chọn tên tài khoản khác");
-			}else{
-				let active_code = bcrypt.hashSync(Math.floor((Math.random() * 99999999) * 54), null, null);
-				let newStore = new Store()
-				let store = Store({
-					name: req.body.name,
-					address: req.body.address,
-					company: req.session.user.company._id,
-					username: req.body.username+req.session.user.company.name_account,
-					password: Common.generateHash(req.body.password),
-					active_code: active_code
-				});
-				await store.save()
-				Admin_store.sendMessage(res, "Đã tạo thành công");
+				return;
 			}
+			let active_code = bcrypt.hashSync(Math.floor((Math.random() * 99999999) * 54), null, null);
+			let store = Store({
+				name: req.body.name,
+				address: req.body.address,
+				company: req.session.user.company._id,
+				username: req.body.username+req.session.user.company.name_account,
+				password: Common.generateHash(req.body.password),
+				active_code: active_code
+			});
+			await store.save()
+			//if had products, will be create store_stocks
+			let get_products = await Product_service.find({company: req.session.user.company._id, type: "product"})
+			if(get_products){
+				get_products.forEach(async (product) => {
+					let store_stocks = Store_stocks({
+						product : product._id,
+						store_name: store.name,
+						store_id: store._id,
+						company: req.session.user.company._id,
+					})
+					await store_stocks.save()
+					product.stocks_in_store.push(store_stocks._id)
+					await product.save()
+				});
+			}
+			Admin_store.sendMessage(res, "Đã tạo thành công");
+			
 		}catch(err){
 			console.log(err.message)
 			Admin_store.sendError(res, err, err.message);

@@ -112,7 +112,7 @@ module.exports = function (passport) {
 				let user = await User.findOne({ 'username': username }).populate({
 				path: 'company',
 				populate: { path: 'Company' },
-				select: 'name'
+				select: 'name name_account'
 			});
 				// if no user is found, return the message
                 if (!user)

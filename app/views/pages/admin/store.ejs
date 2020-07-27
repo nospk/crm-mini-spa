@@ -75,15 +75,30 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		  <div class="modal-body">
 			<div class="input-group">
 				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon1">Tên cửa hàng</div>
+					<div class="input-group-text">Tên cửa hàng</div>
 				</div>
-				<input type="text" class="form-control" id="name" placeholder="Nhập tên" aria-label="Name Store" aria-describedby="btnGroupAddon1">
+				<input type="text" class="form-control" id="name" placeholder="Nhập tên" aria-label="Name Store" a>
 			</div>
 			<div class="input-group">
 				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon2">Địa chỉ cửa hàng</div>
+					<div class="input-group-text">Địa chỉ cửa hàng</div>
 				</div>
-				<input type="text" class="form-control" id="address" placeholder="Nhập địa chỉ" aria-label="Address Store" aria-describedby="btnGroupAddon2">
+				<input type="text" class="form-control" id="address" placeholder="Nhập địa chỉ" aria-label="Address Store">
+			</div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text">Tên tài khoản</div>
+				</div>
+				<input type="text" class="form-control" id="username" placeholder="Nhập tên tài khoản" aria-label="Address User name" >
+				<div class="input-group-append">
+					<div class="input-group-text"><%= name_account %></div>
+				</div>
+			</div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text">Mật khẩu</div>
+				</div>
+				<input type="text" class="form-control" id="password" placeholder="Nhập mật khẩu" aria-label="Address Password" >
 			</div>
 		  </div>
 		  <div class="modal-footer">

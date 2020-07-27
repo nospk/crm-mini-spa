@@ -1,5 +1,11 @@
 const Company = require('../app/models/company');
+const bcrypt = require('bcrypt-nodejs');
 class Common {
+	static notEmpty(string){
+		if(string !== null && string !== '') 
+			return true;
+		return false
+	}
     static isset(object) {
 		if((typeof object == "undefined") || (object == null))
 			return null;
@@ -30,6 +36,14 @@ class Common {
 			}
 		})
 	}
+	static generateHash(password) {
+		 return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+	};
+
+	//checking if password is valid
+	static validPassword(password) {
+		return bcrypt.compareSync(password, this.password);
+	};
 }
 
 module.exports = Common;

@@ -19,48 +19,82 @@ function render_data(data){
 	$('#show_data').html(html);
 }
 function create_store(){
-    let data = {
-        name: $('#create_store #name').val().trim(),
-        address: $('#create_store #address').val().trim(),
-        _csrf: $('#_csrf').val()
-    }
-    $.ajax({
-        url:'/admin_store/create',
-        method:'POST',
-        data: data,
-        success: function(data){
-            if(data.status == 1){
-                Swal.fire({
-                    title: "Thao tác thành công",
-                    text: data.message,
-                    icon: "info",
-                    showConfirmButton: false,
-                    timer: 3000
-                }).then((result)=>{
-					get_store()
-                })
-                .catch(timer => {
-					get_store()
-                });    
-            }else{
-                Swal.fire({
-                    title: data.error,
-                    text: data.message,
-                    icon: "error",
-                    showConfirmButton: false,    
-                    timer: 3000
-                }).then((result)=>{
-                    // cho vào để ko báo lỗi uncaught
-                })
-                .catch(timer => {
-                    // cho vào để ko báo lỗi uncaught
-                }); 
-                
-            }
-        }
-    })
+	let errors = 0
+	if($('#create_store #name').val() == ""){
+		errors++
+	}
+	if($('#create_store #address').val() == ""){
+		errors++
+	}
+	if($('#create_store #username').val() == ""){
+		errors++
+	}
+	if($('#create_store #password').val() == ""){
+		errors++
+	}
+	if(errors > 100 ){
+		Swal.fire({
+			title: "Lỗi thiếu thông tin",
+			text: "Vui lòng nhập đầy đủ thông tin",
+			icon: "error",
+			showConfirmButton: false,    
+				timer: 3000
+			}).then((result)=>{
+				// cho vào để ko báo lỗi uncaught
+			})
+			.catch(timer => {
+				// cho vào để ko báo lỗi uncaught
+		}); 	
+	}else{
+		let data = {
+			name: $('#create_store #name').val().trim(),
+			address: $('#create_store #address').val().trim(),
+			username: $('#create_store #username').val().trim(),
+			password: $('#create_store #password').val().trim(),
+			_csrf: $('#_csrf').val()
+		}
+		$.ajax({
+			url:'/admin_store/create',
+			method:'POST',
+			data: data,
+			success: function(data){
+				if(data.status == 1){
+					Swal.fire({
+						title: "Thao tác thành công",
+						text: data.message,
+						icon: "info",
+						showConfirmButton: false,
+						timer: 3000
+					}).then((result)=>{
+						get_store()
+					})
+					.catch(timer => {
+						get_store()
+					});    
+				}else{
+					Swal.fire({
+						title: data.error,
+						text: data.message,
+						icon: "error",
+						showConfirmButton: false,    
+						timer: 3000
+					}).then((result)=>{
+						// cho vào để ko báo lỗi uncaught
+					})
+					.catch(timer => {
+						// cho vào để ko báo lỗi uncaught
+					}); 
+					
+				}
+			}
+		})
+	}
 }
 function get_store(){
+	$('#create_store #name').val("")
+    $('#create_store #address').val("")
+	$('#create_store #username').val("")
+	$('#create_store #password').val("")
     let data = {
         _csrf: $('#_csrf').val()
     }

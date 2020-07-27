@@ -12,21 +12,25 @@ const StoreSchema = mongoose.Schema({
 	company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
 	},
-    money_in_month: {
-        type: Number
-    },
 	image_store:{
 		type: String, "default": "/dist/image/spa.jpg"
     },
     number_code:{
         type: String
     },
-    product:[{
-        name: String,
-        quantity: Number,
-        description: String,
-        price: Number,
-    }],
+	password:{
+        type: String
+    },
+	username: {
+        type: String
+    },
+    active_hash: {
+        type: String
+    },
+	active_hash_times: {
+		token: String,
+		date: Date
+    },
 	serial_TT:{
 		type: Number
 	},

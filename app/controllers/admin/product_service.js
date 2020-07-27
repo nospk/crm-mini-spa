@@ -65,7 +65,7 @@ class Admin_product_service extends Controller{
 					type: req.body.type,
 					cost_price: req.body.cost_price,
 					price: req.body.price,
-					stocks: 0,
+					quantity: 0,
 					description: req.body.description,
 					number_code: req.body.number_code,
 					company: req.session.user.company._id,

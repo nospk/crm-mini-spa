@@ -30,7 +30,7 @@ const Product_Service_Schema = mongoose.Schema({
 	isDelete:{
 		type: Boolean, default:false
 	},
-	stocks:{
+	quantity:{
 		type: Number
 	},
 	stocks_in_storage:{

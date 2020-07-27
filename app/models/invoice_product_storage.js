@@ -21,8 +21,9 @@ const Invoice_product_storage_Schema = mongoose.Schema({
     list_products:[{
         name: {type: String},
         product_id: {type: mongoose.Schema.Types.ObjectId, ref:'Product_services'}, 
-        stock_quantity: {type: Number},
+        quantity: {type: Number},
         cost_price: {type: Number},
+        current_quantity: {type: Number},
 		_id: false
     }]
 }, { timestamps: true });

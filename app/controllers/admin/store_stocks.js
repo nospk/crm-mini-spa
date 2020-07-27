@@ -92,15 +92,17 @@ class Admin_store_stocks extends Controller{
 
             for (let i = 1; i < products.length; i++){
                 let find_product = await Product_service.findOne({company: req.session.user.company._id, type: "product", _id: products[i].product_id})
-                let cost_price_average = ((Number(find_product.stocks) * Number(find_product.cost_price)) + (Number(products[i].stock_quantity) * Number(products[i].cost_price))) / (Number(find_product.stocks) + Number(products[i].stock_quantity))
-                find_product.stocks = Number(find_product.stocks) + Number(products[i].stock_quantity)
+                let cost_price_average = ((Number(find_product.quantity) * Number(find_product.cost_price)) + (Number(products[i].quantity) * Number(products[i].cost_price))) / (Number(find_product.quantity) + Number(products[i].quantity))
+                find_product.quantity = Number(find_product.quantity) + Number(products[i].quantity)
                 find_product.cost_price = Math.ceil(cost_price_average)
                 await find_product.save()
                 let store_stocks = await Storage_stocks.findOne({company: req.session.user.company._id, product: products[i].product_id})
-				store_stocks.quantity = Number(store_stocks.quantity) + Number(products[i].stock_quantity)
+				store_stocks.quantity = Number(store_stocks.quantity) + Number(products[i].quantity)
+				invoice_product_storage.list_products[i-1].current_quantity = Number(store_stocks.quantity)
 				store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_product_storage._id)
 				store_stocks.save();
-            }
+			}
+			invoice_product_storage.save()
             Admin_store_stocks.sendMessage(res, "Đã tạo thành công");
 		}catch(err){
 			console.log(err)

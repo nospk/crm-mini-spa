@@ -220,7 +220,7 @@ function edit_data(id){
                                 <span class="info-box-icon bg-success"><i class="fas fa-boxes"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">Tổng hàng tồn</span>
-                                    <span class="info-box-number">${data.data.stocks}</span>
+                                    <span class="info-box-number">${data.data.quantity}</span>
                                     </div>
                             </div>
                             <div class="info-box">

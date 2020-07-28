@@ -10,7 +10,21 @@ class Admin_tranfer_stocks extends Controller{
         Admin_tranfer_stocks.setLocalValue(req,res);
 		//console.log(req.session);
         res.render('./pages/admin/tranfer_stocks');
-    }
+	}
+	static async getStoresAndProducts(req, res){
+        try{
+			let products = await Product_service.find({company: req.session.user.company._id, type: "product", isDelete: false}).populate({
+				path: 'stocks_in_storage',
+				populate: { path: 'Storage_stocks' },
+				select: 'quantity'
+			});
+			let stores = await Store.find({company: req.session.user.company._id, status: 0});
+			Admin_tranfer_stocks.sendData(res, {products, stores});
+		}catch(err){
+			console.log(err)
+			Admin_tranfer_stocks.sendError(res, err, err.message);
+        }
+	}
 	static async get_data(req, res){
 		try{
 			//let {}=req.body
@@ -30,10 +44,10 @@ class Admin_tranfer_stocks extends Controller{
 				populate: { path: 'Product_services' },
 				select: 'number_code'
 			});
-			Admin_store_stocks.sendData(res, {data, pageCount, currentPage});
+			Admin_tranfer_stocks.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
 			console.log(err)
-			Admin_store_stocks.sendError(res, err, err.message);
+			Admin_tranfer_stocks.sendError(res, err, err.message);
         }
 	}
 }

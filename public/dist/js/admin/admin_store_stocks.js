@@ -146,8 +146,8 @@ function add_product(){
     let check = $(`#quantity-${value[1]}`).val()
     if(!check){
         let html = `<tr>
-                    <td><span id="name-product-${value[1]}">${value[0]}</span><input type="hidden" id="id-product-${value[1]}" value="${value[3]}"></td>
                     <td><span class="number-code">${value[1]}</span></td>
+                    <td><span id="name-product-${value[1]}">${value[0]}</span><input type="hidden" id="id-product-${value[1]}" value="${value[3]}"></td>
                     <td><input class="form-control form-control-sm" id="cost-price-${value[1]}" onchange="change_cost_price('${value[1]}')" type="number" step="1000" value="${value[2]}"></td>
                     <td><input class="form-control form-control-sm" min="0" type="number" onchange="change_quantity('${value[1]}')" id="quantity-${value[1]}" value="1"></td>
                     <td><span class="total" id="total-${value[1]}" >${value[2]}</span></td>

@@ -175,13 +175,21 @@ function loginFull() {
                 "parent_id": "8",
                 "css_class": "nav-icon far fa-circle",
             },
-            {
+			{
                 "id": "13",
+                "name": "Chuyển hàng",
+                "url": "/admin_tranfer_stocks",
+                "parent_id": "8",
+                "css_class": "nav-icon far fa-circle",
+            },
+            {
+                "id": "14",
                 "name": "Thu/Chi",
                 "url": "/admin_cash_book",
                 "parent_id": "8",
                 "css_class": "nav-icon far fa-circle",
             },
+			
         ];
 
 		
@@ -256,13 +264,21 @@ function activeFull() {
                 "parent_id": "10",
                 "css_class": "nav-icon far fa-circle",
             },
-            {
+			{
                 "id": "15",
+                "name": "Chuyển hàng",
+                "url": "/admin_tranfer_stocks",
+                "parent_id": "10",
+                "css_class": "nav-icon far fa-circle",
+            },
+            {
+                "id": "16",
                 "name": "Thu/Chi",
                 "url": "/admin_cash_book",
                 "parent_id": "10",
                 "css_class": "nav-icon far fa-circle",
             },
+			
         ];
 
 		

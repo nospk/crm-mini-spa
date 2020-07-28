@@ -25,7 +25,7 @@ class Admin_store_stocks extends Controller{
         try{
 			//let {}=req.body
 			let match = {
-				$and: [ {company :req.session.user.company._id} ] 
+				$and: [ {company :req.session.user.company._id, type: "import"} ] 
 			}
 			//set default variables
 			let pageSize = 10

@@ -75,9 +75,10 @@ function render_data(data, pageCount, currentPage){
                                     <th>Ngày</th>
 									<th>Mã phiếu</th>
                                     <th>Sản phẩm</th>
+									<th style="text-align: center;">Tồn kho</th>
                                     <th>Công ty</th>
-									<th>Giá</th>
-                                    <th>Thanh toán</th>
+									<th style="text-align: right;">Giá</th>
+                                    <th style="text-align: right;">Thanh toán</th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
@@ -85,16 +86,20 @@ function render_data(data, pageCount, currentPage){
 		html+=`<tr>
                 <td>${new Date(item.createdAt).toLocaleString()}</td>
 				<td>${item.serial}</td>
-                <td>
-                `
+                <td>`
         item.list_products.forEach(item=>{
             html +=`[${item.quantity} ${item.name}] [${item.product_id.number_code}] - [${(item.cost_price).toLocaleString()} đồng]<br>`
-        })      
-        html+=        `</td>
+        })
+		html+= `</td><td style="text-align: center;">`
+		item.list_products.forEach(item=>{
+            html +=`${item.current_quantity}<br>`
+        })		
+        html+= `</td>
 				<td>${(item.supplier.name)}</td>
-                <td>${(item.price).toLocaleString()} đồng</td>
-                <td>${(item.payment? item.payment.money: 0).toLocaleString()} đồng</td>
-                </tr>`
+                <td style="text-align: right;">${(item.price).toLocaleString()} đồng</td>
+                <td style="text-align: right;">${(item.payment? item.payment.money: 0).toLocaleString()} đồng</td>
+                </tr>
+			   `
     })
     html+=`</tbody>
                 </table>

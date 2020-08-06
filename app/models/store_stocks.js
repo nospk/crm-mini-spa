@@ -15,6 +15,15 @@ const Store_stocks_Schema = mongoose.Schema({
     quantity:{
         type: Number, default:0
     },
+	product_of_safe:{
+		type: Number, default:0
+	},
+	product_of_service:{
+		type: Number, default:0
+	},
+	product_of_undefined:{
+		type: Number, default:0
+	},
     last_history:[{
 		type: mongoose.Schema.Types.ObjectId,
 		_id: false

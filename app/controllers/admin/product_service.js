@@ -39,7 +39,7 @@ class Admin_product_service extends Controller{
 			let data = await Product_service.findOne({company: req.session.user.company._id, _id: req.body.id}).populate({
 				path: 'stocks_in_store',
 				populate: { path: 'Stores' },
-				select: 'store_name quantity'
+				select: 'store_name quantity product_of_safe product_of_service product_of_undefined'
 			}).populate({
 				path: 'stocks_in_storage',
 				populate: { path: 'Storage_stocks' },

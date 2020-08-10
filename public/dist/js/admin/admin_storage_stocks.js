@@ -203,12 +203,7 @@ function get_list_product(){
     $(".number-code").each(function () {                  
         list_product.push($(this).text()); 
     });
-    let data = [{
-        total_get_goods : money_total,
-        payment: $('#payment').val(),
-		debt: $('#debt').val(),
-		supplier: $('#select_supplier').val(),
-    }];
+    let data = [];
     list_product.forEach((number_code)=>{
         data.push({
             cost_price: $(`#cost-price-${number_code}`).val(),
@@ -227,6 +222,10 @@ function clear_data(){
 }
 function create_new(){
     let data = {
+        total_get_goods : money_total,
+        payment: $('#payment').val(),
+		debt: $('#debt').val(),
+		supplier_id: $('#select_supplier').val(),
         products: get_list_product(),
         _csrf: $('#_csrf').val()
     }

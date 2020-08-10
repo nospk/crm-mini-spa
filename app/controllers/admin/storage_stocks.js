@@ -56,31 +56,29 @@ class Admin_store_stocks extends Controller{
     }
     static async create_new(req, res){
 		try{
-            const {products} = req.body;
-			let list_products = [...products]
+            const {total_get_goods, payment, debt, supplier_id, products} = req.body;
 			let serial_NH = await Common.get_serial_company(req.session.user.company._id, 'NH')
-			list_products.shift()
 			let invoice_product_storage = Invoice_product_storage({
 				serial: serial_NH,
 				type: 'import',
 				company: req.session.user.company._id,
-				price: products[0].total_get_goods,
-				supplier: products[0].supplier,
-				list_products: list_products
+				price: total_get_goods,
+				supplier: supplier_id,
+				list_products: products
 			});
 			await invoice_product_storage.save()
-			let supplier = await Supplier.findOne({company: req.session.user.company._id, _id: products[0].supplier})
-			supplier.totalMoney = Number(supplier.totalMoney) + Number(products[0].total_get_goods)
-			supplier.debt = Number(supplier.debt) + Number(products[0].debt || 0)
+			let supplier = await Supplier.findOne({company: req.session.user.company._id, _id: supplier_id})
+			supplier.totalMoney = Number(supplier.totalMoney) + Number(total_get_goods)
+			supplier.debt = Number(supplier.debt) + Number(debt)
 			supplier.last_history = await Common.last_history(supplier.last_history, invoice_product_storage._id)
 			await supplier.save();
-			if(Number(products[0].payment) > 0){
+			if(Number(payment) > 0){
 				let serial_TT = await Common.get_serial_company(req.session.user.company._id, 'TT')
 				let cash_book = Cash_book({
 					serial: serial_TT,
 					type: "outcome",
 					company:req.session.user.company._id,
-					money: products[0].payment,
+					money: payment,
 					reference: invoice_product_storage._id,
 					who_created: req.session.user.username,
 					who_receiver: supplier.name
@@ -90,17 +88,17 @@ class Admin_store_stocks extends Controller{
 				await invoice_product_storage.save()
 			}
 
-            for (let i = 1; i < products.length; i++){
+            for (let i = 0; i < products.length; i++){
                 let find_product = await Product_service.findOne({company: req.session.user.company._id, type: "product", _id: products[i].product})
                 let cost_price_average = ((Number(find_product.quantity) * Number(find_product.cost_price)) + (Number(products[i].quantity) * Number(products[i].cost_price))) / (Number(find_product.quantity) + Number(products[i].quantity))
                 find_product.quantity = Number(find_product.quantity) + Number(products[i].quantity)
                 find_product.cost_price = Math.ceil(cost_price_average)
                 await find_product.save()
-                let store_stocks = await Storage_stocks.findOne({company: req.session.user.company._id, product: products[i].product})
-				store_stocks.quantity = Number(store_stocks.quantity) + Number(products[i].quantity)
-				invoice_product_storage.list_products[i-1].current_quantity = Number(store_stocks.quantity)
-				store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_product_storage._id)
-				store_stocks.save();
+                let storage_stocks = await Storage_stocks.findOne({company: req.session.user.company._id, product: products[i].product})
+				storage_stocks.quantity = Number(storage_stocks.quantity) + Number(products[i].quantity)
+				invoice_product_storage.list_products[i].current_quantity = Number(storage_stocks.quantity)
+				storage_stocks.last_history = await Common.last_history(storage_stocks.last_history, invoice_product_storage._id)
+				storage_stocks.save();
 			}
 			invoice_product_storage.save()
             Admin_store_stocks.sendMessage(res, "Đã tạo thành công");

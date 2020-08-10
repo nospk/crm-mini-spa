@@ -89,7 +89,7 @@ function get_list_product(){
     list_product.forEach((number_code)=>{
         data.push({
             quantity: $(`#quantity-${number_code}`).val(),
-            product_id: $(`#id-product-${number_code}`).val()
+            product: $(`#id-product-${number_code}`).val()
         })
     })
     return data;
@@ -120,13 +120,12 @@ function create_new(){
 	}
     let data = {
         products: get_list_product(),
-		total_products : $('#total_products').text(),
 		store: $('#select_store').val(),
         _csrf: $('#_csrf').val()
     }
     if(data.products.length >= 1){
         $.ajax({
-            url:'/admin_store_stocks/create',
+            url:'/admin_tranfer_stocks/create',
             method:'POST',
             data: data,
             success: function(data){

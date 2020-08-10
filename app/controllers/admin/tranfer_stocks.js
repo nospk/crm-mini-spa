@@ -3,6 +3,7 @@ const Product_service = require('../../models/product_service');
 const Store = require('../../models/store');
 const Storage_stocks = require('../../models/storage_stocks');
 const Store_stocks = require('../../models/store_stocks');
+const Common = require("../../../core/common");
 const mongoose = require('mongoose');
 const Invoice_product_storage = require('../../models/invoice_product_storage');
 class Admin_tranfer_stocks extends Controller{
@@ -50,6 +51,34 @@ class Admin_tranfer_stocks extends Controller{
 			Admin_tranfer_stocks.sendError(res, err, err.message);
         }
 	}
+	static async create_new(req, res){
+		try{
+            const {products, store} = req.body;
+			let serial_XH = await Common.get_serial_company(req.session.user.company._id, 'XH')
+			let invoice_product_storage = Invoice_product_storage({
+				serial: serial_XH,
+				type: 'transfer',
+				company: req.session.user.company._id,
+				store: store,
+				list_products: products
+			});
+			await invoice_product_storage.save()
+            for (let i = 0; i < products.length; i++){
+				let storage_stocks = await Storage_stocks.findOne({company: req.session.user.company._id, product: products[i].product})
+				let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.user.company._id, product: products[i].product},{$inc:{product_of_undefined:Number(products[i].quantity), quantity:Number(products[i].quantity)}})
+				storage_stocks.quantity = Number(storage_stocks.quantity) - Number(products[i].quantity)
+				invoice_product_storage.list_products[i].current_quantity = Number(storage_stocks.quantity)
+				storage_stocks.last_history = await Common.last_history(storage_stocks.last_history, invoice_product_storage._id)
+				storage_stocks.save();
+			}
+			invoice_product_storage.save()
+            Admin_tranfer_stocks.sendMessage(res, "Đã tạo thành công");
+		}catch(err){
+			console.log(err)
+			Admin_tranfer_stocks.sendError(res, err, err.message);
+		}
+		
+    }
 }
 
 module.exports = Admin_tranfer_stocks

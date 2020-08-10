@@ -13,15 +13,20 @@ class Common {
 	};
 	static  get_serial_company(id, chartCode){
 		return new Promise(async (resolve, reject)=>{
-            if(chartCode == 'NH'){
-				let company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_NH:1}});
-				resolve('NH_'+Number(company.serial_NH))
-			}else if(chartCode == 'TT'){
-				let company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_TT:1}});
-				resolve('TT_'+Number(company.serial_TT))
-			}else{
-				reject(null)
-			}		
+			let company;
+            switch(chartCode) {
+				case 'NH':
+					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_NH:1}});
+					resolve('NH_'+Number(company.serial_NH))
+				case 'TT':
+					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_TT:1}});
+					resolve('TT_'+Number(company.serial_TT))
+				case 'XH':
+					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_XH:1}});
+					resolve('XT_'+Number(company.serial_XH))
+				default:
+					reject(null)
+			}			
         })
 	}
 	static last_history(listArray, item){

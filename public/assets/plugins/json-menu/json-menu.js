@@ -171,7 +171,7 @@ function loginFull() {
             {
                 "id": "12",
                 "name": "Nhập Hàng",
-                "url": "/admin_store_stocks",
+                "url": "/admin_storage_stocks",
                 "parent_id": "8",
                 "css_class": "nav-icon far fa-circle",
             },
@@ -260,7 +260,7 @@ function activeFull() {
             {
                 "id": "14",
                 "name": "Nhập Hàng",
-                "url": "/admin_store_stocks",
+                "url": "/admin_storage_stocks",
                 "parent_id": "10",
                 "css_class": "nav-icon far fa-circle",
             },

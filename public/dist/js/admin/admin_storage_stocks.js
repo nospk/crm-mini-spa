@@ -10,7 +10,7 @@ function get_product(){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_store_stocks/get_product',
+        url:'/admin_storage_stocks/get_product',
         method:'POST',
         data: data,
         success: function(data){
@@ -41,7 +41,7 @@ function get_data(paging_num){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_store_stocks/get_data',
+        url:'/admin_storage_stocks/get_data',
         method:'POST',
         data: data,
         success: function(data){
@@ -88,7 +88,7 @@ function render_data(data, pageCount, currentPage){
 				<td>${item.serial}</td>
                 <td>`
         item.list_products.forEach(item=>{
-            html +=`[${item.quantity} ${item.name}] [${item.product_id.number_code}] - [${(item.cost_price).toLocaleString()} đồng]<br>`
+            html +=`[${item.quantity} ${item.product.name}] [${item.product.number_code}] - [${(item.cost_price).toLocaleString()} đồng]<br>`
         })
 		html+= `</td><td style="text-align: center;">`
 		item.list_products.forEach(item=>{
@@ -211,10 +211,9 @@ function get_list_product(){
     }];
     list_product.forEach((number_code)=>{
         data.push({
-            name: $(`#name-product-${number_code}`).text(),
             cost_price: $(`#cost-price-${number_code}`).val(),
             quantity: $(`#quantity-${number_code}`).val(),
-            product_id: $(`#id-product-${number_code}`).val()
+            product: $(`#id-product-${number_code}`).val()
         })
     })
     return data;
@@ -231,9 +230,9 @@ function create_new(){
         products: get_list_product(),
         _csrf: $('#_csrf').val()
     }
-    if(data.products.length > 1){
+    if(data.products.length >= 1){
         $.ajax({
-            url:'/admin_store_stocks/create',
+            url:'/admin_storage_stocks/create',
             method:'POST',
             data: data,
             success: function(data){

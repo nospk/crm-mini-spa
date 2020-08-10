@@ -9,7 +9,7 @@ class Admin_store_stocks extends Controller{
     static show(req, res){
         Admin_store_stocks.setLocalValue(req,res);
 		//console.log(req.session);
-        res.render('./pages/admin/store_stocks');
+        res.render('./pages/admin/storage_stocks');
     }
 	static async get_product(req, res){
         try{
@@ -40,9 +40,9 @@ class Admin_store_stocks extends Controller{
 				populate: { path: 'Suppliers'},
 				select: 'name'
 			}).populate({
-				path: 'list_products.product_id',
+				path: 'list_products.product',
 				populate: { path: 'Product_services' },
-				select: 'number_code'
+				select: 'number_code name'
 			}).populate({
 				path: 'payment',
 				populate: { path: 'Cash_book' },
@@ -91,12 +91,12 @@ class Admin_store_stocks extends Controller{
 			}
 
             for (let i = 1; i < products.length; i++){
-                let find_product = await Product_service.findOne({company: req.session.user.company._id, type: "product", _id: products[i].product_id})
+                let find_product = await Product_service.findOne({company: req.session.user.company._id, type: "product", _id: products[i].product})
                 let cost_price_average = ((Number(find_product.quantity) * Number(find_product.cost_price)) + (Number(products[i].quantity) * Number(products[i].cost_price))) / (Number(find_product.quantity) + Number(products[i].quantity))
                 find_product.quantity = Number(find_product.quantity) + Number(products[i].quantity)
                 find_product.cost_price = Math.ceil(cost_price_average)
                 await find_product.save()
-                let store_stocks = await Storage_stocks.findOne({company: req.session.user.company._id, product: products[i].product_id})
+                let store_stocks = await Storage_stocks.findOne({company: req.session.user.company._id, product: products[i].product})
 				store_stocks.quantity = Number(store_stocks.quantity) + Number(products[i].quantity)
 				invoice_product_storage.list_products[i-1].current_quantity = Number(store_stocks.quantity)
 				store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_product_storage._id)

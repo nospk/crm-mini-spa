@@ -13,14 +13,16 @@ const Invoice_product_storage_Schema = mongoose.Schema({
 		type: Number
 	},
 	supplier:{
-		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Suppliers' 
+		type: mongoose.Schema.Types.ObjectId, ref:'Suppliers' 
     },
     payment:{
         type: mongoose.Schema.Types.ObjectId, ref:'Cash_book'
     },
+	store:{
+		type: mongoose.Schema.Types.ObjectId, ref:'Stores'
+	},
     list_products:[{
-        name: {type: String},
-        product_id: {type: mongoose.Schema.Types.ObjectId, ref:'Product_services'}, 
+        product: {type: mongoose.Schema.Types.ObjectId, ref:'Product_services'}, 
         quantity: {type: Number},
         cost_price: {type: Number},
         current_quantity: {type: Number},

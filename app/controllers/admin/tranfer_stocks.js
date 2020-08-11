@@ -6,6 +6,7 @@ const Store_stocks = require('../../models/store_stocks');
 const Common = require("../../../core/common");
 const mongoose = require('mongoose');
 const Invoice_product_storage = require('../../models/invoice_product_storage');
+const Invoice_product_store = require('../../models/invoice_product_store');
 class Admin_tranfer_stocks extends Controller{
     static show(req, res){
         Admin_tranfer_stocks.setLocalValue(req,res);
@@ -30,7 +31,7 @@ class Admin_tranfer_stocks extends Controller{
 		try{
 			//let {}=req.body
 			let match = {
-				$and: [ {company :req.session.user.company._id, type: "tranfer"} ] 
+				$and: [ {company :req.session.user.company._id, type: "transfer"} ] 
 			}
 			//set default variables
 			let pageSize = 10
@@ -41,9 +42,13 @@ class Admin_tranfer_stocks extends Controller{
 			// find total pages
 			let pageCount = Math.ceil(pages/pageSize)
 			let data = await Invoice_product_storage.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
-				path: 'list_products.product_id',
+				path: 'list_products.product',
 				populate: { path: 'Product_services' },
-				select: 'number_code'
+				select: 'number_code name'
+			}).populate({
+				path: 'store',
+				populate: { path: 'Stores' },
+				select: 'name'
 			});
 			Admin_tranfer_stocks.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
@@ -53,23 +58,35 @@ class Admin_tranfer_stocks extends Controller{
 	}
 	static async create_new(req, res){
 		try{
-            const {products, store} = req.body;
+            const {products, store, note} = req.body;
 			let serial_XH = await Common.get_serial_company(req.session.user.company._id, 'XH')
+			let serial_NK = await Common.get_serial_store(store, 'NK')
 			let invoice_product_storage = Invoice_product_storage({
 				serial: serial_XH,
 				type: 'transfer',
 				company: req.session.user.company._id,
 				store: store,
+				note: note,
 				list_products: products
 			});
+			let invoice_product_store = Invoice_product_store({
+				serial: serial_NK,
+				type: 'import',
+				company: req.session.user.company._id,
+				store: store,
+				list_products: products
+			});
+			await invoice_product_store.save()
 			await invoice_product_storage.save()
             for (let i = 0; i < products.length; i++){
 				let storage_stocks = await Storage_stocks.findOne({company: req.session.user.company._id, product: products[i].product})
-				let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.user.company._id, product: products[i].product},{$inc:{product_of_undefined:Number(products[i].quantity), quantity:Number(products[i].quantity)}})
+				let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.user.company._id, store_id:store, product: products[i].product},{$inc:{product_of_undefined:Number(products[i].quantity), quantity:Number(products[i].quantity)}})
+				store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_product_store._id)
 				storage_stocks.quantity = Number(storage_stocks.quantity) - Number(products[i].quantity)
 				invoice_product_storage.list_products[i].current_quantity = Number(storage_stocks.quantity)
 				storage_stocks.last_history = await Common.last_history(storage_stocks.last_history, invoice_product_storage._id)
 				storage_stocks.save();
+				store_stocks.save();
 			}
 			invoice_product_storage.save()
             Admin_tranfer_stocks.sendMessage(res, "Đã tạo thành công");

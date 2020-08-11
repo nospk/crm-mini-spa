@@ -9,6 +9,9 @@ const Invoice_product_store_Schema = mongoose.Schema({
     company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
 	},
+	store:{
+		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Stores' 
+	},
     list_products:[{
         product: {type: mongoose.Schema.Types.ObjectId, ref:'Product_services'}, 
         quantity: {type: Number},

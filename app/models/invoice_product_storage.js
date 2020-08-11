@@ -21,6 +21,9 @@ const Invoice_product_storage_Schema = mongoose.Schema({
 	store:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Stores'
 	},
+	note:{
+		type: String
+	},
     list_products:[{
         product: {type: mongoose.Schema.Types.ObjectId, ref:'Product_services'}, 
         quantity: {type: Number},

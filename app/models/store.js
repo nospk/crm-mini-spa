@@ -31,11 +31,14 @@ const StoreSchema = mongoose.Schema({
 		token: String,
 		date: Date
     },
+	serial_NK:{
+		type: Number, "default" : 1
+	},
 	serial_TT:{
-		type: Number
+		type: Number, "default" : 1
 	},
 	serial_BH:{
-		type: Number
+		type: Number, "default" : 1
 	},
     status:{
         type: Number, "default" : 0 //0: active, 1: unactive

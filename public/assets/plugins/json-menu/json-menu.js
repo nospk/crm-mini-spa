@@ -178,7 +178,7 @@ function loginFull() {
 			{
                 "id": "13",
                 "name": "Chuyển hàng",
-                "url": "/admin_tranfer_stocks",
+                "url": "/admin_transfer_stocks",
                 "parent_id": "8",
                 "css_class": "nav-icon far fa-circle",
             },
@@ -267,7 +267,7 @@ function activeFull() {
 			{
                 "id": "15",
                 "name": "Chuyển hàng",
-                "url": "/admin_tranfer_stocks",
+                "url": "/admin_transfer_stocks",
                 "parent_id": "10",
                 "css_class": "nav-icon far fa-circle",
             },

@@ -12,7 +12,7 @@ function get_data(paging_num){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_tranfer_stocks/get_data',
+        url:'/admin_transfer_stocks/get_data',
         method:'POST',
         data: data,
         success: function(data){
@@ -114,7 +114,7 @@ function getStoresAndProducts() {
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url: '/admin_tranfer_stocks/getStoresAndProducts',
+        url: '/admin_transfer_stocks/getStoresAndProducts',
         method: 'POST',
         data: data,
         success: function (data) {
@@ -148,7 +148,7 @@ function add_product() {
                     <td><span class="number-code">${value[1]}</span></td>
                     <td><span id="name-product-${value[1]}">${value[0]}</span><input type="hidden" id="id-product-${value[1]}" value="${value[3]}"></td>
                     <td><span id="current-products-${value[1]}" >${value[2]}</span></td>
-                    <td><input class="form-control form-control-sm product-send" min="0" max="${value[2]}"type="number" onchange="change_quantity('${value[1]}')" id="quantity-${value[1]}" value="1"></td>
+                    <td><input class="form-control form-control-sm product-send" min="0" max="${value[2]}"type="number" onchange="change_quantity('${value[1]}', this)" id="quantity-${value[1]}" value="1"></td>
                     <td><span class="remaining-products" id="remaining-products-${value[1]}" >${value[2] - 1}</span></td>
                     <td><span style="color:red; cursor: pointer" onclick="delete_row_product(this)"><i class="fas fa-times-circle"></i></span></td>
                 </tr>`
@@ -165,10 +165,14 @@ function add_product() {
     }
 }
 
-function change_quantity(code) {
-    let current_product = $(`#current-products-${code}`).text()
+function change_quantity(code,btn) {
     let send_number = $(`#quantity-${code}`).val()
-    $(`#remaining-products-${code}`).text(Number(current_product) - Number(send_number))
+	if(send_number == 0){
+		delete_row_product(btn)
+	}else{
+		let current_product = $(`#current-products-${code}`).text()
+		$(`#remaining-products-${code}`).text(Number(current_product) - Number(send_number))
+	}
     total_get_goods()
 }
 
@@ -233,7 +237,7 @@ function create_new(){
     }
     if(data.products.length >= 1){
         $.ajax({
-            url:'/admin_tranfer_stocks/create',
+            url:'/admin_transfer_stocks/create',
             method:'POST',
             data: data,
             success: function(data){

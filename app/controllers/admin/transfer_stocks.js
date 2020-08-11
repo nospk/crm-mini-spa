@@ -7,11 +7,11 @@ const Common = require("../../../core/common");
 const mongoose = require('mongoose');
 const Invoice_product_storage = require('../../models/invoice_product_storage');
 const Invoice_product_store = require('../../models/invoice_product_store');
-class Admin_tranfer_stocks extends Controller{
+class Admin_transfer_stocks extends Controller{
     static show(req, res){
-        Admin_tranfer_stocks.setLocalValue(req,res);
+        Admin_transfer_stocks.setLocalValue(req,res);
 		//console.log(req.session);
-        res.render('./pages/admin/tranfer_stocks');
+        res.render('./pages/admin/transfer_stocks');
 	}
 	static async getStoresAndProducts(req, res){
         try{
@@ -21,10 +21,10 @@ class Admin_tranfer_stocks extends Controller{
 				select: 'quantity'
 			});
 			let stores = await Store.find({company: req.session.user.company._id, status: 0});
-			Admin_tranfer_stocks.sendData(res, {products, stores});
+			Admin_transfer_stocks.sendData(res, {products, stores});
 		}catch(err){
 			console.log(err)
-			Admin_tranfer_stocks.sendError(res, err, err.message);
+			Admin_transfer_stocks.sendError(res, err, err.message);
         }
 	}
 	static async get_data(req, res){
@@ -50,10 +50,10 @@ class Admin_tranfer_stocks extends Controller{
 				populate: { path: 'Stores' },
 				select: 'name'
 			});
-			Admin_tranfer_stocks.sendData(res, {data, pageCount, currentPage});
+			Admin_transfer_stocks.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
 			console.log(err)
-			Admin_tranfer_stocks.sendError(res, err, err.message);
+			Admin_transfer_stocks.sendError(res, err, err.message);
         }
 	}
 	static async create_new(req, res){
@@ -89,13 +89,13 @@ class Admin_tranfer_stocks extends Controller{
 				store_stocks.save();
 			}
 			invoice_product_storage.save()
-            Admin_tranfer_stocks.sendMessage(res, "Đã tạo thành công");
+            Admin_transfer_stocks.sendMessage(res, "Đã tạo thành công");
 		}catch(err){
 			console.log(err)
-			Admin_tranfer_stocks.sendError(res, err, err.message);
+			Admin_transfer_stocks.sendError(res, err, err.message);
 		}
 		
     }
 }
 
-module.exports = Admin_tranfer_stocks
+module.exports = Admin_transfer_stocks

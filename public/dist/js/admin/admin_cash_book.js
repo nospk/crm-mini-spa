@@ -2,6 +2,16 @@
 let page_now;
 $( document ).ready(()=>{
     get_data();
+	getSupplierAndEmployees();
+	$("#select_type_receiver").change(()=>{
+		if($("#select_type_receiver").val() == "employees"){
+			$("#show_supplier").hide();
+			$("#show_employees").show();
+		}else{
+			$("#show_supplier").show();
+			$("#show_employees").hide();
+		}
+	})
 })
 
 function get_data(paging_num){
@@ -38,7 +48,33 @@ function get_data(paging_num){
         }
     })
 }
-
+function getSupplierAndEmployees(){
+    let data = {
+        _csrf: $('#_csrf').val()
+    }
+    $.ajax({
+        url: '/admin_cash_book/getSupplierAndEmployees',
+        method: 'POST',
+        data: data,
+        success: function (data) {
+            if (data.status == 1) {
+                let html_supplier = ""
+                let html_employees = ""
+                data.data.supplier.forEach(item => {
+                    html_supplier += `<option value="${item._id}">${item.name}</option>`
+                })
+                data.data.employees.forEach(item => {
+                    html_employees += `<option value="${item._id}">${item.name}</option>`
+                })
+                $('#select_supplier').html(html_supplier)
+                $('#select_employees').html(html_employees)
+                $('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
+            }
+        }
+    })
+}
 function render_data(data, pageCount, currentPage){
 	let html = `        
 		                    <table class="table table-hover text-nowrap">
@@ -51,6 +87,7 @@ function render_data(data, pageCount, currentPage){
                                     <th>Người nhận/thanh toán</th>
                                     <th>Ghi chú</th>
                                     <th style="text-align: right;">Tiền</th>
+									<th style="text-align: right;">Tồn Quỹ</th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
@@ -62,7 +99,8 @@ function render_data(data, pageCount, currentPage){
 				<td>${(item.who_created)}</td>
                 <td>${item.who_receiver}</td>
                 <td>${item.note ? item.note : ""}</td>
-                <td style="text-align: right;">${item.money.toLocaleString()} đồng</td>
+                <td style="text-align: right;">${item.type == "income" ? item.money.toLocaleString() : (item.money * -1).toLocaleString()} đồng</td>
+				<td style="text-align: right;">${item.current_money.toLocaleString()} đồng</td>
                 </tr>`
     })
     html+=`</tbody>

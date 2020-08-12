@@ -17,8 +17,12 @@ const CompanySchema = mongoose.Schema({
 	},
 	serial_XH:{
 		type: Number, default: 1
-	},serial_TT:{
+	},
+	serial_TT:{
 		type: Number, default: 1
+	},
+	money:{
+		type: Number, default: 0
 	},
 	status:{
 		type: Number //0: active 1: inactive

@@ -1,10 +1,9 @@
 const Controller = require('../../../core/controller');
-const Product_service = require('../../models/product_service');
-const Storage_stocks = require('../../models/storage_stocks');
 const Supplier = require('../../models/supplier');
 const Invoice_product_storage = require('../../models/invoice_product_storage');
 const Cash_book = require('../../models/cash_book');
 const Common = require("../../../core/common");
+const Employees = require('../../models/employees');
 class Admin_cash_book extends Controller{
     static show(req, res){
         Admin_cash_book.setLocalValue(req,res);
@@ -32,7 +31,16 @@ class Admin_cash_book extends Controller{
 			Admin_cash_book.sendError(res, err, err.message);
         }
     }
-	
+	static async getSupplierAndEmployees(req, res){
+		try{
+			let supplier = await Supplier.find({company: req.session.user.company._id});
+			let employees = await Employees.find({company: req.session.user.company._id, status: 0});
+			Admin_cash_book.sendData(res, {supplier, employees});
+		}catch(err){
+			console.log(err)
+			Admin_cash_book.sendError(res, err, err.message);
+        }
+	}
 }
 
 module.exports = Admin_cash_book

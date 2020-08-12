@@ -59,7 +59,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<div class="col-12">
 						<div class="card">
 							<div class="card-header" style="background-color: black;">
-								<h3 class="card-title" style="color: whitesmoke;">Lịch sử nhập hàng</h3>
+								<h3 class="card-title" style="color: whitesmoke;">Lịch sử thu chi</h3>
 								<div class="card-tools">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -96,7 +96,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	  <div class="modal-dialog modal-xl" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
-			<h5 class="modal-title">Nhập đơn hàng mới</h5>
+			<h5 class="modal-title">Tạo hóa đơn mới</h5>
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			  <span aria-hidden="true">&times;</span>
 			</button>
@@ -105,65 +105,51 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <div class="form-group">
                 <div class="input-group mb-3">
 				    <div class="input-group-prepend">
-                        <span class="input-group-text">Sản phẩm</span>
+                        <span class="input-group-text">Loại</span>
                     </div>
-                    <select class="form-control select2bs4" id="select_product">
-                        
+                    <select class="form-control" id="select_type">
+                        <option value="income">Thu</option>
+						<option value="outcome">Chi</option>
                     </select>
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" onclick="add_product()">Chọn</button>
-                    </div>
                 </div>    
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">
-                        <span class="input-group-text">Nhà cung cấp</span>
+                        <span class="input-group-text">Bên giao/nhận</span>
+                    </div>
+                    <select class="form-control" id="select_type_receiver">
+                        <option value="supplier">Nhà cung cấp</option>
+						<option value="employees">Nhân viên</option>
+                    </select>
+                </div>
+				<div class="input-group mb-3" id="show_supplier">
+				    <div class="input-group-prepend">
+                        <span class="input-group-text">Tên</span>
                     </div>
                     <select class="form-control select2bs4" id="select_supplier">
                         
                     </select>
-                </div> 	
+                </div>		
+				<div class="input-group mb-3" id="show_employees" style="display: none;">
+				    <div class="input-group-prepend">
+                        <span class="input-group-text">Tên</span>
+                    </div>
+                    <select class="form-control select2bs4" id="select_employees">
+                        
+                    </select>
+                </div>					
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">
                         <span class="input-group-text">Số tiền thanh toán</span>
                     </div>
                     <input type="number" step="1000" min="0" onchange="change_debt()" value="0" id="payment" class="form-control">
-                </div>		
+                </div>
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">
-                        <span class="input-group-text">Số tiền còn nợ</span>
-                    </div>
-                    <input type="number" disabled id="debt" value="0" class="form-control">
-                </div>				
+					  <span class="input-group-text">Ghi chú</span>
+					</div>
+					<textarea class="form-control" rows="5" id="note"></textarea>
+				</div>
             </div>
-            <div class="card">
-                <div class="card-header">
-                  <h3 class="card-title">Danh sách hàng</h3>
-                  <div class="card-tools">
-                    <div class="input-group input-group-sm" style="width: 300px;">
-                        <span> Tổng tiền hàng: <span id="total_get_goods">0</span>  đồng</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body p-0">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Tên</th>
-                        <th>Mã</th>
-                        <th>Giá</th>
-                        <th>Số lượng</th>
-                        <th>Tổng cộng</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody id="add_product">
-                      
-                    </tbody>
-                  </table>
-                </div>
-                <!-- /.card-body -->
-              </div>
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>

@@ -48,6 +48,7 @@ require('./core/passport')(passport); // pass passport for configuration
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+
 //Public file
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -56,7 +57,8 @@ app.set('views', path.join('./app/views'));
 app.set('view engine', 'ejs');
 
 // connect to our database 
-mongoose.connect(process.env.DB_LOCALHOST, options);  
+mongoose.connect(process.env.DB_MONGO, options);  
+//mongoose.connect(process.env.DB_LOCALHOST, options);  
 
 app.use(cookieParser())
 app.use(csrf({ cookie: true }));

@@ -56,7 +56,10 @@ class Admin_store_stocks extends Controller{
     }
     static async create_new(req, res){
 		try{
-            const {total_get_goods, payment, debt, supplier_id, products} = req.body;
+            const {total_get_goods, payment, debt, supplier_id = "", products} = req.body;
+			if(supplier_id == ""){
+				return Admin_store_stocks.sendError(res, "Lỗi thiếu thông tin", "Vui lòng chọn nhà cung cấp hoặc tạo mới");
+			}
 			let serial_NH = await Common.get_serial_company(req.session.user.company._id, 'NH')
 			let invoice_product_storage = Invoice_product_storage({
 				serial: serial_NH,
@@ -79,6 +82,7 @@ class Admin_store_stocks extends Controller{
 					type: "outcome",
 					company:req.session.user.company._id,
 					money: payment,
+					current_money: await Common.get_current_money(req.session.user.company._id, (Number(payment) * -1)),
 					reference: invoice_product_storage._id,
 					who_created: req.session.user.username,
 					who_receiver: supplier.name

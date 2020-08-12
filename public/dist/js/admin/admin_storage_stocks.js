@@ -88,7 +88,7 @@ function render_data(data, pageCount, currentPage){
 				<td>${item.serial}</td>
                 <td>`
         item.list_products.forEach(item=>{
-            html +=`[${item.quantity} ${item.product.name}] [${item.product.number_code}] - [${(item.cost_price).toLocaleString()} đồng]<br>`
+            html +=`[+${item.quantity} ${item.product.name}] [${item.product.number_code}] - [${(item.cost_price).toLocaleString()} đồng]<br>`
         })
 		html+= `</td><td style="text-align: center;">`
 		item.list_products.forEach(item=>{

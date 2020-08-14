@@ -74,6 +74,7 @@ function render_data(data, pageCount, currentPage){
                                     <tr>
                                     <th>Ngày</th>
 									<th>Mã phiếu</th>
+									<th>Người tạo</th>
                                     <th>Sản phẩm</th>
 									<th style="text-align: center;">Tồn kho</th>
                                     <th>Công ty</th>
@@ -86,6 +87,7 @@ function render_data(data, pageCount, currentPage){
 		html+=`<tr>
                 <td>${new Date(item.createdAt).toLocaleString()}</td>
 				<td>${item.serial}</td>
+				<td>${item.who_created}</td>
                 <td>`
         item.list_products.forEach(item=>{
             html +=`[+${item.quantity} ${item.product.name}] [${item.product.number_code}] - [${(item.cost_price).toLocaleString()} đồng]<br>`

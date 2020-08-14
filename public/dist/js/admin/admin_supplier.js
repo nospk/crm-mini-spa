@@ -176,7 +176,6 @@ function comform_delete_data(id){
                     url:'/admin_supplier/delete_data',
                     method:'delete',
                     data: {id: id, _csrf: $('#_csrf').val()},
-					async:false,
                     success: function(data){
                         if(data.status == 1){
                             get_data();
@@ -191,7 +190,6 @@ function edit_data(id){
 		url:'/admin_supplier/edit_data',
 		method:'post',
         data: {id: id, _csrf: $('#_csrf').val()},
-		async:false,
         success: function(data){
 			if(data.status == 1){
 				$('#edit_data #edit_name').val(data.data.name);

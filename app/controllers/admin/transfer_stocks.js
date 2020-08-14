@@ -66,6 +66,7 @@ class Admin_transfer_stocks extends Controller{
 				type: 'transfer',
 				company: req.session.user.company._id,
 				store: store,
+				who_created: req.session.user.name,
 				note: note,
 				list_products: products
 			});
@@ -73,6 +74,7 @@ class Admin_transfer_stocks extends Controller{
 				serial: serial_NK,
 				type: 'import',
 				company: req.session.user.company._id,
+				who_created: req.session.user.name,
 				store: store,
 				list_products: products
 			});

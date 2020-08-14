@@ -4,6 +4,7 @@ const Invoice_product_storage = require('../../models/invoice_product_storage');
 const Cash_book = require('../../models/cash_book');
 const Common = require("../../../core/common");
 const Employees = require('../../models/employees');
+const Store = require('../../models/store');
 class Admin_cash_book extends Controller{
     static show(req, res){
         Admin_cash_book.setLocalValue(req,res);
@@ -35,12 +36,12 @@ class Admin_cash_book extends Controller{
 			Admin_cash_book.sendError(res, err, err.message);
         }
     }
-	static async getSupplierAndEmployees(req, res){
+	static async getStoreSupplierEmployees(req, res){
 		try{
-			let supplier = await Supplier.find({company: req.session.user.company._id, isActive: true});
+			let suppliers = await Supplier.find({company: req.session.user.company._id, isActive: true});
 			let employees = await Employees.find({company: req.session.user.company._id, isActive: true});
-			let employees = await Employees.find({company: req.session.user.company._id, isActive: true});
-			Admin_cash_book.sendData(res, {supplier, employees});
+			let stores = await Store.find({company: req.session.user.company._id, isActive: true});
+			Admin_cash_book.sendData(res, {suppliers, employees, stores});
 		}catch(err){
 			console.log(err)
 			Admin_cash_book.sendError(res, err, err.message);

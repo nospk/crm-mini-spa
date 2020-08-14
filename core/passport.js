@@ -122,7 +122,7 @@ module.exports = function (passport) {
                 // if the user is found but the password is wrong
                 if (!user.validPassword(password))
                     return done(null, false, req.flash('error', 'Email and Password Does Not Match.')); // create the loginMessage and save it to session as flashdata
-                if (user.isActive === true)
+                if (user.isActive === false)
                     return done(null, false, req.flash('error', 'Your Account Not Activated ,Please Check Your Email')); // create the loginMessage and save it to session as flashdata
 
                 // all is well, return successful user

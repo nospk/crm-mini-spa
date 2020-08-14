@@ -18,8 +18,8 @@ const EmployeesSchema = mongoose.Schema({
 	company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
 	},
-	status:{
-		type: Number, default:0 //0: active 1: inactive
+	isActive:{
+		type: Boolean, default:true
 	},
 }, { timestamps: true });
 module.exports = mongoose.model('Employees', EmployeesSchema);

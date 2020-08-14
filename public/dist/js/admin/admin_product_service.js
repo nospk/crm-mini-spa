@@ -179,7 +179,6 @@ function comform_delete_data(id){
                     url:'/admin_product_service/delete_data',
                     method:'delete',
                     data: {id: id, _csrf: $('#_csrf').val()},
-					async:false,
                     success: function(data){
                         if(data.status == 1){
                             get_data();

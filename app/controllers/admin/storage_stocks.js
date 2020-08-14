@@ -13,7 +13,7 @@ class Admin_store_stocks extends Controller{
     }
 	static async get_product(req, res){
         try{
-			let products = await Product_service.find({company: req.session.user.company._id, type: "product", isActive: true, isDelete: false});
+			let products = await Product_service.find({company: req.session.user.company._id, type: "product", isActive: true});
 			let suppliers = await Supplier.find({company: req.session.user.company._id, isActive: true});
 			Admin_store_stocks.sendData(res, {products, suppliers});
 		}catch(err){
@@ -65,6 +65,7 @@ class Admin_store_stocks extends Controller{
 				serial: serial_NH,
 				type: 'import',
 				company: req.session.user.company._id,
+				who_created: req.session.user.name,
 				price: total_get_goods,
 				supplier: supplier_id,
 				list_products: products
@@ -84,7 +85,7 @@ class Admin_store_stocks extends Controller{
 					money: payment,
 					current_money: await Common.get_current_money(req.session.user.company._id, (Number(payment) * -1)),
 					reference: invoice_product_storage._id,
-					who_created: req.session.user.username,
+					who_created: req.session.user.name,
 					who_receiver: supplier.name,
 					cost_for_who: 'Company',
 					cost_for_company: req.session.user.company._id

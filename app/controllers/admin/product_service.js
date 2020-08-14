@@ -53,7 +53,7 @@ class Admin_product_service extends Controller{
 	}
 	static async create_new(req, res){
 		try{
-			let check = await Product_service.findOne({company: req.session.user.company._id, number_code:req.body.number_code});
+			let check = await Product_service.findOne({company: req.session.user.company._id, number_code:req.body.number_code, isActive: true});
 			if(check){
 				Admin_product_service.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
 				return;

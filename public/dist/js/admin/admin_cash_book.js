@@ -2,7 +2,7 @@
 let page_now;
 $( document ).ready(()=>{
     get_data();
-	getSupplierAndEmployees();
+	getStoreSupplierEmployees();
 	$("#select_type_receiver").change(()=>{
 		if($("#select_type_receiver").val() == "employees"){
 			$("#show_supplier").hide();
@@ -55,26 +55,31 @@ function get_data(paging_num){
         }
     })
 }
-function getSupplierAndEmployees(){
+function getStoreSupplierEmployees(){
     let data = {
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url: '/admin_cash_book/getSupplierAndEmployees',
+        url: '/admin_cash_book/getStoreSupplierEmployees',
         method: 'POST',
         data: data,
         success: function (data) {
             if (data.status == 1) {
-                let html_supplier = ""
+                let html_suppliers = ""
                 let html_employees = ""
-                data.data.supplier.forEach(item => {
-                    html_supplier += `<option value="${item._id}">${item.name}</option>`
+				let html_stores = ""
+                data.data.suppliers.forEach(item => {
+                    html_suppliers += `<option value="${item._id}">${item.name}</option>`
                 })
                 data.data.employees.forEach(item => {
                     html_employees += `<option value="${item._id}">${item.name}</option>`
                 })
-                $('#select_supplier').html(html_supplier)
-                $('#select_employees').html(html_employees)
+				data.data.stores.forEach(item => {
+                    html_stores += `<option value="${item._id}">${item.name}</option>`
+                })
+                $('#select_supplier').html(html_suppliers)
+                $('#select_employees').html(html_stores)
+				$('#select_store').html(html_stores)
                 $('.select2bs4').select2({
                     theme: 'bootstrap4'
                 })
@@ -90,7 +95,7 @@ function render_data(data, pageCount, currentPage){
                                     <th>Ngày</th>
 									<th>Mã phiếu</th>
                                     <th>Loại thu/chi</th>
-                                    <th>Người lập</th>
+                                    <th>Người tạo</th>
                                     <th>Người nhận/thanh toán</th>
 									<th>Nơi nhận/thanh toán</th>
                                     <th>Ghi chú</th>

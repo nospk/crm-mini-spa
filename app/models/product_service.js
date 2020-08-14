@@ -27,8 +27,8 @@ const Product_Service_Schema = mongoose.Schema({
 	isActive:{
 		type: Boolean, default:true 
 	},
-	isDelete:{
-		type: Boolean, default:false
+	isSale:{
+		type: Boolean, default:true
 	},
 	quantity:{
 		type: Number

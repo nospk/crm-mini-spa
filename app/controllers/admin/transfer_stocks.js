@@ -15,12 +15,12 @@ class Admin_transfer_stocks extends Controller{
 	}
 	static async getStoresAndProducts(req, res){
         try{
-			let products = await Product_service.find({company: req.session.user.company._id, type: "product", isDelete: false}).populate({
+			let products = await Product_service.find({company: req.session.user.company._id, type: "product", isActive: true}).populate({
 				path: 'stocks_in_storage',
 				populate: { path: 'Storage_stocks' },
 				select: 'quantity'
 			});
-			let stores = await Store.find({company: req.session.user.company._id, status: 0});
+			let stores = await Store.find({company: req.session.user.company._id, isActive: true});
 			Admin_transfer_stocks.sendData(res, {products, stores});
 		}catch(err){
 			console.log(err)

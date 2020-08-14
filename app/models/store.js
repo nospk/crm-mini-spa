@@ -40,9 +40,9 @@ const StoreSchema = mongoose.Schema({
 	serial_BH:{
 		type: Number, "default" : 1
 	},
-    status:{
-        type: Number, "default" : 0 //0: active, 1: unactive
-    }
+    isActive:{
+		type: Boolean, default:true
+	}
 }, { timestamps: true });
 
 module.exports = mongoose.model('Stores', StoreSchema);

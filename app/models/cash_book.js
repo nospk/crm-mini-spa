@@ -26,7 +26,16 @@ const Cash_book_Schema = mongoose.Schema({
 	},
 	reference:{
 		type: mongoose.Schema.Types.ObjectId
-	}
+	},
+	cost_for_who:{
+		type: String,
+	},
+	cost_for_company:{
+		type: mongoose.Schema.Types.ObjectId, ref:'Company' 
+	},
+	cost_for_store:{
+		type: mongoose.Schema.Types.ObjectId, ref:'Stores' 
+	},
 }, { timestamps: true });
 
 module.exports = mongoose.model('Cash_book', Cash_book_Schema);

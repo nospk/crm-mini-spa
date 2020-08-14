@@ -85,7 +85,9 @@ class Admin_store_stocks extends Controller{
 					current_money: await Common.get_current_money(req.session.user.company._id, (Number(payment) * -1)),
 					reference: invoice_product_storage._id,
 					who_created: req.session.user.username,
-					who_receiver: supplier.name
+					who_receiver: supplier.name,
+					cost_for_who: 'Company',
+					cost_for_company: req.session.user.company._id
 				})
 				await cash_book.save()
 				invoice_product_storage.payment = cash_book._id

@@ -14,7 +14,7 @@ class Admin_product_service extends Controller{
 		try{
 			let {search}=req.body
 			let match = {
-				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id), isDelete: false} ] 
+				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id), isActive: true} ] 
 			}
 			if(search){
 				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
@@ -122,7 +122,7 @@ class Admin_product_service extends Controller{
 						find.cost_price = req.body.cost_price;
 					}
 					find.name = req.body.name;
-					find.isActive = req.body.isActive;
+					find.isSale = req.body.isSale;
 					find.price = req.body.price;
 					find.description = req.body.description;
 					find.number_code = req.body.number_code;
@@ -140,7 +140,7 @@ class Admin_product_service extends Controller{
 	}
 	static async delete_data(req, res){
 		try{
-			await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.id}, {isDelete: true, isActive: false});
+			await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.id}, {isActive: false, isSale: false});
 			Admin_product_service.sendMessage(res, "Đã xóa thành công");
 		}catch(err){
 			console.log(err)

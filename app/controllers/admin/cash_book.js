@@ -24,7 +24,11 @@ class Admin_cash_book extends Controller{
 			let pages = await Cash_book.find(match).countDocuments()
 			// find total pages
 			let pageCount = Math.ceil(pages/pageSize)
-			let data = await Cash_book.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize)
+			let data = await Cash_book.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
+				path: 'cost_for_company',
+				populate: { path: 'Company' },
+				select: 'name'
+			})
 			Admin_cash_book.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
 			console.log(err)
@@ -33,8 +37,9 @@ class Admin_cash_book extends Controller{
     }
 	static async getSupplierAndEmployees(req, res){
 		try{
-			let supplier = await Supplier.find({company: req.session.user.company._id});
-			let employees = await Employees.find({company: req.session.user.company._id, status: 0});
+			let supplier = await Supplier.find({company: req.session.user.company._id, isActive: true});
+			let employees = await Employees.find({company: req.session.user.company._id, isActive: true});
+			let employees = await Employees.find({company: req.session.user.company._id, isActive: true});
 			Admin_cash_book.sendData(res, {supplier, employees});
 		}catch(err){
 			console.log(err)

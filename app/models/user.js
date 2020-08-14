@@ -4,6 +4,9 @@ const UserSchema = mongoose.Schema({
 	username: {
         type: String
     },
+	name: {
+        type: String
+    },
 	company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
 	},
@@ -20,8 +23,8 @@ const UserSchema = mongoose.Schema({
 		token: String,
 		date: Date
     },
-	status:{
-		type: Number //0: active 1: inactive
+	isActive:{
+		type: Boolean, default:true
 	},
     role_id: { type: Number, default: 1} //0: admin, 1:manager
 }, { timestamps: true });

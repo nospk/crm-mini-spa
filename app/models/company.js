@@ -9,7 +9,7 @@ const CompanySchema = mongoose.Schema({
 	total_user:{
 		type: Number
 	},
-	isActive:{
+	type:{
 		type: String, default:'free'
 	},
 	serial_NH:{
@@ -24,8 +24,8 @@ const CompanySchema = mongoose.Schema({
 	money:{
 		type: Number, default: 0
 	},
-	status:{
-		type: Number //0: active 1: inactive
+	isActive:{
+		type: Boolean, default:true
 	}
 }, { timestamps: true });
 

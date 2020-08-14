@@ -77,7 +77,7 @@ function render_data(data, pageCount, currentPage){
                 <td>${item.number_code}</td>
 				<td>${(item.cost_price).toLocaleString()}</td>
 				<td>${(item.price).toLocaleString()}</td>
-                <td>${item.isActive ? "Đang kinh doanh" : "Ngừng kinh doanh"}</td>
+                <td>${item.isSale ? "Đang kinh doanh" : "Ngừng kinh doanh"}</td>
                 <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;
 					<span style="color:red; cursor: pointer" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i></span>		
 				</td>
@@ -207,7 +207,7 @@ function edit_data(id){
 				$('#edit_data #edit_type_product_service').val(data.data.type),
 				$('#edit_data #edit_number_code').val(data.data.number_code);
 				$('#edit_data #edit_description').val(data.data.description);
-				$('#edit_data #isActive').val(data.data.isActive.toString())
+				$('#edit_data #isSale').val(data.data.isSale.toString())
                 $('#edit_data #edit_id').val(data.data._id);
                 $('#edit_data').modal('show');
                 if(data.data.type =="service"){
@@ -256,7 +256,7 @@ function update_data(){
         price: $('#edit_data #edit_price').val(),
         number_code: $('#edit_data #edit_number_code').val(),
         description: $('#edit_data #edit_description').val(),
-		isActive: $('#edit_data #isActive').val(),
+		isSale: $('#edit_data #isSale').val(),
 		id: $('#edit_data #edit_id').val(),
         _csrf: $('#_csrf').val()
     }

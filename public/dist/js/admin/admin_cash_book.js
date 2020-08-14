@@ -12,6 +12,13 @@ $( document ).ready(()=>{
 			$("#show_employees").hide();
 		}
 	})
+	$("#select_cost_for").change(()=>{
+		if($("#select_cost_for").val() == "Company"){
+			$("#show_stores").hide();
+		}else{
+			$("#show_stores").show();
+		}
+	})
 })
 
 function get_data(paging_num){
@@ -85,6 +92,7 @@ function render_data(data, pageCount, currentPage){
                                     <th>Loại thu/chi</th>
                                     <th>Người lập</th>
                                     <th>Người nhận/thanh toán</th>
+									<th>Nơi nhận/thanh toán</th>
                                     <th>Ghi chú</th>
                                     <th style="text-align: right;">Tiền</th>
 									<th style="text-align: right;">Tồn Quỹ</th>
@@ -98,6 +106,7 @@ function render_data(data, pageCount, currentPage){
                 <td>${item.type == "income" ? "Thu" : "Chi"}</td>
 				<td>${(item.who_created)}</td>
                 <td>${item.who_receiver}</td>
+				<td>${item.cost_for_who == 'Company' ? item.cost_for_company.name : item.cost_for_store.name}</td>
                 <td>${item.note ? item.note : ""}</td>
                 <td style="text-align: right;">${item.type == "income" ? item.money.toLocaleString() : (item.money * -1).toLocaleString()} đồng</td>
 				<td style="text-align: right;">${item.current_money.toLocaleString()} đồng</td>

@@ -21,6 +21,9 @@ const CompanySchema = mongoose.Schema({
 	serial_TT:{
 		type: Number, default: 1
 	},
+	serial_NT:{
+		type: Number, default: 1
+	},
 	money:{
 		type: Number, default: 0
 	},

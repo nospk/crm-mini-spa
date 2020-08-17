@@ -5,6 +5,9 @@ const Cash_book_Schema = mongoose.Schema({
     },
     type:{
         type: String, required: true // income - outcome
+	},
+	group:{
+        type: String, required: true // Thanh toán nhà cung cấp - Thanh toán tiền lương - Các khoản khác - Nhận tiền cửa hàng
     },
     company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
@@ -12,16 +15,13 @@ const Cash_book_Schema = mongoose.Schema({
 	money:{
 		type: Number, required: true
 	},
-	who_created_name:{
+	user_created:{
 		type: String, required: true
 	},
-	who_created_id:{
-		type: mongoose.Schema.Types.ObjectId, required: true
-	},
-	who_receiver_name:{
+	member_name:{
 		type: String, required: true
 	},
-	who_receiver_id:{
+	member_id:{
 		type: mongoose.Schema.Types.ObjectId, required: true
 	},
 	note:{
@@ -33,13 +33,10 @@ const Cash_book_Schema = mongoose.Schema({
 	reference:{
 		type: mongoose.Schema.Types.ObjectId
 	},
-	cost_for_who:{
-		type: String,
+	isCostForCompany:{
+		type: Boolean, default:true
 	},
-	cost_for_company:{
-		type: mongoose.Schema.Types.ObjectId, ref:'Company' 
-	},
-	cost_for_store:{
+	store:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Stores' 
 	},
 }, { timestamps: true });

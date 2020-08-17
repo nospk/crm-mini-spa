@@ -36,7 +36,7 @@ function get_data(paging_num){
         success: function(data){
             if(data.status == 1){
                 page_now = data.data.currentPage
-                render_data(data.data.data, data.data.pageCount, data.data.currentPage);
+                render_data(data.data.data, data.data.pageCount, data.data.currentPage, data.data.company);
             }else{
                 Swal.fire({
                     title: data.error,
@@ -87,14 +87,14 @@ function getStoreSupplierEmployees(){
         }
     })
 }
-function render_data(data, pageCount, currentPage){
+function render_data(data, pageCount, currentPage, company){
 	let html = `        
 		                    <table class="table table-hover text-nowrap">
 		                        <thead>
                                     <tr>
                                     <th>Ngày</th>
 									<th>Mã phiếu</th>
-                                    <th>Loại thu/chi</th>
+                                    <th>Loại</th>
                                     <th>Người tạo</th>
                                     <th>Người nhận/thanh toán</th>
 									<th>Nơi nhận/thanh toán</th>
@@ -108,10 +108,10 @@ function render_data(data, pageCount, currentPage){
 		html+=`<tr>
                 <td>${new Date(item.createdAt).toLocaleString()}</td>
 				<td>${item.serial}</td>
-                <td>${item.type == "income" ? "Thu" : "Chi"}</td>
-				<td>${(item.who_created)}</td>
-                <td>${item.who_receiver}</td>
-				<td>${item.cost_for_who == 'Company' ? item.cost_for_company.name : item.cost_for_store.name}</td>
+                <td>${item.group}</td>
+				<td>${(item.user_created)}</td>
+                <td>${item.member_name}</td>
+				<td>${item.isCostForCompany == true ? company : item.store.name}</td>
                 <td>${item.note ? item.note : ""}</td>
                 <td style="text-align: right;">${item.type == "income" ? item.money.toLocaleString() : (item.money * -1).toLocaleString()} đồng</td>
 				<td style="text-align: right;">${item.current_money.toLocaleString()} đồng</td>

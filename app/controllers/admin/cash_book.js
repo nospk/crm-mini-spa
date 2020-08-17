@@ -20,17 +20,13 @@ class Admin_cash_book extends Controller{
 			//set default variables
 			let pageSize = 10
 			let currentPage = req.body.paging_num || 1
-	
+			let company = req.session.user.company.name
 			// find total item
 			let pages = await Cash_book.find(match).countDocuments()
 			// find total pages
 			let pageCount = Math.ceil(pages/pageSize)
-			let data = await Cash_book.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
-				path: 'cost_for_company',
-				populate: { path: 'Company' },
-				select: 'name'
-			})
-			Admin_cash_book.sendData(res, {data, pageCount, currentPage});
+			let data = await Cash_book.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize)
+			Admin_cash_book.sendData(res, {data, pageCount, currentPage, company});
 		}catch(err){
 			console.log(err)
 			Admin_cash_book.sendError(res, err, err.message);

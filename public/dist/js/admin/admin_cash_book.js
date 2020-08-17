@@ -69,16 +69,16 @@ function getStoreSupplierEmployees(){
                 let html_employees = ""
 				let html_stores = ""
                 data.data.suppliers.forEach(item => {
-                    html_suppliers += `<option value="${item._id}">${item.name}</option>`
+                    html_suppliers += `<option value="${item.name}">${item.name}</option>`
                 })
                 data.data.employees.forEach(item => {
-                    html_employees += `<option value="${item._id}">${item.name}</option>`
+                    html_employees += `<option value="Tên:${item.name} - Mã:${item.number_code}">${item.name}</option>`
                 })
 				data.data.stores.forEach(item => {
                     html_stores += `<option value="${item._id}">${item.name}</option>`
                 })
                 $('#select_supplier').html(html_suppliers)
-                $('#select_employees').html(html_stores)
+                $('#select_employees').html(html_employees)
 				$('#select_store').html(html_stores)
                 $('.select2bs4').select2({
                     theme: 'bootstrap4'
@@ -155,4 +155,51 @@ function render_data(data, pageCount, currentPage){
         pageination += `</ul>`
     }   
     $("#pagination").html(pageination)
+}
+function create_new(){
+    let data = {
+        type: $('#create_new #select_type').val(),
+        type_receiver: $('#create_new #select_type_receiver').val(),
+        select_supplier: $('#create_new #select_supplier').val(),
+        select_employees: $('#create_new #select_employees').val(),
+        cost_for: $('#create_new #select_cost_for').val(),
+		select_store: $('#create_new #select_store').val(),
+		note: $('#create_new #note').val().trim(),
+        _csrf: $('#_csrf').val()
+    }
+    $.ajax({
+        url:'/admin_cash_book/create',
+        method:'POST',
+        data: data,
+        success: function(data){
+            if(data.status == 1){
+                Swal.fire({
+                    title: "Thao tác thành công",
+                    text: data.message,
+                    icon: "info",
+                    showConfirmButton: false,
+                    timer: 3000
+                }).then((result)=>{
+					get_data()
+                })
+                .catch(timer => {
+					get_data()
+                });    
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
 }

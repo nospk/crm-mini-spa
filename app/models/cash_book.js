@@ -12,11 +12,17 @@ const Cash_book_Schema = mongoose.Schema({
 	money:{
 		type: Number, required: true
 	},
-	who_created:{
+	who_created_name:{
 		type: String, required: true
 	},
-	who_receiver:{
+	who_created_id:{
+		type: mongoose.Schema.Types.ObjectId, required: true
+	},
+	who_receiver_name:{
 		type: String, required: true
+	},
+	who_receiver_id:{
+		type: mongoose.Schema.Types.ObjectId, required: true
 	},
 	note:{
 		type: String

@@ -47,6 +47,17 @@ class Admin_cash_book extends Controller{
 			Admin_cash_book.sendError(res, err, err.message);
         }
 	}
+	static async create_new(req, res){
+		try{
+			const {type, type_receiver, select_supplier, select_employees, cost_for, select_store, note} = req.body;
+			console.log(type, type_receiver, select_supplier, select_employees, cost_for, select_store, note)
+			Admin_cash_book.sendMessage(res, "Đã tạo thành công");
+		}catch(err){
+			console.log(err.message)
+			Admin_cash_book.sendError(res, err, err.message);
+		}
+		
+	}
 }
 
 module.exports = Admin_cash_book

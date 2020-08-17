@@ -32,7 +32,7 @@ function create_store(){
 	if($('#create_store #password').val() == ""){
 		errors++
 	}
-	if(errors > 100 ){
+	if(errors > 1 ){
 		Swal.fire({
 			title: "Lỗi thiếu thông tin",
 			text: "Vui lòng nhập đầy đủ thông tin",

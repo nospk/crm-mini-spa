@@ -5,6 +5,7 @@ const Cash_book = require('../../models/cash_book');
 const Common = require("../../../core/common");
 const Employees = require('../../models/employees');
 const Store = require('../../models/store');
+const mongoose = require('mongoose');
 class Admin_cash_book extends Controller{
     static show(req, res){
         Admin_cash_book.setLocalValue(req,res);
@@ -25,7 +26,11 @@ class Admin_cash_book extends Controller{
 			let pages = await Cash_book.find(match).countDocuments()
 			// find total pages
 			let pageCount = Math.ceil(pages/pageSize)
-			let data = await Cash_book.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize)
+			let data = await Cash_book.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
+				path: 'store',
+				populate: { path: 'Stores' },
+				select: 'name'
+			});
 			Admin_cash_book.sendData(res, {data, pageCount, currentPage, company});
 		}catch(err){
 			console.log(err)
@@ -45,8 +50,55 @@ class Admin_cash_book extends Controller{
 	}
 	static async create_new(req, res){
 		try{
-			const {type, type_receiver, select_supplier, select_employees, cost_for, select_store, note} = req.body;
-			console.log(type, type_receiver, select_supplier, select_employees, cost_for, select_store, note)
+			const {type, type_receiver, select_supplier, select_employees, isForCompany, select_store, payment, note} = req.body;
+			let serial, current_money, member_name, member_id, str;
+			if(isForCompany == "true"){
+				if(type == "outcome"){
+					current_money = await Common.get_current_money(req.session.user.company._id, (Number(payment) * -1))
+					serial = await Common.get_serial_company(req.session.user.company._id, 'TTCT')
+				}else{ 
+					current_money = await Common.get_current_money(req.session.user.company._id, Number(payment))
+					serial = await Common.get_serial_company(req.session.user.company._id, 'TTNT')
+					}
+			}else{
+				if(type == "outcome"){ 
+					current_money = await Common.get_current_money_store(req.session.user.company._id, select_store, (Number(payment) * -1))
+					serial = await Common.get_serial_store(select_store, 'TTCT')
+				}else{
+					current_money = await Common.get_current_money_store(req.session.user.company._id, select_store, Number(payment))
+					serial = await Common.get_serial_store(select_store, 'TTNT')
+				}
+			}
+			switch(type_receiver){
+				case "supplier":
+					str = select_supplier.split(":")
+					member_name = str[0];
+					member_id = str[1];
+					break;
+				case "employees":
+					str = select_employees.split(":")
+					member_name = str[0];
+					member_id = str[1];
+					break;
+				default:
+					member_name = "Khác";
+					break;
+			}
+			let cash_book = Cash_book({
+				serial: serial,
+				type: type,
+				company:req.session.user.company._id,
+				money: payment,
+				current_money: current_money,
+				isForCompany: isForCompany == "true" ? true : false,
+				group: '',
+				user_created: req.session.user.name,
+				member_name: member_name,
+				member_id: type_receiver != "different" ? mongoose.Types.ObjectId(member_id) : undefined,
+				note: note,
+				store: isForCompany == "true" ? undefined : select_store
+			})
+			await cash_book.save()
 			Admin_cash_book.sendMessage(res, "Đã tạo thành công");
 		}catch(err){
 			console.log(err.message)

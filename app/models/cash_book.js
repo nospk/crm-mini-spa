@@ -22,7 +22,7 @@ const Cash_book_Schema = mongoose.Schema({
 		type: String, required: true
 	},
 	member_id:{
-		type: mongoose.Schema.Types.ObjectId, required: true
+		type: mongoose.Schema.Types.ObjectId
 	},
 	note:{
 		type: String
@@ -33,8 +33,8 @@ const Cash_book_Schema = mongoose.Schema({
 	reference:{
 		type: mongoose.Schema.Types.ObjectId
 	},
-	isCostForCompany:{
-		type: Boolean, default:true
+	isForCompany:{
+		type: Boolean, default:false
 	},
 	store:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Stores' 

@@ -77,14 +77,15 @@ class Admin_store_stocks extends Controller{
 			supplier.last_history = await Common.last_history(supplier.last_history, invoice_product_storage._id)
 			await supplier.save();
 			if(Number(payment) > 0){
-				let serial_TT = await Common.get_serial_company(req.session.user.company._id, 'TT')
+				let serial_TTCT = await Common.get_serial_company(req.session.user.company._id, 'TTCT')
 				let cash_book = Cash_book({
-					serial: serial_TT,
+					serial: serial_TTCT,
 					type: "outcome",
 					company:req.session.user.company._id,
 					money: payment,
 					current_money: await Common.get_current_money(req.session.user.company._id, (Number(payment) * -1)),
 					reference: invoice_product_storage._id,
+					isForCompany: true,
 					group: 'Thanh toán nhà cung cấp',
 					user_created: req.session.user.name,
 					member_name: supplier.name,

@@ -31,13 +31,22 @@ const StoreSchema = mongoose.Schema({
 		token: String,
 		date: Date
     },
+	money:{
+		type: Number, "default" : 0
+	},
+	cash:{
+		type: Number, "default" : 0
+	},
 	serial_NK:{
 		type: Number, "default" : 1
 	},
-	serial_TT:{
+	serial_TTCT:{
 		type: Number, "default" : 1
 	},
-	serial_BH:{
+	serial_TTNT:{
+		type: Number, "default" : 1
+	},
+	serial_HDBH:{
 		type: Number, "default" : 1
 	},
     isActive:{

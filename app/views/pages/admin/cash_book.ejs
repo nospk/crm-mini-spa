@@ -6,7 +6,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <html lang="vi">
 <head>
   <%- include ('../../partials/head') %>
-  <title>Nhập hàng</title>
+  <title>Quản lý thu chi</title>
   <style>
   .callout {
 	  padding: 10px;
@@ -111,7 +111,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <option value="income">Thu</option>
 						<option value="outcome">Chi</option>
                     </select>
-                </div>    
+                </div> 
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+                        <span class="input-group-text">Lập cho</span>
+                    </div>
+                    <select class="form-control" id="isForCompany">
+                        <option value=true>Công ty</option>
+						<option value=false>Cửa hàng</option>
+                    </select>
+                </div>	
+				<div class="input-group mb-3" id="show_stores" style="display: none;">
+				    <div class="input-group-prepend">
+                        <span class="input-group-text">Tên</span>
+                    </div>
+                    <select class="form-control select2bs4" id="select_store">
+                        
+                    </select>
+                </div>					
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">
                         <span class="input-group-text">Bên giao/nhận</span>
@@ -119,6 +136,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <select class="form-control" id="select_type_receiver">
                         <option value="supplier">Nhà cung cấp</option>
 						<option value="employees">Nhân viên</option>
+						<option value="customer">Khách hàng</option>
+						<option value="different">Khác</option>
                     </select>
                 </div>
 				<div class="input-group mb-3" id="show_supplier">
@@ -136,29 +155,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <select class="form-control select2bs4" id="select_employees">
                         
                     </select>
-                </div>	
-				<div class="input-group mb-3">
-					<div class="input-group-prepend">
-                        <span class="input-group-text">Nơi giao/nhận</span>
-                    </div>
-                    <select class="form-control" id="select_cost_for">
-                        <option value="Company">Công ty</option>
-						<option value="Stores">Cửa hàng</option>
-                    </select>
-                </div>	
-				<div class="input-group mb-3" id="show_stores" style="display: none;">
-				    <div class="input-group-prepend">
-                        <span class="input-group-text">Tên</span>
-                    </div>
-                    <select class="form-control select2bs4" id="select_store">
-                        
-                    </select>
                 </div>					
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">
                         <span class="input-group-text">Số tiền thanh toán</span>
                     </div>
-                    <input type="number" step="1000" min="0" onchange="change_debt()" value="0" id="payment" class="form-control">
+                    <input type="number" step="1000" min="0" value="0" id="payment" class="form-control">
                 </div>
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">

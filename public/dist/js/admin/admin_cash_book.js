@@ -12,8 +12,8 @@ $( document ).ready(()=>{
 			$("#show_employees").hide();
 		}
 	})
-	$("#select_cost_for").change(()=>{
-		if($("#select_cost_for").val() == "Company"){
+	$("#isForCompany").change(()=>{
+		if($("#isForCompany").val() == "true"){
 			$("#show_stores").hide();
 		}else{
 			$("#show_stores").show();
@@ -69,10 +69,10 @@ function getStoreSupplierEmployees(){
                 let html_employees = ""
 				let html_stores = ""
                 data.data.suppliers.forEach(item => {
-                    html_suppliers += `<option value="${item.name}">${item.name}</option>`
+                    html_suppliers += `<option value="${item.name} :${item._id}">${item.name}</option>`
                 })
                 data.data.employees.forEach(item => {
-                    html_employees += `<option value="Tên:${item.name} - Mã:${item.number_code}">${item.name}</option>`
+                    html_employees += `<option value="Tên:${item.name} - Mã:${item.number_code}:${item._id}">${item.name}</option>`
                 })
 				data.data.stores.forEach(item => {
                     html_stores += `<option value="${item._id}">${item.name}</option>`
@@ -95,9 +95,9 @@ function render_data(data, pageCount, currentPage, company){
                                     <th>Ngày</th>
 									<th>Mã phiếu</th>
                                     <th>Loại</th>
+									<th>Lập tại</th>
                                     <th>Người tạo</th>
-                                    <th>Người nhận/thanh toán</th>
-									<th>Nơi nhận/thanh toán</th>
+                                    <th>Nơi nhận/thanh toán</th>
                                     <th>Ghi chú</th>
                                     <th style="text-align: right;">Tiền</th>
 									<th style="text-align: right;">Tồn Quỹ</th>
@@ -109,9 +109,9 @@ function render_data(data, pageCount, currentPage, company){
                 <td>${new Date(item.createdAt).toLocaleString()}</td>
 				<td>${item.serial}</td>
                 <td>${item.group}</td>
+				<td>${item.isForCompany == true ? "Công ty " + company : "Cửa hàng " + item.store.name}</td>
 				<td>${(item.user_created)}</td>
                 <td>${item.member_name}</td>
-				<td>${item.isCostForCompany == true ? company : item.store.name}</td>
                 <td>${item.note ? item.note : ""}</td>
                 <td style="text-align: right;">${item.type == "income" ? item.money.toLocaleString() : (item.money * -1).toLocaleString()} đồng</td>
 				<td style="text-align: right;">${item.current_money.toLocaleString()} đồng</td>
@@ -162,8 +162,9 @@ function create_new(){
         type_receiver: $('#create_new #select_type_receiver').val(),
         select_supplier: $('#create_new #select_supplier').val(),
         select_employees: $('#create_new #select_employees').val(),
-        cost_for: $('#create_new #select_cost_for').val(),
+        isForCompany: $('#create_new #isForCompany').val(),
 		select_store: $('#create_new #select_store').val(),
+		payment: $('#create_new #payment').val(),
 		note: $('#create_new #note').val().trim(),
         _csrf: $('#_csrf').val()
     }

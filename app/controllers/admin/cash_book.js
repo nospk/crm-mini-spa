@@ -55,7 +55,7 @@ class Admin_cash_book extends Controller{
 	}
 	static async create_new(req, res){
 		try{
-			const {type, type_receiver, select_supplier, select_employees, isForCompany, select_store, payment, note, group} = req.body;
+			const {type, type_receiver, select_supplier, select_employees, isForCompany, select_store, payment, note, group, accounting} = req.body;
 			let serial, current_money, member_name, member_id, str;
 			if(isForCompany == "true"){
 				if(type == "outcome"){
@@ -101,6 +101,7 @@ class Admin_cash_book extends Controller{
 				member_name: member_name,
 				member_id: type_receiver != "different" ? mongoose.Types.ObjectId(member_id) : undefined,
 				note: note,
+				accounting: accounting == "true" ? true : false,
 				store: isForCompany == "true" ? undefined : select_store
 			})
 			await cash_book.save()

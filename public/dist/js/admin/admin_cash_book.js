@@ -206,8 +206,9 @@ function create_new(){
         isForCompany: $('#create_new #isForCompany').val(),
 		select_store: $('#create_new #select_store').val(),
 		payment: $('#create_new #payment').val(),
-		note: $('#create_new #note').val().trim(),
-		group: $("#isForCompany").val() == "income" ? $("#select_group_income").val() : $("#select_group_outcome").val(),
+        note: $('#create_new #note').val().trim(),
+        accounting: $('#create_new #accounting').is(":checked"),
+		group: $("#select_type").val() == "income" ? $("#select_group_income").val() : $("#select_group_outcome").val(),
         _csrf: $('#_csrf').val()
     }
     $.ajax({

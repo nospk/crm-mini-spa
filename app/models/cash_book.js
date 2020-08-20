@@ -36,6 +36,9 @@ const Cash_book_Schema = mongoose.Schema({
 	isForCompany:{
 		type: Boolean, default:false
 	},
+	accounting:{
+		type: Boolean, default:true
+	},
 	store:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Stores' 
 	},

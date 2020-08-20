@@ -19,6 +19,22 @@ $( document ).ready(()=>{
 			$("#show_stores").show();
 		}
 	})
+	$("#select_type").change(()=>{
+		if($("#isForCompany").val() == "income"){
+			$("#select_group_income").show();
+			$("#select_group_outcome").hide();
+		}else{
+			$("#select_group_income").hide();
+			$("#select_group_outcome").show();
+		}
+	})
+	$("#search_find_selection").change(()=>{
+		if($("#search_find_selection").val() == "company"){
+			$("#search_find_store").hide();
+		}else{
+			$("#search_find_store").show();
+		}
+	})
 })
 
 function get_data(paging_num){
@@ -26,6 +42,8 @@ function get_data(paging_num){
         paging_num = page_now
     }
     let data = {
+		search_find_selection: $("#search_find_selection").val(),
+		search_find_store: $("#search_find_store").val(),
         paging_num:paging_num,
         _csrf: $('#_csrf').val()
     }
@@ -77,7 +95,8 @@ function getStoreSupplierEmployees(){
 				data.data.stores.forEach(item => {
                     html_stores += `<option value="${item._id}">${item.name}</option>`
                 })
-                $('#select_supplier').html(html_suppliers)
+                $('#select_supplier').html(html_suppliers)	
+				$('#search_find_store').html(html_stores)
                 $('#select_employees').html(html_employees)
 				$('#select_store').html(html_stores)
                 $('.select2bs4').select2({
@@ -94,7 +113,7 @@ function render_data(data, pageCount, currentPage, company){
                                     <tr>
                                     <th>Ngày</th>
 									<th>Mã phiếu</th>
-                                    <th>Loại</th>
+                                    <th>Nhóm</th>
 									<th>Lập tại</th>
                                     <th>Người tạo</th>
                                     <th>Nơi nhận/thanh toán</th>
@@ -108,7 +127,7 @@ function render_data(data, pageCount, currentPage, company){
 		html+=`<tr>
                 <td>${new Date(item.createdAt).toLocaleString()}</td>
 				<td>${item.serial}</td>
-                <td>${item.group}</td>
+                <td>${showGroup(item.group)}</td>
 				<td>${item.isForCompany == true ? "Công ty " + company : "Cửa hàng " + item.store.name}</td>
 				<td>${(item.user_created)}</td>
                 <td>${item.member_name}</td>
@@ -156,6 +175,28 @@ function render_data(data, pageCount, currentPage, company){
     }   
     $("#pagination").html(pageination)
 }
+function showGroup(str){
+	switch (str){
+		case 'THUTMH':
+			return 'Thu Tiền Mua Hàng';
+			break;
+		case 'THUTCN':
+			return 'Thu Tiền Công Nợ';
+			break;
+		case 'THANHTNCC':
+			return 'Thanh Toán Nhà Cung Cấp';
+			break;
+		case 'THANHTCN':
+			return 'Thanh Toán Công Nợ';
+			break;
+		case 'THANHTCNV':
+			return 'Thanh Toán Cho Nhân Viên';
+			break;
+		default:
+			return 'Khác';
+			break;
+	}
+}
 function create_new(){
     let data = {
         type: $('#create_new #select_type').val(),
@@ -166,6 +207,7 @@ function create_new(){
 		select_store: $('#create_new #select_store').val(),
 		payment: $('#create_new #payment').val(),
 		note: $('#create_new #note').val().trim(),
+		group: $("#isForCompany").val() == "income" ? $("#select_group_income").val() : $("#select_group_outcome").val(),
         _csrf: $('#_csrf').val()
     }
     $.ajax({

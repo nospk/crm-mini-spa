@@ -40,9 +40,32 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<div class="container-fluid">
 			<div class="callout callout-primary">
 				<div class="row">
-					<div class="col-auto mr-auto">
+					<div class="col-12 mr-auto">
+						<div class="input-group">
+                            <div class="input-group-prepend">
+								<span class="input-group-text">Tìm theo</span>
+                            </div>
+							<select class="form-control" id="search_find_selection">
+								<option value="company"> Công ty </option>
+								<option value="store"> Cửa Hàng </option>
+							</select>
+							<select class="form-control" id="search_find_store"  style="display:none">
+                        
+							</select>
+                        </div>  
 					</div>
-					<div class="col-auto">
+					<div class="col-12 mt-auto ">
+						<div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                     <i class="far fa-calendar-alt"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control float-right" id="reservation">
+                        </div> 
+					</div>
+					<div class="col-12 mt-auto ">
+						<button type="button" style="margin-left: 10px" class="btn btn-primary float-right" onclick="get_data(0)">Tìm</button>
 						<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#create_new">Tạo mới</button>
 					</div>
 				</div>
@@ -60,19 +83,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						<div class="card">
 							<div class="card-header" style="background-color: black;">
 								<h3 class="card-title" style="color: whitesmoke;">Lịch sử thu chi</h3>
-								<div class="card-tools">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="far fa-calendar-alt"></i>
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control float-right" id="reservation">
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
-                                        </div>
-                                    </div>     
-								</div>
 							</div>
 							<!-- /.card-header -->
 							<div class="card-body table-responsive p-0" id="show_data">
@@ -112,6 +122,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						<option value="outcome">Chi</option>
                     </select>
                 </div> 
+				<div class="input-group mb-3">
+				    <div class="input-group-prepend">
+                        <span class="input-group-text">Nhóm</span>
+                    </div>
+                    <select class="form-control" id="select_group_income">
+                        <option value="THUTMH">Thu Tiền Mua Hàng</option>
+						<option value="THUTCN">Thu Tiền Công Nợ</option>
+						<option value="TTK">Khác</option>
+                    </select>
+					<select class="form-control" id="select_group_outcome" style="display:none">
+                        <option value="THANHTNCC">Thanh Toán Nhà Cung Cấp</option>
+						<option value="THANHTCN">Thanh Toán Công Nợ</option>
+						<option value="THANHTCNV">Thanh Toán Cho Nhân Viên</option>
+						<option value="TTK">Khác</option>
+                    </select>
+                </div>
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">
                         <span class="input-group-text">Lập cho</span>

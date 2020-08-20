@@ -14,9 +14,14 @@ class Admin_cash_book extends Controller{
     }
 	static async get_data(req, res){
         try{
-			//let {}=req.body
+			let {search_find_store, search_find_selection}=req.body
 			let match = {
 				$and: [ {company :req.session.user.company._id} ] 
+			}
+			if(search_find_selection == "company"){
+				match.$and.push({isForCompany: true})
+			}else{
+				match.$and.push({store: search_find_store})
 			}
 			//set default variables
 			let pageSize = 10
@@ -50,7 +55,7 @@ class Admin_cash_book extends Controller{
 	}
 	static async create_new(req, res){
 		try{
-			const {type, type_receiver, select_supplier, select_employees, isForCompany, select_store, payment, note} = req.body;
+			const {type, type_receiver, select_supplier, select_employees, isForCompany, select_store, payment, note, group} = req.body;
 			let serial, current_money, member_name, member_id, str;
 			if(isForCompany == "true"){
 				if(type == "outcome"){
@@ -91,7 +96,7 @@ class Admin_cash_book extends Controller{
 				money: payment,
 				current_money: current_money,
 				isForCompany: isForCompany == "true" ? true : false,
-				group: '',
+				group: group,
 				user_created: req.session.user.name,
 				member_name: member_name,
 				member_id: type_receiver != "different" ? mongoose.Types.ObjectId(member_id) : undefined,

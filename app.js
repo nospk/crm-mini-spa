@@ -81,9 +81,14 @@ fs.readdirSync(routeBasePath).forEach(function(file) {
 		}
 	}
 });
-const routeAdminPath="./router/admin/";
-fs.readdirSync(routeAdminPath).forEach(function(file) {
-    let route=routeAdminPath+file;
+const routeAdminManagerPath="./router/admin_manager/";
+fs.readdirSync(routeAdminManagerPath).forEach(function(file) {
+    let route=routeAdminManagerPath+file;
+    require(route)(app);
+});
+const routeAdminStorePath="./router/admin_store/";
+fs.readdirSync(routeAdminStorePath).forEach(function(file) {
+    let route=routeAdminStorePath+file;
     require(route)(app);
 });
 

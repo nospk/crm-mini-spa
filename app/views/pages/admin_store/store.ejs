@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html lang="vi">
+<head>
+  <%- include ('../../partials/head') %>
+  <title>Admin Store</title>
+  <style>
+  .callout {
+	  padding: 10px;
+	  margin: 10px 0;
+	  border: 1px solid #eee;
+	  border-left-width: 5px;
+	  border-radius: 3px;
+  }
+  .callout-primary {
+	  border-left-color: #007BFF;
+  }
+  .input-group{
+	  margin: 10px 0;
+  }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <%- include ('../../partials/header') %>
+  <%- include ('../../partials/menu') %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+	<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="container-fluid">
+			<div class="callout callout-primary">
+				<div class="row">
+					<div class="col-auto mr-auto">
+					</div>
+					<div class="col-auto">
+						<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#create_store">Tạo cửa hàng</button>
+					</div>
+				</div>
+			</div>
+		</div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content-header -->
+	
+	<!-- Main content -->
+    <section class="content">
+		<div class="container-fluid">
+			<!-- Small boxes (Stat box) -->
+			<div class="card">
+				<div class="card-body">
+					<div class="row" id="show_data">
+					</div>
+				</div>
+			</div>
+		</div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+	<!-- Modal create store -->
+	<div class="modal fade" id="create_store" tabindex="-1" role="dialog" aria-labelledby="create_store" data-backdrop="static">
+	  <div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title">Tạo cửa hàng</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text">Tên cửa hàng</div>
+				</div>
+				<input type="text" class="form-control" id="name" placeholder="Nhập tên" aria-label="Name Store" a>
+			</div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text">Địa chỉ cửa hàng</div>
+				</div>
+				<input type="text" class="form-control" id="address" placeholder="Nhập địa chỉ" aria-label="Address Store">
+			</div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text">Tên tài khoản</div>
+				</div>
+				<input type="text" class="form-control" id="username" placeholder="Nhập tên tài khoản" aria-label="Address User name" >
+				<div class="input-group-append">
+					<div class="input-group-text"><%= name_account %></div>
+				</div>
+			</div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text">Mật khẩu</div>
+				</div>
+				<input type="text" class="form-control" id="password" placeholder="Nhập mật khẩu" aria-label="Address Password" >
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+			<button type="button" class="btn btn-primary" onclick="create_store();" data-dismiss="modal">Tạo</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<!-- End Modal create store -->
+  <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
+  <%- include ('../../partials/footer') %>
+  <script src="/dist/js/admin_store/admin_store.js"></script>
+</body>
+</html>

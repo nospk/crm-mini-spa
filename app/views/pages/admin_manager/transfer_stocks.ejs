@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html lang="vi">
+
+<head>
+  <%- include ('../../partials/head') %>
+  <title>Chuyển hàng</title>
+  <style>
+    .callout {
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #eee;
+      border-left-width: 5px;
+      border-radius: 3px;
+    }
+
+    .callout-primary {
+      border-left-color: #007BFF;
+    }
+
+    .input-group {
+      margin: 10px 0;
+    }
+  </style>
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="/assets/plugins/daterangepicker/daterangepicker.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="/assets/plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+</head>
+
+<body class="hold-transition sidebar-mini">
+  <div class="wrapper">
+    <%- include ('../../partials/header') %>
+    <%- include ('../../partials/menu') %>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="callout callout-primary">
+            <div class="row">
+              <div class="col-auto mr-auto">
+              </div>
+              <div class="col-auto">
+                <button type="button" class="btn btn-primary float-right" data-toggle="modal"
+                  data-target="#create_new">Tạo mới</button>
+              </div>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+      <!-- /.content-header -->
+
+      <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Small boxes (Stat box) -->
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header" style="background-color: black;">
+                  <h3 class="card-title" style="color: whitesmoke;">Lịch sử chuyển hàng</h3>
+                  <div class="card-tools">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <i class="far fa-calendar-alt"></i>
+                        </span>
+                      </div>
+                      <input type="text" class="form-control float-right" id="reservation">
+                      <div class="input-group-append">
+                        <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body table-responsive p-0" id="show_data">
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix" id="pagination">
+                </div>
+                <!-- /.card-footer -->
+              </div>
+              <!-- /.card -->
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Modal create store -->
+    <div class="modal fade" id="create_new" tabindex="-1" role="dialog" aria-labelledby="create_store"
+      data-backdrop="static">
+      <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Chuyển hàng sang cửa hàng</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Sản phẩm</span>
+                </div>
+                <select class="form-control select2bs4" id="select_product">
+
+                </select>
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="button" onclick="add_product()">Chọn</button>
+                </div>
+              </div>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Cửa hàng</span>
+                </div>
+                <select class="form-control select2bs4" id="select_store">
+
+                </select>
+              </div>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Ghi chú</span>
+                </div>
+                <textarea class="form-control" id="note"></textarea>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Danh sách hàng</h3>
+                <div class="card-tools">
+                  <div class="input-group input-group-sm" style="width: 300px;">
+                    <span> Tổng số lượng hàng chuyển: <span id="total_products">0</span></span>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>Mã</th>
+                      <th>Tên</th>
+                      <th>Hiện có</th>
+                      <th>Chuyển đi</th>
+                      <th>Còn lại</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="add_product">
+
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="button" class="btn btn-primary" onclick="create_new();" data-dismiss="modal">Tạo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Modal create store -->
+    <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
+    <%- include ('../../partials/footer') %>
+    <script src="/dist/js/admin_manager/admin_transfer_stocks.js"></script>
+    <!-- InputMask -->
+    <script src="/assets/plugins/moment/moment.min.js"></script>
+    <script src="/assets/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+    <!-- date-range-picker -->
+    <script src="/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- Select2 -->
+    <script src="/assets/plugins/select2/js/select2.full.min.js"></script>
+    <script>
+      $(function () {
+        //Datemask dd/mm/yyyy
+        $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+        //Datemask2 mm/dd/yyyy
+        $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+        //Money Euro
+        $('[data-mask]').inputmask()
+
+        //Date range picker
+        $('#reservation').daterangepicker()
+      })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html lang="vi">
+
+<head>
+  <%- include ('../../partials/head') %>
+  <title>Quản lý thu chi</title>
+  <style>
+    .callout {
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #eee;
+      border-left-width: 5px;
+      border-radius: 3px;
+    }
+
+    .callout-primary {
+      border-left-color: #007BFF;
+    }
+
+    .input-group {
+      margin: 10px 0;
+    }
+  </style>
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="/assets/plugins/daterangepicker/daterangepicker.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="/assets/plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+</head>
+
+<body class="hold-transition sidebar-mini">
+  <div class="wrapper">
+    <%- include ('../../partials/header') %>
+    <%- include ('../../partials/menu') %>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="callout callout-primary">
+            <div class="row">
+              <div class="col-12 mr-auto">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Tìm theo</span>
+                  </div>
+                  <select class="form-control" id="search_find_selection">
+                    <option value="company"> Công ty </option>
+                    <option value="store"> Cửa Hàng </option>
+                  </select>
+                  <select class="form-control" id="search_find_store" style="display:none">
+
+                  </select>
+                </div>
+              </div>
+              <div class="col-12 mt-auto ">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <i class="far fa-calendar-alt"></i>
+                    </span>
+                  </div>
+                  <input type="text" class="form-control float-right" id="reservation">
+                </div>
+              </div>
+              <div class="col-12 mt-auto ">
+                <button type="button" style="margin-left: 10px" class="btn btn-primary float-right"
+                  onclick="get_data(0)">Tìm</button>
+                <button type="button" class="btn btn-primary float-right" data-toggle="modal"
+                  data-target="#create_new">Tạo mới</button>
+              </div>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+      <!-- /.content-header -->
+
+      <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Small boxes (Stat box) -->
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header" style="background-color: black;">
+                  <h3 class="card-title" style="color: whitesmoke;">Lịch sử thu chi</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body table-responsive p-0" id="show_data">
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix" id="pagination">
+                </div>
+                <!-- /.card-footer -->
+              </div>
+              <!-- /.card -->
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Modal create store -->
+    <div class="modal fade" id="create_new" tabindex="-1" role="dialog" aria-labelledby="create_store"
+      data-backdrop="static">
+      <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Tạo hóa đơn mới</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Loại</span>
+                </div>
+                <select class="form-control" id="select_type">
+                  <option value="income">Thu</option>
+                  <option value="outcome">Chi</option>
+                </select>
+              </div>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Nhóm</span>
+                </div>
+                <select class="form-control" id="select_group_income">
+                  <option value="THUTMH">Thu Tiền Mua Hàng</option>
+                  <option value="THUTCN">Thu Tiền Công Nợ</option>
+                  <option value="TTK">Khác</option>
+                </select>
+                <select class="form-control" id="select_group_outcome" style="display:none">
+                  <option value="THANHTNCC">Thanh Toán Nhà Cung Cấp</option>
+                  <option value="THANHTCN">Thanh Toán Công Nợ</option>
+                  <option value="THANHTCNV">Thanh Toán Cho Nhân Viên</option>
+                  <option value="TTK">Khác</option>
+                </select>
+              </div>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Lập cho</span>
+                </div>
+                <select class="form-control" id="isForCompany">
+                  <option value=true>Công ty</option>
+                  <option value=false>Cửa hàng</option>
+                </select>
+              </div>
+              <div class="input-group mb-3" id="show_stores" style="display: none;">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Tên</span>
+                </div>
+                <select class="form-control select2bs4" id="select_store">
+
+                </select>
+              </div>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Bên giao/nhận</span>
+                </div>
+                <select class="form-control" id="select_type_receiver">
+                  <option value="supplier">Nhà cung cấp</option>
+                  <option value="employees">Nhân viên</option>
+                  <option value="customers">Khách hàng</option>
+                  <option value="different">Khác</option>
+                </select>
+              </div>
+              <div class="input-group mb-3" id="show_supplier">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Tên</span>
+                </div>
+                <select class="form-control select2bs4" id="select_supplier">
+
+                </select>
+              </div>
+              <div class="input-group mb-3" id="show_employees" style="display: none;">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Tên</span>
+                </div>
+                <select class="form-control select2bs4" id="select_employees">
+
+                </select>
+              </div>
+			  <div class="input-group mb-3" id="show_customers" style="display: none;">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Tên</span>
+                </div>
+                <select class="form-control select2bs4" id="select_customer">
+
+                </select>
+              </div>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Số tiền thanh toán</span>
+                </div>
+                <input type="currency" value="0" id="payment" class="form-control">
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="accounting">
+                <label class="form-check-label" for="accounting">Hạch toán vào kinh doanh</label>
+              </div>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Ghi chú</span>
+                </div>
+                <textarea class="form-control" rows="5" id="note"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="button" class="btn btn-primary" onclick="create_new();" data-dismiss="modal">Tạo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Modal create store -->
+    <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
+    <%- include ('../../partials/footer') %>
+    <script src="/dist/js/admin_manager/admin_cash_book.js"></script>
+    <!-- InputMask -->
+    <script src="/assets/plugins/moment/moment.min.js"></script>
+    <script src="/assets/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+    <!-- date-range-picker -->
+    <script src="/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- Select2 -->
+    <script src="/assets/plugins/select2/js/select2.full.min.js"></script>
+    <script>
+      $(function () {
+        //Datemask dd/mm/yyyy
+        $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+        //Datemask2 mm/dd/yyyy
+        $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+        //Money Euro
+        $('[data-mask]').inputmask()
+
+        //Date range picker
+        $('#reservation').daterangepicker()
+      })
+    </script>
+</body>
+
+</html>

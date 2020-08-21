@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html lang="vi">
+<head>
+  <%- include ('../../partials/head') %>
+  <title>Admin Store</title>
+  <style>
+  .callout {
+	  padding: 10px;
+	  margin: 10px 0;
+	  border: 1px solid #eee;
+	  border-left-width: 5px;
+	  border-radius: 3px;
+  }
+  .callout-primary {
+	  border-left-color: #007BFF;
+  }
+  .input-group{
+	  margin: 10px 0;
+  }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <%- include ('../../partials/header') %>
+  <%- include ('../../partials/menu') %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+	<!-- Content Header (Page header) -->
+    <section class="content-header">
+		<div class="container-fluid">
+			<div class="callout callout-primary">
+				<div class="row">
+					<div class="col-auto mr-auto">
+					</div>
+					<div class="col-auto">
+						<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#create_store">Tạo cửa hàng</button>
+					</div>
+				</div>
+			</div>
+		</div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content-header -->
+	
+	<!-- Main content -->
+    <section class="content">
+		<div class="container-fluid">
+			<!-- Small boxes (Stat box) -->
+			<div class="card">		
+				<div class="card-body">
+					<img class="card-img-top" id="image" alt="Hình cửa hàng">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text">Tên cửa hàng</div>
+						</div>
+						<input type="text" class="form-control" id="name" placeholder="Nhập tên" aria-label="Name Store" a>
+					</div>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text">Địa chỉ cửa hàng</div>
+						</div>
+						<input type="text" class="form-control" id="address" placeholder="Nhập địa chỉ" aria-label="Address Store">
+					</div>
+				</div>
+				<div class="card-footer">
+					<button type="button" class="btn btn-primary float-right" style="margin-left: 10px" onclick="update_store()">Lưu thay đổi</button>
+					<button type="button" class="btn btn-primary float-right" >Đổi mật khẩu</button>
+				</div>
+			</div>
+		</div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
+  <%- include ('../../partials/footer') %>
+  <script src="/dist/js/admin_store/admin_store_edit.js"></script>
+</body>
+</html>

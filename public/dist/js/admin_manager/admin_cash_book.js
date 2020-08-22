@@ -148,9 +148,9 @@ function render_data(data, pageCount, currentPage, company){
 				<td>${item.isForCompany == true ? "Công ty " + company : "Cửa hàng " + item.store.name}</td>
 				<td>${(item.user_created)}</td>
                 <td>${item.member_name}</td>
-                <td>${item.note ? item.note : ""}</td>
-                <td style="text-align: right;">${item.type == "income" ? item.money.toLocaleString() : (item.money * -1).toLocaleString()} đồng</td>
-				<td style="text-align: right;">${item.current_money.toLocaleString()} đồng</td>
+                <td>${item.note ? reduce_string(item.note) : ""}</td>
+                <td style="text-align: right;">${item.type == "income" ? convert_vnd(item.money) : convert_vnd(item.money * -1)}</td>
+				<td style="text-align: right;">${convert_vnd(item.current_money)}</td>
                 </tr>`
     })
     html+=`</tbody>

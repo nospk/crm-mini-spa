@@ -18,6 +18,12 @@ const CustomerSchema = mongoose.Schema({
 	note:{
         type: String
     },
+	payment:{
+		type: Number, default:0
+	},
+	deb:{
+		type: Number, default:0
+	},
 	company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
 	},

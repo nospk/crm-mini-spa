@@ -82,6 +82,8 @@ class Admin_cash_book extends Controller{
 					str = select_supplier.split(":");
 					member_name = str[0];
 					member_id = str[1];
+					let debt = type == "outcome" ? payment * -1 : payment;
+					let supplier = await Supplier.findOneAndUpdate({company: req.session.user.company._id, _id: member_id},{$inc:{debt:debt}})
 					break;
 				case "employees":
 					str = select_employees.split(":");

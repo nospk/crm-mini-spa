@@ -17,3 +17,7 @@ const reduce_string = (string)=>{
         return string
     }
 }
+const convert_vnd = (number)=>{
+	if(Number.isInteger(number))return number.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+	else return "lỗi";
+}

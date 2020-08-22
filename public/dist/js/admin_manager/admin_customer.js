@@ -58,6 +58,8 @@ function render_data(data, pageCount, currentPage){
                                     <th>Số điện thoại</th>
                                     <th>Địa chỉ</th>
                                     <th>Ghi chú</th>
+									<th>Nợ</th>
+									<th>Tổng mua hàng</th>
                                     <th>Hành Động</th>
                                     </tr>
 		                        </thead>
@@ -69,6 +71,8 @@ function render_data(data, pageCount, currentPage){
                 <td>${item.phone}</td>
                 <td>${reduce_string(item.address)}</td>
                 <td>${reduce_string(item.note)}</td>
+				<td>${convert_vnd(item.debt)}</td>
+				<td>${convert_vnd(item.payment)}</td>
                 <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;
 					<span style="color:red; cursor: pointer" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i></span>		
 				</td>

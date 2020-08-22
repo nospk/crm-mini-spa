@@ -38,16 +38,16 @@ const StoreSchema = mongoose.Schema({
 		type: Number, "default" : 0
 	},
 	serial_NK:{
-		type: Number, "default" : 1
+		type: Number, "default" : 0
 	},
 	serial_TTCT:{
-		type: Number, "default" : 1
+		type: Number, "default" : 0
 	},
 	serial_TTNT:{
-		type: Number, "default" : 1
+		type: Number, "default" : 0
 	},
 	serial_HDBH:{
-		type: Number, "default" : 1
+		type: Number, "default" : 0
 	},
     isActive:{
 		type: Boolean, default:true

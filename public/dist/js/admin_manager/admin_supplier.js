@@ -68,8 +68,8 @@ function render_data(data, pageCount, currentPage){
 				<td>${reduce_string(item.address)}</td>
                 <td>${item.phone}</td>
                 <td>${item.email}</td>
-                <td>${(item.debt).toLocaleString()}</td>
-				<td>${(item.totalMoney).toLocaleString()}</td>
+                <td>${convert_vnd(item.debt)}</td>
+				<td>${convert_vnd(item.totalMoney)}</td>
                 <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;
 					<span style="color:red; cursor: pointer" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i></span>		
 				</td>

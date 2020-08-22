@@ -17,19 +17,19 @@ class Common {
 			let company;
             switch(chartCode) {
 				case 'NH':
-					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_NH:1}});
+					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_NH:1}},{new: true});
 					resolve('NH_'+Number(company.serial_NH));
 					break; 
 				case 'TTCT':
-					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_TTCT:1}});
+					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_TTCT:1}},{new: true});
 					resolve('TTCT_'+Number(company.serial_TTCT));
 					break; 
 				case 'TTNT':
-					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_TTNT:1}});
+					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_TTNT:1}},{new: true});
 					resolve('TTNT_'+Number(company.serial_TTNT));
 					break;
 				case 'XH':
-					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_XH:1}});
+					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_XH:1}},{new: true});
 					resolve('XH_'+Number(company.serial_XH));
 					break; 
 				default:
@@ -59,19 +59,19 @@ class Common {
 			let store;
             switch(chartCode) {
 				case 'NK':
-					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_NK:1}});
+					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_NK:1}},{new: true});
 					resolve('NK_'+Number(store.serial_NK));
 					break; 
 				case 'TTNT':
-					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_TTNT:1}});
+					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_TTNT:1}},{new: true});
 					resolve('TTNT_'+Number(store.serial_TTNT));
 					break; 
 				case 'TTCT':
-					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_TTCT:1}});
+					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_TTCT:1}},{new: true});
 					resolve('TTCT_'+Number(store.serial_TTCT));
 					break;
 				case 'HDBH':
-					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_BH:1}});
+					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_BH:1}},{new: true});
 					resolve('BH_'+Number(store.serial_BH));
 					break; 
 				default:

@@ -16,6 +16,7 @@ function get_store(){
                 $('#name').val(data.data.name);
 				$('#image').attr("src", data.data.image_store)
 				$('#address').val(data.data.address);
+				$('#username').val(data.data.username);
             }else{
                 Swal.fire({
                     title: data.error,
@@ -54,10 +55,10 @@ function update_store(){
                         showConfirmButton: false,
                         timer: 3000
                     }).then((result)=>{
-                        get_store()
+                        location.reload();
                     })
                     .catch(timer => {
-                        get_store()
+                        location.reload();
                     });    
                 }else{
                     Swal.fire({

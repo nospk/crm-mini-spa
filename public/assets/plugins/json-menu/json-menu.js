@@ -237,6 +237,13 @@ function activeFull() {
                 "css_class": "nav-icon far fa-circle",
             },
 			{
+                "id": "18",
+                "name": "Quản lý kho cửa hàng",
+                "url": "/admin_store_stock",
+                "parent_id": "7",
+                "css_class": "nav-icon far fa-circle",
+            },
+			{
                 "id": "10",
                 "name": "Quản Lý",
                 "url": "#",

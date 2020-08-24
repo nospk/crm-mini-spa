@@ -1,8 +1,6 @@
 const Controller = require('../../../core/controller');
 const Store = require('../../models/store');
 const Common = require("../../../core/common");
-const Product_service = require('../../models/product_service');
-const Store_stocks = require('../../models/store_stocks');
 const bcrypt = require('bcrypt-nodejs');
 class Admin_store_edit extends Controller{
     static show(req, res){

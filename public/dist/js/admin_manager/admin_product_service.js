@@ -60,11 +60,13 @@ function render_data(data, pageCount, currentPage){
 									<th>Giá vốn</th>
                                     <th>Giá bán</th>
                                     <th>Trạng thái</th>
+									<th>Tồn kho</th>
                                     <th>Hành Động</th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
 	data.forEach(item =>{
+		console.log(item.quantity)
 		html+=`<tr>
                 <td>${item.name}</td>
 				<td>${item.type == 'product'? "Sản phẩm" : "Dịch vụ"}</td>
@@ -72,6 +74,7 @@ function render_data(data, pageCount, currentPage){
 				<td>${(item.cost_price).toLocaleString()}</td>
 				<td>${(item.price).toLocaleString()}</td>
                 <td>${item.isSale ? "Đang kinh doanh" : "Ngừng kinh doanh"}</td>
+				<td>${item.type == 'product'? item.quantity : ""}</td>
                 <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;
 					<span style="color:red; cursor: pointer" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i></span>		
 				</td>

@@ -18,6 +18,12 @@ const reduce_string = (string)=>{
     }
 }
 const convert_vnd = (number)=>{
-	if(Number.isInteger(number))return number.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
-	else return "lỗi";
+	if ($('html').is(':lang(vi)')) {
+		if(Number.isInteger(number))return number.toLocaleString('it-IT', {style : 'currency', currency : 'VND'});
+		else return "lỗi";
+	}else{
+		if(Number.isInteger(number))return number.toLocaleString('en-US', {style:'currency', currency:'USD'});
+		else return "error";
+	}
+	
 }

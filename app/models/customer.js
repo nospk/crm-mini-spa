@@ -21,7 +21,7 @@ const CustomerSchema = mongoose.Schema({
 	payment:{
 		type: Number, default:0
 	},
-	deb:{
+	debt:{
 		type: Number, default:0
 	},
 	company:{

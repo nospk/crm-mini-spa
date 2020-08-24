@@ -58,7 +58,6 @@ class Admin_cash_book extends Controller{
 	static async create_new(req, res){
 		try{
 			const {type, type_receiver, select_supplier, select_employees, isForCompany, select_store, payment, note, group, accounting, select_customer} = req.body;
-			console.log(typeof(isForCompany));
 			let serial, current_money, member_name, member_id, str;
 			if(isForCompany == true){
 				if(type == "outcome"){
@@ -77,12 +76,14 @@ class Admin_cash_book extends Controller{
 					serial = await Common.get_serial_store(select_store, 'TTNT')
 				}
 			}
+			let debt
+			console.log(type)
 			switch(type_receiver){
 				case "supplier":
 					str = select_supplier.split(":");
 					member_name = str[0];
 					member_id = str[1];
-					let debt = type == "outcome" ? payment * -1 : payment;
+					debt = type == "outcome" ? payment * -1 : payment;
 					let supplier = await Supplier.findOneAndUpdate({company: req.session.user.company._id, _id: member_id},{$inc:{debt:debt}})
 					break;
 				case "employees":
@@ -94,6 +95,8 @@ class Admin_cash_book extends Controller{
 					str = select_customer.split(":");
 					member_name = str[0];
 					member_id = str[1];
+					debt = type == "outcome" ? payment * -1 : payment;
+					let customer = await Customer.findOneAndUpdate({company: req.session.user.company._id, _id: member_id},{$inc:{debt:debt}})
 					break;
 				default:
 					member_name = "Khác";

@@ -3,6 +3,7 @@ const Store = require('../../models/store');
 const Common = require("../../../core/common");
 const Product_service = require('../../models/product_service');
 const Store_stocks = require('../../models/store_stocks');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
 class Admin_store_stock extends Controller{
     static show(req, res){
@@ -14,7 +15,7 @@ class Admin_store_stock extends Controller{
 		try{
 			let {search}=req.body
 			let match = {
-				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id), isActive: true} ] 
+				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id), type: "product", isActive: true} ] 
 			}
 			if(search){
 				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
@@ -27,11 +28,16 @@ class Admin_store_stock extends Controller{
 			let pages = await Product_service.find(match).countDocuments()
 			// find total pages
 			let pageCount = Math.ceil(pages/pageSize)
-			let data = await Product_service.aggregate([{$match:match},{$skip:(pageSize * currentPage) - pageSize},{$limit:pageSize}])
-			Admin_product_service.sendData(res, {data, pageCount, currentPage});
+			let data = await Product_service.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
+				path: 'stocks_in_store',
+				populate: { path: 'Store_stocks' },
+				match: { store_id: req.session.store_id },
+				select: 'quantity product_of_sale product_of_service product_of_undefined'
+			});
+			Admin_store_stock.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
 			console.log(err)
-			Admin_product_service.sendError(res, err, err.message);
+			Admin_store_stock.sendError(res, err, err.message);
 		}
 	}
 	static async update_stock(req, res){

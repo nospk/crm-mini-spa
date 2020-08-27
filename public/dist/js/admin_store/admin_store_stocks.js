@@ -1,6 +1,9 @@
 
 $( document ).ready(()=>{
 	get_product();
+	$('#product_classification').on('show.bs.modal', function (e) {
+		get_product_of_undefined()
+	})
 })
 let page_now;
 function get_product(){
@@ -8,7 +11,7 @@ function get_product(){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_store_stock/get',
+        url:'/admin_store_stocks/get',
         method:'POST',
         data: data,
         success: function(data){
@@ -50,7 +53,6 @@ function render_data(data, pageCount, currentPage){
 		                        </thead>	
 		                        <tbody>`;
 	data.forEach(item =>{
-		console.log(item.quantity)
 		html+=`<tr>
                 <td>${item.name}</td>
                 <td>${item.number_code}</td>
@@ -108,7 +110,7 @@ function update_store(){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_store_stock/update_store',
+        url:'/admin_store_stocks/update_store',
         method:'POST',
         data: data,
         success: function(data){
@@ -142,4 +144,60 @@ function update_store(){
                 }
             }
     })
+}
+function get_product_of_undefined(){
+	let data = {
+        _csrf: $('#_csrf').val()
+    }
+    $.ajax({
+        url:'/admin_store_stocks/get_product_of_undefined',
+        method:'POST',
+        data: data,
+        success: function(data){
+                if(data.status == 1){
+                    render_data_classification(data.data)
+                }else{
+                    Swal.fire({
+                        title: data.error,
+                        text: data.message,
+                        icon: "error",
+                        showConfirmButton: false,    
+                        timer: 3000
+                    }).then((result)=>{
+                        // cho vào để ko báo lỗi uncaught
+                    })
+                    .catch(timer => {
+                        // cho vào để ko báo lỗi uncaught
+                    }); 
+                    
+                }
+            }
+    })
+}
+function render_data_classification(data){
+	let html = `        
+		                    <table class="table table-hover text-nowrap">
+		                        <thead>
+                                    <tr>
+                                    <th>Tên</th>
+									<th>Mã số</th>
+									<th>Hàng chưa phân loại</th>
+									<th>Hàng bán</th>
+									<th>Hàng dịch vụ</th>
+                                    </tr>
+		                        </thead>	
+		                        <tbody>`;
+	data.forEach(item =>{
+		html+=`<tr>
+                <td>${item.product.name}</td>
+                <td>${item.product.number_code}</td>
+				<td><span>${item.product_of_undefined}</span></td>
+				<td><input type="number" class="form-control form-control-sm" min="0" value="0"></td>
+				<td><input type="number" class="form-control form-control-sm" min="0" value="0"></td>
+                </tr>`
+    })
+    html+=`</tbody>
+                </table>
+            `;
+    $('#show_product_classification').html(html);
 }

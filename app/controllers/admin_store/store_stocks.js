@@ -9,7 +9,7 @@ class Admin_store_stock extends Controller{
     static show(req, res){
         Admin_store_stock.setLocalValue(req,res);
 		//console.log(req.session);
-        res.render('./pages/admin_store/store_stock');
+        res.render('./pages/admin_store/store_stocks');
     }
 	static async get_data(req, res){
 		try{
@@ -50,6 +50,19 @@ class Admin_store_stock extends Controller{
 			Admin_store_stock.sendError(res, err, err.message);
 		}
 		
+	}
+	static async get_product_of_undefined(req, res){
+		try{
+			let store = await Store_stocks.find({company: req.session.user.company._id, store_id: req.session.store_id, product_of_undefined:{$gt: 0}}).populate({
+				path: 'product',
+				populate: { path: 'Product_services' },
+				select: 'name number_code'
+			});
+			Admin_store_stock.sendData(res, store);
+		}catch(err){
+			console.log(err.message)
+			Admin_store_stock.sendError(res, err, err.message);
+		}
 	}
 }
 

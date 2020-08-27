@@ -239,7 +239,7 @@ function activeFull() {
 			{
                 "id": "18",
                 "name": "Quản lý kho cửa hàng",
-                "url": "/admin_store_stock",
+                "url": "/admin_store_stocks",
                 "parent_id": "7",
                 "css_class": "nav-icon far fa-circle",
             },

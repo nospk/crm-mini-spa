@@ -5,10 +5,9 @@ const Product_service = require('../../models/product_service');
 const Store_stocks = require('../../models/store_stocks');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
-class Admin_store_stock extends Controller{
+class Admin_store_stocks extends Controller{
     static show(req, res){
-        Admin_store_stock.setLocalValue(req,res);
-		//console.log(req.session);
+        Admin_store_stocks.setLocalValue(req,res);
         res.render('./pages/admin_store/store_stocks');
     }
 	static async get_data(req, res){
@@ -34,36 +33,38 @@ class Admin_store_stock extends Controller{
 				match: { store_id: req.session.store_id },
 				select: 'quantity product_of_sale product_of_service product_of_undefined'
 			});
-			Admin_store_stock.sendData(res, {data, pageCount, currentPage});
+			Admin_store_stocks.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
 			console.log(err)
-			Admin_store_stock.sendError(res, err, err.message);
+			Admin_store_stocks.sendError(res, err, err.message);
 		}
 	}
-	static async update_stock(req, res){
+	static async update_stocks(req, res){
 		try{
-			let store = await Store.findOneAndUpdate({company: req.session.user.company._id, _id: req.session.store_id},{$set:{name:req.body.name, address:req.body.address}},{new: true})
-			req.session.store_name = store.name;
-			Admin_store_stock.sendMessage(res, "Đã cập nhật thành công");
+			const {products} = req.body
+			products.forEach(async item => {
+				Store_stocks.findOneAndUpdate({company: req.session.user.company._id, _id: item.id}, {$inc: {product_of_sale:item.product_of_sale, product_of_service: item.product_of_service, product_of_undefined: (item.product_of_sale+item.product_of_service) * -1}}).exec()
+			})
+			Admin_store_stocks.sendMessage(res, "Đã cập nhật thành công");
 		}catch(err){
 			console.log(err.message)
-			Admin_store_stock.sendError(res, err, err.message);
+			Admin_store_stocks.sendError(res, err, err.message);
 		}
 		
 	}
 	static async get_product_of_undefined(req, res){
 		try{
-			let store = await Store_stocks.find({company: req.session.user.company._id, store_id: req.session.store_id, product_of_undefined:{$gt: 0}}).populate({
+			let store = await Store_stocks.find({company: req.session.user.company._id, store_id: req.session.store_id, product_of_undefined:{$gt: 0}}).sort({createdAt: -1}).populate({
 				path: 'product',
 				populate: { path: 'Product_services' },
 				select: 'name number_code'
 			});
-			Admin_store_stock.sendData(res, store);
+			Admin_store_stocks.sendData(res, store);
 		}catch(err){
 			console.log(err.message)
-			Admin_store_stock.sendError(res, err, err.message);
+			Admin_store_stocks.sendError(res, err, err.message);
 		}
 	}
 }
 
-module.exports = Admin_store_stock
+module.exports = Admin_store_stocks

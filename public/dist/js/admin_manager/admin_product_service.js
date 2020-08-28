@@ -233,7 +233,7 @@ function edit_data(id){
                                         <span class="info-box-text">Cửa hàng ${data.data.stocks_in_store[i].store_name}</span>
 										<span class="info-box-number">Tổng hàng : ${data.data.stocks_in_store[i].quantity}</span>
                                         <span class="info-box-text">Hàng bán:</span><span class="info-box-number">${data.data.stocks_in_store[i].product_of_service}</span>
-										<span class="info-box-text">Hàng dịch vụ:</span><span class="info-box-number">${data.data.stocks_in_store[i].product_of_safe}</span>
+										<span class="info-box-text">Hàng dịch vụ:</span><span class="info-box-number">${data.data.stocks_in_store[i].product_of_sale}</span>
 										<span class="info-box-text">Hàng chưa phân loại:</span><span class="info-box-number">${data.data.stocks_in_store[i].product_of_undefined}</span>
                                         </div>
                                 </div>`

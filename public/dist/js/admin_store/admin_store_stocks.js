@@ -177,7 +177,7 @@ function get_product_of_undefined(){
 function render_data_classification(data){
 	let html = `        
 		                    <table class="table table-hover text-nowrap">
-		                        <thead>
+		                        <thead class="thead-dark">
                                     <tr>
                                     <th>Tên</th>
 									<th>Mã số</th>
@@ -190,14 +190,116 @@ function render_data_classification(data){
 	data.forEach(item =>{
 		html+=`<tr>
                 <td>${item.product.name}</td>
-                <td>${item.product.number_code}</td>
-				<td><span>${item.product_of_undefined}</span></td>
-				<td><input type="number" class="form-control form-control-sm" min="0" value="0"></td>
-				<td><input type="number" class="form-control form-control-sm" min="0" value="0"></td>
+                <td><span class="number-code">${item.product.number_code}</span></td>
+				<td><input style="border-style:none;width: 100px;" disabled id="quantity_${item.product.number_code}" value="${item.product_of_undefined}"></td>
+				<td><input type="number" class="form-control form-control-sm" min="0" value="0" onchange="change_product_sale('${item.product.number_code}')" id="quantity_sale_${item.product.number_code}"></td>
+				<td><input type="number" class="form-control form-control-sm" min="0" value="0" onchange="change_product_service('${item.product.number_code}')" id="quantity_service_${item.product.number_code}"></td>
+				<input type="hidden" id="default_quantity_${item.product.number_code}"value="${item.product_of_undefined}" >
+				<input type="hidden" id="id_${item.product.number_code}"value="${item._id}" >
                 </tr>`
     })
     html+=`</tbody>
                 </table>
             `;
     $('#show_product_classification').html(html);
+}
+
+function change_product_sale(number_code){
+	let quantity = $(`#default_quantity_${number_code}`).val()
+	let change_number = $(`#quantity_sale_${number_code}`).val()
+	let quantity_service = $(`#quantity_service_${number_code}`).val()
+	if(quantity - change_number - quantity_service >= 0){
+		$(`#quantity_${number_code}`).val(quantity - change_number - quantity_service)
+	}else{
+		$(`#quantity_sale_${number_code}`).val(quantity - quantity_service )
+		$(`#quantity_${number_code}`).val(0)
+	}
+	
+}
+function change_product_service(number_code){
+	let quantity = $(`#default_quantity_${number_code}`).val()
+	let change_number = $(`#quantity_service_${number_code}`).val()
+	let quantity_sale = $(`#quantity_sale_${number_code}`).val()
+	if(quantity - change_number - quantity_sale >= 0){
+		$(`#quantity_${number_code}`).val(quantity - change_number - quantity_sale)
+	}else{
+		$(`#quantity_service_${number_code}`).val(quantity - quantity_sale)
+		$(`#quantity_${number_code}`).val(0)
+	}
+	
+}
+
+function get_list_product(){
+    let list_product = [];
+    $(".number-code").each(function () {                  
+        list_product.push($(this).text()); 
+    });
+    let data = [];
+    list_product.forEach((number_code)=>{
+		if($(`#quantity_sale_${number_code}`).val() > 0 || $(`#quantity_service_${number_code}`).val() > 0){
+			data.push({
+				product_of_sale: Number($(`#quantity_sale_${number_code}`).val()),
+				product_of_service: Number($(`#quantity_service_${number_code}`).val()),
+				id: $(`#id_${number_code}`).val()
+			})
+		}
+    })
+    return data;
+}
+function send_data(){
+	let data = {
+        products: get_list_product(),
+        _csrf: $('#_csrf').val()
+    }
+    if(data.products.length >= 1){
+        $.ajax({
+            url:'/admin_store_stocks/update_stocks',
+            method:'POST',
+            contentType: "application/json; charset=utf-8",
+			data: JSON.stringify(data),
+            success: function(data){
+                if(data.status == 1){
+                    Swal.fire({
+                        title: "Thao tác thành công",
+                        text: data.message,
+                        icon: "info",
+                        showConfirmButton: false,
+                        timer: 3000
+                    }).then((result)=>{
+                        get_product()
+                    })
+                    .catch(timer => {
+                        get_product()
+                    });    
+                }else{
+                    Swal.fire({
+                        title: data.error,
+                        text: data.message,
+                        icon: "error",
+                        showConfirmButton: false,    
+                        timer: 3000
+                    }).then((result)=>{
+                        // cho vào để ko báo lỗi uncaught
+                    })
+                    .catch(timer => {
+                        // cho vào để ko báo lỗi uncaught
+                    }); 
+                    
+                }
+            }
+        })
+    }else{
+        Swal.fire({
+            title: 'Không có hàng chưa phân loại',
+            text: 'Vui lòng phân loại hàng vào lần sau',
+            icon: "error",
+            showConfirmButton: false,    
+            timer: 3000
+        }).then((result)=>{
+            // cho vào để ko báo lỗi uncaught
+        })
+        .catch(timer => {
+            // cho vào để ko báo lỗi uncaught
+        }); 
+    }
 }

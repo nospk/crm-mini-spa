@@ -5,7 +5,6 @@ function onFocus(e){
 
 function onBlur(e){
   let value = Number(e.target.value.replace(/[^0-9 ]/g, ""));
-  console.log(value)
   e.target.value = value 
     ? value.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
     : ''
@@ -25,5 +24,9 @@ const convert_vnd = (number)=>{
 		if(Number.isInteger(number))return number.toLocaleString('en-US', {style:'currency', currency:'USD'});
 		else return "error";
 	}
+	
+}
+const convert_number = (string)=>{
+  return Number(string.replace(/[^0-9 ]/g, ""))
 	
 }

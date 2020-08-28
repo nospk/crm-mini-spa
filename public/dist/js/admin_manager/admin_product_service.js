@@ -1,5 +1,10 @@
 $( document ).ready(()=>{
-	get_data();
+    get_data();
+    const currencyInput = document.querySelectorAll('input[type="currency"]')
+    currencyInput.forEach(function(element) {
+        element.addEventListener('focus', onFocus)
+        element.addEventListener('blur', onBlur)
+    });
 })
 let page_now;
 
@@ -66,13 +71,12 @@ function render_data(data, pageCount, currentPage){
 		                        </thead>
 		                        <tbody>`;
 	data.forEach(item =>{
-		console.log(item.quantity)
 		html+=`<tr>
                 <td>${item.name}</td>
 				<td>${item.type == 'product'? "Sản phẩm" : "Dịch vụ"}</td>
                 <td>${item.number_code}</td>
-				<td>${(item.cost_price).toLocaleString()}</td>
-				<td>${(item.price).toLocaleString()}</td>
+				<td>${convert_vnd(item.cost_price)}</td>
+				<td>${convert_vnd(item.price)}</td>
                 <td>${item.isSale ? "Đang kinh doanh" : "Ngừng kinh doanh"}</td>
 				<td>${item.type == 'product'? item.quantity : ""}</td>
                 <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;

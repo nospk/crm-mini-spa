@@ -92,7 +92,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- /.content-wrapper -->
 
 	<!-- Modal create store -->
-	<div class="modal fade" id="create_new" tabindex="-1" role="dialog" aria-labelledby="create_store" data-backdrop="static">
+	<div class="modal fade" id="create_new" tabindex="-1" role="dialog" aria-labelledby="create_new" data-backdrop="static">
 	  <div class="modal-dialog modal-xl" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
@@ -126,13 +126,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<div class="input-group-prepend">
                         <span class="input-group-text">Số tiền thanh toán</span>
                     </div>
-                    <input type="number" step="1000" min="0" onchange="change_debt()" value="0" id="payment" class="form-control">
+                    <input type="currency" step="1000" min="0" onchange="change_debt()" value="0" id="payment" class="form-control">
                 </div>		
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">
                         <span class="input-group-text">Số tiền còn nợ</span>
                     </div>
-                    <input type="number" disabled id="debt" value="0" class="form-control">
+                    <input type="currency" disabled id="debt" value="0" class="form-control">
                 </div>				
             </div>
             <div class="card">
@@ -140,7 +140,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <h3 class="card-title">Danh sách hàng</h3>
                   <div class="card-tools">
                     <div class="input-group input-group-sm" style="width: 300px;">
-                        <span> Tổng tiền hàng: <span id="total_get_goods">0</span>  đồng</span>
+                        <span> Tổng tiền hàng: <span id="total_get_goods">0</span></span>
                     </div>
                   </div>
                 </div>

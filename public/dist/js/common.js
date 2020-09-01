@@ -1,10 +1,10 @@
 function onFocus(e){
-  let value = Number(e.target.value.replace(/[^0-9 ]/g, ""));
+  let value = convert_number(e.target.value);
   e.target.value = value ? value : ''
 }
 
 function onBlur(e){
-  let value = Number(e.target.value.replace(/[^0-9 ]/g, ""));
+  let value = convert_number(e.target.value);
   e.target.value = value 
     ? value.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
     : ''

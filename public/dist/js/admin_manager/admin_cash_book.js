@@ -223,7 +223,7 @@ function create_new(){
 		select_customer: $('#create_new #select_customer').val(),
         isForCompany: $('#create_new #isForCompany').val() == "true" ? true : false,
 		select_store: $('#create_new #select_store').val(),
-		payment: Number($('#create_new #payment').val().replace(/[^0-9 ]/g, "")),
+		payment: convert_number($('#create_new #payment').val()),
         note: $('#create_new #note').val().trim(),
         accounting: $('#create_new #accounting').is(":checked"),
 		group: $("#select_type").val() == "income" ? $("#select_group_income").val() : $("#select_group_outcome").val(),

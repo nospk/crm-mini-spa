@@ -12,8 +12,8 @@ function create_new(){
     let data = {
         name: $('#create_new #name').val().trim(),
         type: $('#create_new #type_product_service').val(),
-        price: $('#create_new #price').val(),
-		cost_price: $('#create_new #cost_price').val(),
+        price: convert_number($('#create_new #price').val()),
+		cost_price: convert_number($('#create_new #cost_price').val()),
         number_code: $('#create_new #number_code').val(),
         description: $('#create_new #description').val(),
         _csrf: $('#_csrf').val()
@@ -202,8 +202,8 @@ function edit_data(id){
         success: function(data){
 			if(data.status == 1){
 				$('#edit_data #edit_name').val(data.data.name);
-                $('#edit_data #edit_price').val(data.data.price);
-                $('#edit_data #edit_cost_price').val(data.data.cost_price);
+                $('#edit_data #edit_price').val(convert_vnd(data.data.price));
+                $('#edit_data #edit_cost_price').val(convert_vnd(data.data.cost_price));
 				$('#edit_data #edit_type_product_service').val(data.data.type),
 				$('#edit_data #edit_number_code').val(data.data.number_code);
 				$('#edit_data #edit_description').val(data.data.description);
@@ -252,8 +252,8 @@ function edit_data(id){
 function update_data(){
 	let data = {
         name: $('#edit_data #edit_name').val().trim(),
-        cost_price: $('#edit_data #edit_cost_price').val(),
-        price: $('#edit_data #edit_price').val(),
+        cost_price: convert_number($('#edit_data #edit_cost_price').val()),
+        price: convert_number($('#edit_data #edit_price').val()),
         number_code: $('#edit_data #edit_number_code').val(),
         description: $('#edit_data #edit_description').val(),
 		isSale: $('#edit_data #isSale').val(),

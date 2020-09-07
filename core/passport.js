@@ -4,7 +4,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const User = require('../app/models/user');
 const Company = require('../app/models/company');
 const bcrypt = require('bcrypt-nodejs');
-
+const Store = require('../app/models/store');
 
 
 //expose this function to our app using module.exports
@@ -18,14 +18,20 @@ module.exports = function (passport) {
 
     // used to serialize the user for the session
     passport.serializeUser(function (user, done) {
-        done(null, user.id);
+        done(null, user);
     });
 
     // used to deserialize the user
-    passport.deserializeUser(function (id, done) {
-        User.findById(id, function (err, user) {
-            done(err, user);
-        });
+    passport.deserializeUser(function (user, done) {
+		if(!user.image_store){
+			User.findById(user._id, function (err, user) {
+				done(err, user);
+			});
+		}else{
+			Store.findById(user._id, function (err, user) {
+				done(err, user);
+			});
+		} 
     });
 
     // =========================================================================
@@ -97,13 +103,13 @@ module.exports = function (passport) {
 
 
     // =========================================================================
-    // LOCAL LOGIN =============================================================
+    // ADMIN LOGIN =============================================================
     // =========================================================================
     // we are using named strategies since we have one for login and one for signup
-    // by default, if there was no name, it would just be called 'local'
+    // by default, if there was no name, it would just be called 'admin'
 
-    passport.use('local-login', new LocalStrategy({
-        // by default, local strategy uses username and password, we will override with email
+    passport.use('admin-login', new LocalStrategy({
+        // by default, admin strategy uses username and password, we will override with email
         usernameField: 'username',
         passwordField: 'password',
         passReqToCallback: true // allows us to pass back the entire request to the callback
@@ -128,6 +134,38 @@ module.exports = function (passport) {
                 // all is well, return successful user
                 req.session.user = user;
                 return done(null, user);
+			}catch(err){
+				// if there are any errors, return the error before anything else
+				return done(null, false, req.flash('error', err)); // req.flash is the way to set flashdata using connect-flash
+			}          
+        }));
+		
+	// =========================================================================
+    // STORE LOGIN =============================================================
+    // =========================================================================	
+		
+	passport.use('store-login', new LocalStrategy({
+        // by default, store strategy uses username and password, we will override with email
+        usernameField: 'username',
+        passwordField: 'password',
+        passReqToCallback: true // allows us to pass back the entire request to the callback
+    },
+        async function (req, username, password, done) { // callback with email and password from our form
+			try{
+				let store = await Store.findOne({ 'username': username })
+				// if no store is found, return the message
+                if (!store)
+                    return done(null, false, req.flash('error', 'Sorry Your Account Not Exits ,Please Create Account.')); // req.flash is the way to set flashdata using connect-flash
+
+                // if the store is found but the password is wrong
+                if (!store.validPassword(password))
+                    return done(null, false, req.flash('error', 'Email and Password Does Not Match.')); // create the loginMessage and save it to session as flashdata
+                if (store.isActive === false)
+                    return done(null, false, req.flash('error', 'Your Account Not Activated ,Please Check Your Email')); // create the loginMessage and save it to session as flashdata
+
+                // all is well, return successful store
+                req.session.store = store;
+                return done(null, store);
 			}catch(err){
 				// if there are any errors, return the error before anything else
 				return done(null, false, req.flash('error', err)); // req.flash is the way to set flashdata using connect-flash

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt   = require('bcrypt-nodejs');
 const StoreSchema = mongoose.Schema({	
 	name: {
         type: String
@@ -53,5 +54,9 @@ const StoreSchema = mongoose.Schema({
 		type: Boolean, default:true
 	}
 }, { timestamps: true });
+
+StoreSchema.methods.validPassword = function(password) {
+ return bcrypt.compareSync(password, this.password);
+};
 
 module.exports = mongoose.model('Stores', StoreSchema);

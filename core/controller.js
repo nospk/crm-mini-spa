@@ -14,15 +14,16 @@ class Controller {
 		if (req.isAuthenticated()) {
 			next();
 		} else {
+			req.session.destroy();
 			res.redirect('/login');
 		}
 	}
 	static loggedInadmin(req, res, next) {
-		if (req.isAuthenticated() && req.session.user.role_id == '0') {
+		if (req.isAuthenticated()) {
 			next();
 		} else {
 			req.session.destroy();
-			res.redirect('/login');
+			res.redirect('/admin/login');
 		}
 	}
 	//set menu for client
@@ -40,6 +41,7 @@ class Controller {
 			}else{
 				res.locals.menu = "login";
 			}
+			res.locals.logout = "/admin/logout";
 		} else {
 			res.locals.user_role = "";
 			res.locals.menu = "";

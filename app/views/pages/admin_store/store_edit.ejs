@@ -64,7 +64,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				</div>
 				<div class="card-footer">
 					<button type="button" class="btn btn-primary float-right" style="margin-left: 10px" onclick="update_store()">Lưu thay đổi</button>
-					<button type="button" class="btn btn-primary float-right" >Đổi mật khẩu</button>
+					<button type="button" class="btn btn-primary float-right"  data-toggle="modal" data-target="#change_password">Đổi mật khẩu</button>
 				</div>
 			</div>
 		</div><!-- /.container-fluid -->
@@ -72,7 +72,32 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-
+  <!-- Modal create store -->
+	<div class="modal fade" id="change_password" tabindex="-1" role="dialog" aria-labelledby="change_password" data-backdrop="static">
+	  <div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title">Đổi mật khẩu</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text">Mật khẩu</div>
+				</div>
+				<input type="text" class="form-control" id="password" placeholder="Nhập mật khẩu" aria-label="Address Password" >
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+			<button type="button" class="btn btn-primary" onclick="change_password();" data-dismiss="modal">Đổi</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+  <!-- End Modal create store -->
   <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
   <%- include ('../../partials/footer') %>
   <script src="/dist/js/admin_store/admin_store_edit.js"></script>

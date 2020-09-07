@@ -5,10 +5,8 @@ class Base extends Controller{
 		if(req.session.user){
 			res.redirect('/admin_store');
 		}else{
-			console.log(req.session);
-			res.redirect('/store_abc');
-		}
-        
+			res.redirect('/store_sale');
+		}   
     }
     static logout(req, res) {
 		req.session.destroy();

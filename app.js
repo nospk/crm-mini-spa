@@ -91,6 +91,11 @@ fs.readdirSync(routeAdminStorePath).forEach(function(file) {
     let route=routeAdminStorePath+file;
     require(route)(app);
 });
+const routeStorePath="./router/store/";
+fs.readdirSync(routeStorePath).forEach(function(file) {
+    let route=routeStorePath+file;
+    require(route)(app);
+});
 
 //Catch not found
 app.use(error_handler.notFound);

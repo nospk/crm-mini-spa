@@ -19,7 +19,7 @@ class Controller {
 		}
 	}
 	static loggedInadmin(req, res, next) {
-		if (req.isAuthenticated()) {
+		if (req.isAuthenticated() && Common.isset(req.session.user) != null) {
 			next();
 		} else {
 			req.session.destroy();
@@ -28,24 +28,32 @@ class Controller {
 	}
 	//set menu for client
 	static setLocalValue(req, res) {
-		if(Common.isset(req.session.store_name) != null){
-			res.locals.store_name = 'Cửa hàng ' + req.session.store_name;
-		}else{
-			res.locals.store_name = ''
-		}
-		if(Common.isset(req.session.user) != null) {
-			res.locals.user_role = req.session.user.role_id;
-			res.locals.company_name = req.session.user.company.name
-			if(Common.isset(req.session.store_id) != null && req.session.user.role_id == '0'){
-				res.locals.menu = "active";
-			}else{
-				res.locals.menu = "login";
-			}
-			res.locals.logout = "/admin/logout";
-		} else {
-			res.locals.user_role = "";
-			res.locals.menu = "";
+		if(req.session.store){
+			res.locals.store_name = 'Cửa hàng ' + req.session.store.name;
+			res.locals.menu = "store";
 			res.locals.company_name = 'Nospk\'s software'
+			res.locals.user_role = "";
+			res.locals.logout = "/logout";
+		}else{
+			if(Common.isset(req.session.store_name) != null){
+				res.locals.store_name = 'Cửa hàng ' + req.session.store_name;
+			}else{
+				res.locals.store_name = ''
+			}
+			if(Common.isset(req.session.user) != null) {
+				res.locals.user_role = req.session.user.role_id;
+				res.locals.company_name = req.session.user.company.name
+				if(Common.isset(req.session.store_id) != null && req.session.user.role_id == '0'){
+					res.locals.menu = "admin";
+				}else{
+					res.locals.menu = "login";
+				}
+				res.locals.logout = "/admin/logout";
+			} else {
+				res.locals.user_role = "";
+				res.locals.menu = "";
+				res.locals.company_name = 'Nospk\'s software'
+			}
 		}
 	}
 	static sendError(res, err, msg)	 {

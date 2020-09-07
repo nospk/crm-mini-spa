@@ -7,7 +7,7 @@ async function loadMenu() {
 		data = logoutShort();
 	} else if (menuObj == "login" && user_role == '0') {
 		data = loginFull();
-    } else if (menuObj == "active" && user_role == '0') {
+    } else if (menuObj == "admin" && user_role == '0') {
 		data = activeFull();
     }
 	var builddata = function () {

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html lang="vi">
+<head>
+  <%- include ('../../partials/head') %>
+  <title>Bán hàng</title>
+</head>
+<body class="hold-transition sidebar-mini sidebar-collapse">
+<div class="wrapper">
+  <%- include ('../../partials/header') %>
+  <%- include ('../../partials/menu') %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+	<!-- Main content -->
+    <section class="content">
+		<div class="container-fluid">
+			<!-- Small boxes (Stat box) -->
+			<div class="row" style="height: 70vh;">
+				<div class="col-8" style="background-color: blue;">col-8</div>
+				<div class="col-4" style="background-color: red;">col-4</div>
+			</div>
+			<div class="row" style="height: 17vh;">
+				<div class="col-12" style="background-color: green;">col-12</div>
+			</div>
+		</div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
+  <%- include ('../../partials/footer') %>
+  <script src="/dist/js/store/store_sale.js"></script>
+</body>
+</html>

@@ -44,7 +44,7 @@ function update_store(){
     }
     $.ajax({
         url:'/admin_store_edit/update_store',
-        method:'POST',
+        method:'PUT',
         data: data,
         success: function(data){
                 if(data.status == 1){

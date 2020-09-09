@@ -1,5 +1,6 @@
 $( document ).ready(()=>{
     get_data();
+    get_brand_group();
     const currencyInput = document.querySelectorAll('input[type="currency"]')
     currencyInput.forEach(function(element) {
         element.addEventListener('focus', onFocus)
@@ -272,7 +273,7 @@ function update_data(){
     }
     $.ajax({
         url:'/admin_product_service/update_data',
-        method:'put',
+        method:'PUT',
         data: data,
         success: function(data){
             if(data.status == 1){
@@ -302,6 +303,144 @@ function update_data(){
                     // cho vào để ko báo lỗi uncaught
                 }); 
                 
+            }
+        }
+    })
+}
+
+function new_name_brand(){
+    if($('#new_name_brand').val().trim() == ""){
+        Swal.fire({
+            title: "Thiếu thông tin",
+            text: "Vui lòng đặt tên",
+            icon: "error",
+            showConfirmButton: false,    
+            timer: 3000
+        }).then((result)=>{
+            // cho vào để ko báo lỗi uncaught
+        })
+        .catch(timer => {
+            // cho vào để ko báo lỗi uncaught
+        }); 
+    }else{
+        $.ajax({
+            url:'/admin_brand_group/new_brand',
+            method:'POST',
+            data: {
+                name: $('#new_name_brand').val().trim(),
+                _csrf: $('#_csrf').val()
+            },
+            success: function(data){
+                if(data.status == 1){
+                    Swal.fire({
+                        title: "Thao tác thành công",
+                        text: data.message,
+                        icon: "info",
+                        showConfirmButton: false,
+                        timer: 3000
+                    }).then((result)=>{
+                        get_brand_group()
+                    })
+                    .catch(timer => {
+                        get_brand_group()
+                    });    
+                }else{
+                    Swal.fire({
+                        title: data.error,
+                        text: data.message,
+                        icon: "error",
+                        showConfirmButton: false,    
+                        timer: 3000
+                    }).then((result)=>{
+                        // cho vào để ko báo lỗi uncaught
+                    })
+                    .catch(timer => {
+                        // cho vào để ko báo lỗi uncaught
+                    }); 
+                    
+                }
+            }
+        })
+    }
+}
+
+function new_name_group(){
+    if($('#new_name_group').val().trim() == ""){
+        Swal.fire({
+            title: "Thiếu thông tin",
+            text: "Vui lòng đặt tên",
+            icon: "error",
+            showConfirmButton: false,    
+            timer: 3000
+        }).then((result)=>{
+            // cho vào để ko báo lỗi uncaught
+        })
+        .catch(timer => {
+            // cho vào để ko báo lỗi uncaught
+        }); 
+    }else{
+        $.ajax({
+            url:'/admin_brand_group/new_group',
+            method:'POST',
+            data: {
+                name: $('#new_name_group').val().trim(),
+                _csrf: $('#_csrf').val()
+            },
+            success: function(data){
+                if(data.status == 1){
+                    Swal.fire({
+                        title: "Thao tác thành công",
+                        text: data.message,
+                        icon: "info",
+                        showConfirmButton: false,
+                        timer: 3000
+                    }).then((result)=>{
+                        get_brand_group()
+                    })
+                    .catch(timer => {
+                        get_brand_group()
+                    });    
+                }else{
+                    Swal.fire({
+                        title: data.error,
+                        text: data.message,
+                        icon: "error",
+                        showConfirmButton: false,    
+                        timer: 3000
+                    }).then((result)=>{
+                        // cho vào để ko báo lỗi uncaught
+                    })
+                    .catch(timer => {
+                        // cho vào để ko báo lỗi uncaught
+                    }); 
+                    
+                }
+            }
+        })
+    }
+}
+
+
+function get_brand_group(){
+    $.ajax({
+        url:'/admin_brand_group/get_data',
+        method:'POST',
+        data: {
+            _csrf: $('#_csrf').val()
+        },
+        success: function(data){
+            if (data.status == 1) {
+				let html_brand = ""
+				let html_group = ""
+                data.data.forEach(item => {
+                    if(item.type=="brand"){
+                        html_brand += `<option value="${item._id}">${item.name}</option>`
+                    }else{
+                        html_group += `<option value="${item._id}">${item.name}</option>`
+                    }
+                })
+                $('#brand').html(html_brand)	
+				$('#group').html(html_group)
             }
         }
     })

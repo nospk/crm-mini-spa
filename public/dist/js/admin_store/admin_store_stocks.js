@@ -254,7 +254,7 @@ function send_data(){
     if(data.products.length >= 1){
         $.ajax({
             url:'/admin_store_stocks/update_stocks',
-            method:'POST',
+            method:'PUT',
             contentType: "application/json; charset=utf-8",
 			data: JSON.stringify(data),
             success: function(data){

@@ -11,7 +11,7 @@ class Controller {
 
 
 	static loggedIn(req, res, next) {
-		if (req.isAuthenticated()) {
+		if (req.isAuthenticated() && Common.isset(req.session.store) != null) {
 			next();
 		} else {
 			req.session.destroy();

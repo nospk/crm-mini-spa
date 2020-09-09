@@ -21,6 +21,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   .input-group{
 	  margin: 10px 0;
   }
+
   </style>
 </head>
 <body class="hold-transition sidebar-mini sidebar-collapse">
@@ -82,8 +83,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
   </div>
   <!-- /.content-wrapper -->
 
-	<!-- Modal create store -->
-	<div class="modal fade" id="create_new" tabindex="-1" role="dialog" aria-labelledby="create_store" data-backdrop="static">
+	<!-- Modal create product -->
+	<div class="modal" id="create_new" tabindex="-1" role="dialog" aria-labelledby="create_store" >
 	  <div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
@@ -95,9 +96,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		  <div class="modal-body">
 			<div class="input-group">
 				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon1">Tên</div>
+					<div class="input-group-text">Tên</div>
 				</div>
-				<input type="text" class="form-control" id="name" placeholder="Nhập tên" aria-label="Name" aria-describedby="btnGroupAddon1">
+				<input type="text" class="form-control" id="name" placeholder="Nhập tên" aria-label="Name">
 			</div>
 			<div class="input-group mb-3">
                 <div class="input-group-prepend">
@@ -110,21 +111,47 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			</div>
 			<div class="input-group">
 				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon2">Mã số</div>
+					<div class="input-group-text" >Mã số</div>
 				</div>
-				<input type="text" class="form-control" id="number_code" placeholder="Nhập mã tắt" aria-label="Number code" aria-describedby="btnGroupAddon2">
+				<input type="text" class="form-control" id="number_code" placeholder="Nhập mã tắt" aria-label="Number code">
 			</div>
 			<div class="input-group">
 				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon4">Giá vốn</div>
+					<div class="input-group-text">Nhóm</div>
 				</div>
-				<input type="currency" class="form-control" id="cost_price" placeholder="Nhập giá"  aria-label="Price" aria-describedby="btnGroupAddon4">
+				<select class="custom-select" id="group">
+                </select>
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" data-toggle="modal" data-target="#new_group" type="button"><i class="fas fa-plus"></i></button>
+				</div>
+            </div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text">Thương hiệu</div>
+				</div>
+				<select class="custom-select" id="brand">
+                </select>
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" data-toggle="modal" data-target="#new_brand" type="button"><i class="fas fa-plus"></i></button>
+				</div>
+            </div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text">Giá bán</div>
+				</div>
+				<input type="currency" class="form-control" id="price" placeholder="Nhập giá" aria-label="Price">
+            </div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text">Giá vốn</div>
+				</div>
+				<input type="currency" class="form-control" id="cost_price" placeholder="Nhập giá"  aria-label="Price">
             </div>
             <div class="input-group">
 				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon3">Giá bán</div>
+					<div class="input-group-text">Giá bán</div>
 				</div>
-				<input type="currency" class="form-control" id="price" placeholder="Nhập giá" aria-label="Price" aria-describedby="btnGroupAddon3">
+				<input type="currency" class="form-control" id="price" placeholder="Nhập giá" aria-label="Price">
             </div>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -140,9 +167,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		</div>
 	  </div>
 	</div>
-	<!-- End Modal create store -->
-	<!-- Modal create store -->
-	<div class="modal fade" id="edit_data" tabindex="-1" role="dialog" aria-labelledby="create_store" data-backdrop="static">
+	<!-- End Modal create product -->
+	
+	<!-- Modal edit product -->
+	<div class="modal" id="edit_data" tabindex="-1" role="dialog" aria-labelledby="edit_data">
 	  <div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
@@ -224,7 +252,65 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		</div>
 	  </div>
 	</div>
-	<!-- End Modal create store -->
+	<!-- End Modal edit product -->
+	
+	<!-- Modal new brand-->
+	<div class="modal" id="new_brand" tabindex="-1" role="dialog" aria-labelledby="new_brand" data-backdrop="static">
+	  <div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title">Tạo Thương hiệu mới</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+            <div class="form-group">
+                <div class="input-group mb-3">
+				    <div class="input-group-prepend">
+                        <span class="input-group-text">Tên</span>
+                    </div>
+                    <input type="text" class="form-control" id="new_name_brand" placeholder="Tên Thương Hiệu" aria-label="Name">
+                </div>    				
+            </div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+			<button type="button" class="btn btn-primary" onclick="new_name_brand();" data-dismiss="modal">Tạo</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<!-- End Modal new brand -->
+	
+	<!-- Modal new group-->
+	<div class="modal" id="new_group" tabindex="-1" role="dialog" aria-labelledby="new_group" data-backdrop="static">
+	  <div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title">Tạo Nhóm mới</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+            <div class="form-group">
+                <div class="input-group mb-3">
+				    <div class="input-group-prepend">
+                        <span class="input-group-text">Tên</span>
+                    </div>
+                    <input type="text" class="form-control" id="new_name_group" placeholder="Tên Nhóm" aria-label="Name">
+                </div>    				
+            </div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+			<button type="button" class="btn btn-primary" onclick="new_name_group();" data-dismiss="modal">Tạo</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<!-- End Modal new brand -->
   <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
   <%- include ('../../partials/footer') %>
   <script src="/dist/js/admin_manager/admin_product_service.js"></script>

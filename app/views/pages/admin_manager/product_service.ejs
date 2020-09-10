@@ -21,8 +21,32 @@ scratch. This page gets rid of all links and provides the needed markup only.
   .input-group{
 	  margin: 10px 0;
   }
-
+  .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
+	  background-color: #007bff;
+	  color: #ffffff !important;
+  }
+  span.select2.select2-container.select2-container--below.select2-container--bootstrap4.select2-container--focus {
+	  max-width:660px;
+	  height: auto;
+  }
+  span.select2.select2-container.select2-container--bootstrap4.select2-container--below {
+	  max-width:660px;
+	  height: auto;
+  }
+  ul.select2-selection__rendered span.select2-selection.select2-selection--multiple{
+      max-width:660px;
+	  height: auto;
+  }
+  span.select2-selection.select2-selection--multiple {
+	  max-width:660px;
+	  height: auto;
+  }
   </style>
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="/assets/plugins/daterangepicker/daterangepicker.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="/assets/plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 </head>
 <body class="hold-transition sidebar-mini sidebar-collapse">
 <div class="wrapper">
@@ -119,13 +143,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				<div class="input-group-prepend">
 					<div class="input-group-text">Nhóm</div>
 				</div>
-				<select class="custom-select" id="group">
+				<select class="select2bs4" multiple="multiple" id="group">
                 </select>
 				<div class="input-group-append">
 					<button class="btn btn-outline-secondary" data-toggle="modal" data-target="#new_group" type="button"><i class="fas fa-plus"></i></button>
 				</div>
             </div>
-			<div class="input-group">
+			<div class="input-group" id="brand_show">
 				<div class="input-group-prepend">
 					<div class="input-group-text">Thương hiệu</div>
 				</div>
@@ -146,12 +170,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<div class="input-group-text">Giá vốn</div>
 				</div>
 				<input type="currency" class="form-control" id="cost_price" placeholder="Nhập giá"  aria-label="Price">
-            </div>
-            <div class="input-group">
-				<div class="input-group-prepend">
-					<div class="input-group-text">Giá bán</div>
-				</div>
-				<input type="currency" class="form-control" id="price" placeholder="Nhập giá" aria-label="Price">
             </div>
             <div class="input-group">
                 <div class="input-group-prepend">
@@ -210,6 +228,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<div class="input-group-text" id="btnGroupAddon2">Mã số</div>
 						</div>
 						<input type="text" class="form-control" id="edit_number_code" placeholder="Nhập mã tắt" aria-label="Number code" aria-describedby="btnGroupAddon2">
+					</div>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text">Nhóm</div>
+						</div>
+						<select class="select2bs4" multiple="multiple" id="edit_group">
+						</select>
+						<div class="input-group-append">
+							<button class="btn btn-outline-secondary" data-toggle="modal" data-target="#new_group" type="button"><i class="fas fa-plus"></i></button>
+						</div>
+					</div>
+					<div class="input-group" id="edit_brand_show">
+						<div class="input-group-prepend">
+							<div class="input-group-text">Thương hiệu</div>
+						</div>
+						<select class="custom-select" id="edit_brand">
+						</select>
+						<div class="input-group-append">
+							<button class="btn btn-outline-secondary" data-toggle="modal" data-target="#new_brand" type="button"><i class="fas fa-plus"></i></button>
+						</div>
 					</div>
 					<div class="input-group">
 						<div class="input-group-prepend">
@@ -314,5 +352,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
   <%- include ('../../partials/footer') %>
   <script src="/dist/js/admin_manager/admin_product_service.js"></script>
+  <!-- InputMask -->
+  <script src="/assets/plugins/moment/moment.min.js"></script>
+  <script src="/assets/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+  <!-- date-range-picker -->
+  <script src="/assets/plugins/daterangepicker/daterangepicker.js"></script>
+  <!-- Select2 -->
+  <script src="/assets/plugins/select2/js/select2.full.min.js"></script>
+  <script>
+    $(function () {
+      //Datemask dd/mm/yyyy
+      $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+      //Datemask2 mm/dd/yyyy
+      $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+      //Money Euro
+      $('[data-mask]').inputmask()
+
+      //Date range picker
+      $('#reservation').daterangepicker()
+    })
+  </script>
 </body>
 </html>

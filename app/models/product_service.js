@@ -30,6 +30,12 @@ const Product_Service_Schema = mongoose.Schema({
 	isSale:{
 		type: Boolean, default:true
 	},
+	brand:{
+		type: mongoose.Schema.Types.ObjectId, ref:'Brand_group'
+	},
+	group:[{
+		type: mongoose.Schema.Types.ObjectId, ref:'Brand_group'
+	}],
 	quantity:{
 		type: Number
 	},

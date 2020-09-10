@@ -6,16 +6,22 @@ $( document ).ready(()=>{
         element.addEventListener('focus', onFocus)
         element.addEventListener('blur', onBlur)
     });
-	let modal_lv = 0;
-	$('.modal').on('shown.bs.modal', function (e) {
-		$('.modal-backdrop:last').css('zIndex',1051+modal_lv);
-		$(e.currentTarget).css('zIndex',1052+modal_lv);
-		modal_lv++
+	
+	$('#new_group').on('shown.bs.modal', function (e) {
+		$('#create_new').css('opacity', 0);
+		$('#create_new').css('opacity', 0);
 	});
-
-	$('.modal').on('hidden.bs.modal', function (e) {
-		modal_lv--
+	$('#new_group').on('hidden.bs.modal', function (e) {
+		$('#create_new').css('opacity', 1);
+		$('#create_new').css('opacity', 0);
 	});
+	$('#type_product_service').change(function(){
+		if($('#type_product_service').val() == "product"){
+			$('#brand_show').show()
+		}else{
+			$('#brand_show').hide()
+		}
+	})
 })
 let page_now;
 
@@ -27,6 +33,8 @@ function create_new(){
 		cost_price: convert_number($('#create_new #cost_price').val()),
         number_code: $('#create_new #number_code').val(),
         description: $('#create_new #description').val(),
+		brand: $('#brand').val(),
+		group: $('#group').val(),
         _csrf: $('#_csrf').val()
     }
     $.ajax({
@@ -220,13 +228,17 @@ function edit_data(id){
 				$('#edit_data #edit_description').val(data.data.description);
 				$('#edit_data #isSale').val(data.data.isSale.toString())
                 $('#edit_data #edit_id').val(data.data._id);
+				$('#edit_data #edit_brand').val(data.data.brand);
+				$('#edit_data #edit_group').val(data.data.group).change();
                 $('#edit_data').modal('show');
                 if(data.data.type =="service"){
                     $('#edit_data #edit_cost_price').prop("disabled", false);
                     $('#edit_data #edit-stock').css("display", "none");
+					$('#edit_brand_show').hide();
                 }else{
                     $('#edit_data #edit_cost_price').prop("disabled", true);
                     $('#edit_data #edit-stock').css("display", "block");
+					$('#edit_brand_show').show();
                     let html = `<div class="info-box">
                                 <span class="info-box-icon bg-success"><i class="fas fa-boxes"></i></span>
                                 <div class="info-box-content">
@@ -268,6 +280,8 @@ function update_data(){
         number_code: $('#edit_data #edit_number_code').val(),
         description: $('#edit_data #edit_description').val(),
 		isSale: $('#edit_data #isSale').val(),
+		brand: $('#edit_data #edit_brand').val(),
+		group: $('#edit_data #edit_group').val(),
 		id: $('#edit_data #edit_id').val(),
         _csrf: $('#_csrf').val()
     }
@@ -430,7 +444,7 @@ function get_brand_group(){
         },
         success: function(data){
             if (data.status == 1) {
-				let html_brand = ""
+				let html_brand = "<option></option>"
 				let html_group = ""
                 data.data.forEach(item => {
                     if(item.type=="brand"){
@@ -440,7 +454,12 @@ function get_brand_group(){
                     }
                 })
                 $('#brand').html(html_brand)	
+				$('#edit_brand').html(html_brand)
 				$('#group').html(html_group)
+				$('#edit_group').html(html_group)
+				$('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
             }
         }
     })

@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 const Brand_group_Schema = mongoose.Schema({	
-    list_product:[{
-        type: mongoose.Schema.Types.ObjectId, ref:'Product_services'
-    }],
 	type:{
 		type: String, require: true // brand - group
 	},

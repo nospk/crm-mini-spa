@@ -3,6 +3,7 @@ const Product_service = require('../../models/product_service');
 const Store = require('../../models/store');
 const Storage_stocks = require('../../models/storage_stocks');
 const Store_stocks = require('../../models/store_stocks');
+const Brand_group = require('../../models/brand_group');
 const mongoose = require('mongoose');
 class Admin_product_service extends Controller{
     static show(req, res){
@@ -22,12 +23,12 @@ class Admin_product_service extends Controller{
 			//set default variables
 			let pageSize = 10
 			let currentPage = req.body.paging_num || 1
-	
+			let sort = {createdAt: -1}
 			// find total item
 			let pages = await Product_service.find(match).countDocuments()
 			// find total pages
 			let pageCount = Math.ceil(pages/pageSize)
-			let data = await Product_service.aggregate([{$match:match},{$skip:(pageSize * currentPage) - pageSize},{$limit:pageSize}])
+			let data = await Product_service.aggregate([{$match:match},{$sort:sort},{$skip:(pageSize * currentPage) - pageSize},{$limit:pageSize}])
 			Admin_product_service.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
 			console.log(err)
@@ -68,6 +69,8 @@ class Admin_product_service extends Controller{
 					quantity: 0,
 					description: req.body.description,
 					number_code: req.body.number_code,
+					brand: req.body.brand,
+					group: req.body.group,
 					company: req.session.user.company._id,
 				});
 				await data.save()
@@ -126,6 +129,8 @@ class Admin_product_service extends Controller{
 					find.price = req.body.price;
 					find.description = req.body.description;
 					find.number_code = req.body.number_code;
+					find.brand = req.body.brand;
+					find.group = req.body.group;
 					await find.save();
 					Admin_product_service.sendMessage(res, "Đã thay đổi thành công");
 				}

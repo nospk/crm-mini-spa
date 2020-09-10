@@ -9,11 +9,19 @@ $( document ).ready(()=>{
 	
 	$('#new_group').on('shown.bs.modal', function (e) {
 		$('#create_new').css('opacity', 0);
-		$('#create_new').css('opacity', 0);
+		$('#edit_data').css('opacity', 0);
 	});
 	$('#new_group').on('hidden.bs.modal', function (e) {
 		$('#create_new').css('opacity', 1);
+		$('#edit_data').css('opacity', 1);
+	});
+	$('#new_brand').on('shown.bs.modal', function (e) {
 		$('#create_new').css('opacity', 0);
+		$('#edit_data').css('opacity', 0);
+	});
+	$('#new_brand').on('hidden.bs.modal', function (e) {
+		$('#create_new').css('opacity', 1);
+		$('#edit_data').css('opacity', 1);
 	});
 	$('#type_product_service').change(function(){
 		if($('#type_product_service').val() == "product"){

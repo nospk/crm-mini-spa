@@ -42,8 +42,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	  height: auto;
   }
   </style>
-  <!-- daterange picker -->
-  <link rel="stylesheet" href="/assets/plugins/daterangepicker/daterangepicker.css">
   <!-- Select2 -->
   <link rel="stylesheet" href="/assets/plugins/select2/css/select2.min.css">
   <link rel="stylesheet" href="/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
@@ -352,25 +350,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
   <%- include ('../../partials/footer') %>
   <script src="/dist/js/admin_manager/admin_product_service.js"></script>
-  <!-- InputMask -->
-  <script src="/assets/plugins/moment/moment.min.js"></script>
-  <script src="/assets/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
-  <!-- date-range-picker -->
-  <script src="/assets/plugins/daterangepicker/daterangepicker.js"></script>
   <!-- Select2 -->
   <script src="/assets/plugins/select2/js/select2.full.min.js"></script>
-  <script>
-    $(function () {
-      //Datemask dd/mm/yyyy
-      $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
-      //Datemask2 mm/dd/yyyy
-      $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
-      //Money Euro
-      $('[data-mask]').inputmask()
-
-      //Date range picker
-      $('#reservation').daterangepicker()
-    })
-  </script>
 </body>
 </html>

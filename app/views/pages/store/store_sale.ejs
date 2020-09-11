@@ -8,31 +8,73 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <%- include ('../../partials/head') %>
   <title>Bán hàng</title>
 </head>
-<body class="hold-transition sidebar-mini sidebar-collapse">
-<div class="wrapper">
-  <%- include ('../../partials/header') %>
-  <%- include ('../../partials/menu') %>
+<body>
+<div>
+
+
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
+ 
 	<!-- Main content -->
     <section class="content">
 		<div class="container-fluid">
 			<!-- Small boxes (Stat box) -->
-			<div class="row" style="height: 70vh;">
-				<div class="col-8" style="background-color: blue;">col-8</div>
-				<div class="col-4" style="background-color: red;">col-4</div>
+			<div class="row" style="height: 75vh;">
+				<div class="col-8" style="padding: 0;">
+					<div style="height: 100%">
+					  <div class="card-header" style="height: 50px; background-color: #007bff; padding:10px 20px 0px 20px; border-radius:0">
+						<div class="row">
+							<div class="col-7" style="height: 40px;">
+								<input class="form-control" style="height: 30px;padding: 5px 5px 5px 5px" placeholder="Tìm theo tên hoặc mã">
+								<div style="display:block">
+									<ul style="padding:0px; list-style-type:none">
+
+									</ul>
+								</div>
+							</div>
+							<div class="col-5" style="height: 40px;">
+							</div>
+						</div>
+					  </div>
+					  <div class="card-body ">
+
+					  </div>
+					</div>
+				</div>
+				<div class="col-4" style="padding: 0;">
+					<div style="height: 100%">
+					  <div class="card-header" style="height: 50px; padding:7px 0px 7px 0px; text-align: center; background-color: #007bff; border-radius: 0">
+						<h4 style="display:inline; margin-left: 10px; color: #ffff"><%-store_name%></h4>
+						<a class="nav-link float-right" href="/logout" style="color: #ffff; height: 2.5rem; position: relative; display:inline; padding:0;"> <strong>Logout</strong>
+						  <i class="fas fa-sign-out-alt"></i> 
+						</a>
+					  </div>
+					  <div class="card-body ">
+
+					  </div>
+					</div>
+				</div>
 			</div>
-			<div class="row" style="height: 17vh;">
-				<div class="col-12" style="background-color: green;">col-12</div>
+			<div class="row" style="height: 25vh;">
+				<div class="col-12" style="background-color: green;">
+					
+				</div>
 			</div>
 		</div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-  </div>
+  
   <!-- /.content-wrapper -->
   <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
-  <%- include ('../../partials/footer') %>
   <script src="/dist/js/store/store_sale.js"></script>
-</body>
+  <!-- Sweetalert2 -->
+  <link rel="stylesheet" href="/assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <script src="/assets/plugins/sweetalert2/sweetalert2.min.js"></script>
+  <!-- Bootstrap 4 -->
+  <script src="/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- AdminLTE App -->
+  <script src="/assets/dist/js/adminlte.min.js"></script>
+  <!-- Common -->
+  <script src="/dist/js/common.js"></script>
+  </body>
 </html>

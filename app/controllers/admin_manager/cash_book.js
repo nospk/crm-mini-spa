@@ -77,7 +77,6 @@ class Admin_cash_book extends Controller{
 				}
 			}
 			let debt
-			console.log(type)
 			switch(type_receiver){
 				case "supplier":
 					str = select_supplier.split(":");

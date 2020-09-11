@@ -41,7 +41,7 @@ function create_new(){
 		cost_price: convert_number($('#create_new #cost_price').val()),
         number_code: $('#create_new #number_code').val(),
         description: $('#create_new #description').val(),
-		brand: $('#brand').val(),
+		brand: $('#brand').val() == "" ? undefined : $('#brand').val(),
 		group: $('#group').val(),
         _csrf: $('#_csrf').val()
     }
@@ -288,7 +288,7 @@ function update_data(){
         number_code: $('#edit_data #edit_number_code').val(),
         description: $('#edit_data #edit_description').val(),
 		isSale: $('#edit_data #isSale').val(),
-		brand: $('#edit_data #edit_brand').val(),
+		brand: $('#edit_data #edit_brand').val() == "" ? undefined: $('#edit_data #edit_brand').val(),
 		group: $('#edit_data #edit_group').val(),
 		id: $('#edit_data #edit_id').val(),
         _csrf: $('#_csrf').val()

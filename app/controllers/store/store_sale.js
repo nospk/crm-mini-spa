@@ -12,13 +12,16 @@ class Store_sale extends Controller{
         try{
 			let {search}=req.body
 			let match = {
-				$and: [ {company :req.session.store.company, isActive: true} ] 
+				$and: [ {company :req.session.store.company, isSale: true} ] 
 			}
 			if(search){
 				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
 			}
-
-			let products = await Product_service.find(match).sort({createdAt: -1})
+			let products = await Product_service.find(match).sort({createdAt: -1}).populate({
+				path: 'stocks_in_store',
+				match: { store_id: req.session.store._id },
+				select: 'product_of_sale',
+			})
 			Store_sale.sendData(res, products);
 		}catch(err){
 			console.log(err)

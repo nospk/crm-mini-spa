@@ -4,77 +4,137 @@ This is a starter template page. Use this page to start your new project from
 scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <html lang="vi">
+
 <head>
-  <%- include ('../../partials/head') %>
-  <title>Bán hàng</title>
+	<%- include ('../../partials/head') %>
+	<title>Bán hàng</title>
+	<style>
+		.number_code {
+			margin: 0px 30px 0px 0px;
+		}
+
+		.search_product:hover {
+			background-color: #007bff;
+			color: #ffff;
+		}
+
+		ul#show_search_product li {
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+
+		::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		/* Track */
+		::-webkit-scrollbar-track {
+			background: #f1f1f1;
+			
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background: #888;
+			border-radius: 10px;
+		}
+
+		/* Handle on hover */
+		::-webkit-scrollbar-thumb:hover {
+			background: #555;
+		}
+	</style>
 </head>
+
 <body>
-<div>
+	<div>
 
 
 
-  <!-- Content Wrapper. Contains page content -->
- 
-	<!-- Main content -->
-    <section class="content">
-		<div class="container-fluid">
-			<!-- Small boxes (Stat box) -->
-			<div class="row" style="height: 75vh;">
-				<div class="col-8" style="padding: 0;">
-					<div style="height: 100%">
-					  <div class="card-header" style="height: 50px; background-color: #007bff; padding:10px 20px 0px 20px; border-radius:0">
-						<div class="row">
-							<div class="col-7" style="height: 40px;">
-								<input class="form-control" style="height: 30px;padding: 5px 5px 5px 5px" placeholder="Tìm theo tên hoặc mã">
-								<div style="display:block">
-									<ul style="padding:0px; list-style-type:none">
+		<!-- Content Wrapper. Contains page content -->
 
-									</ul>
+		<!-- Main content -->
+		<section class="content">
+			<div class="container-fluid">
+				<!-- Small boxes (Stat box) -->
+				<div class="row" style="height: 75vh;">
+					<div class="col-8" style="padding: 0;">
+						<div style="height: 100%">
+							<div class="card-header"
+								style="height: 50px; background-color: #007bff; padding:10px 20px 0px 20px; border-radius:0">
+								<div class="row">
+									<div class="col-7" style="height: 40px;">
+										<input class="form-control" style="height: 30px;padding: 5px 5px 5px 5px" id="search_product"
+											placeholder="Tìm theo tên hoặc mã">
+										<div style="display:block">
+											<ul style="max-height: 60vh;margin:0px; overflow: auto; list-style-type:none; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index:10010; background-color: #ffff; padding: 0"
+												id="show_search_product">
+
+											</ul>
+										</div>
+									</div>
+									<div class="col-5" style="height: 40px;">
+									</div>
 								</div>
 							</div>
-							<div class="col-5" style="height: 40px;">
+							<div class="card-body " style="height: calc(100vh - 50px - 25vh);">
+								<table class="table table-striped" style="font-size: 14px;">
+									<thead>
+									  <tr>
+										<th>Mã</th>
+										<th>Tên</th>
+										<th>Giá</th>
+										<th>Số lượng</th>
+										<th>Tổng cộng</th>
+										<th></th>
+									  </tr>
+									</thead>
+									<tbody id="add_product">
+									  
+									</tbody>
+								</table>
 							</div>
 						</div>
-					  </div>
-					  <div class="card-body ">
+					</div>
+					<div class="col-4" style="padding: 0;">
+						<div style="height: 100%">
+							<div class="card-header"
+								style="height: 50px; padding:7px 0px 7px 0px; text-align: center; background-color: #007bff; border-radius: 0">
+								<h4 class="font-italic" style="display:inline; margin-left: 10px; color: #ffff">
+									<%-store_name%></h4>
+								<a class="nav-link float-right" href="/logout"
+									style="color: #ffff; position: relative; display:inline; padding:0;">
+									<strong>Logout</strong>
+									<i class="fas fa-sign-out-alt"></i>
+								</a>
+							</div>
+							<div class="card-body " style="height: calc(100vh - 50px - 25vh);">
 
-					  </div>
+							</div>
+						</div>
 					</div>
 				</div>
-				<div class="col-4" style="padding: 0;">
-					<div style="height: 100%">
-					  <div class="card-header" style="height: 50px; padding:7px 0px 7px 0px; text-align: center; background-color: #007bff; border-radius: 0">
-						<h4 style="display:inline; margin-left: 10px; color: #ffff"><%-store_name%></h4>
-						<a class="nav-link float-right" href="/logout" style="color: #ffff; height: 2.5rem; position: relative; display:inline; padding:0;"> <strong>Logout</strong>
-						  <i class="fas fa-sign-out-alt"></i> 
-						</a>
-					  </div>
-					  <div class="card-body ">
+				<div class="row" style="height: 25vh;">
+					<div class="col-12" style="background-color: green;">
 
-					  </div>
 					</div>
 				</div>
-			</div>
-			<div class="row" style="height: 25vh;">
-				<div class="col-12" style="background-color: green;">
-					
-				</div>
-			</div>
-		</div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-  
-  <!-- /.content-wrapper -->
-  <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
-  <script src="/dist/js/store/store_sale.js"></script>
-  <!-- Sweetalert2 -->
-  <link rel="stylesheet" href="/assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
-  <script src="/assets/plugins/sweetalert2/sweetalert2.min.js"></script>
-  <!-- Bootstrap 4 -->
-  <script src="/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <!-- AdminLTE App -->
-  <script src="/assets/dist/js/adminlte.min.js"></script>
-  <!-- Common -->
-  <script src="/dist/js/common.js"></script>
-  </body>
+			</div><!-- /.container-fluid -->
+		</section>
+		<!-- /.content -->
+
+		<!-- /.content-wrapper -->
+		<input type="hidden" id="_csrf" value="<%=csrfToken %>" />
+		<script src="/dist/js/store/store_sale.js"></script>
+		<!-- Sweetalert2 -->
+		<link rel="stylesheet" href="/assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+		<script src="/assets/plugins/sweetalert2/sweetalert2.min.js"></script>
+		<!-- Bootstrap 4 -->
+		<script src="/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+		<!-- AdminLTE App -->
+		<script src="/assets/dist/js/adminlte.min.js"></script>
+		<!-- Common -->
+		<script src="/dist/js/common.js"></script>
+</body>
+
 </html>

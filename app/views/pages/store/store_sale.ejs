@@ -43,6 +43,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		::-webkit-scrollbar-thumb:hover {
 			background: #555;
 		}
+		body {
+		--table-width: 100%; /* Or any value, this will change dinamically */
+		}
+		tbody {
+		display:block;
+		max-height:500px;
+		overflow-y:auto;
+		}
+		thead, tbody tr {
+		display:table;
+		width: var(--table-width);
+		table-layout:fixed;
+		}
 	</style>
 </head>
 
@@ -77,19 +90,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									</div>
 								</div>
 							</div>
-							<div class="card-body " style="height: calc(100vh - 50px - 25vh);">
-								<table class="table table-striped" style="font-size: 14px;">
+							<div class="card-body table-responsive" style="height: calc(100vh - 50px - 25vh);">
+								<table class="table table-striped" id="dtVerticalScrollExample" style="font-size: 14px;">
 									<thead>
 									  <tr>
-										<th>Mã</th>
-										<th>Tên</th>
-										<th>Giá</th>
-										<th>Số lượng</th>
-										<th>Tổng cộng</th>
-										<th></th>
+										<th width="15%">Mã</th>
+										<th width="30%">Tên</th>
+										<th width="15%">Giá</th>
+										<th width="15%">Số lượng</th>
+										<th width="15%">Tổng cộng</th>
+										<th width="5%"></th>
 									  </tr>
 									</thead>
-									<tbody id="add_product">
+									<tbody style="overflow-y:scroll;" id="add_product">
 									  
 									</tbody>
 								</table>

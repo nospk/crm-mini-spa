@@ -169,12 +169,18 @@ function add_product() {
 
 function change_quantity(code,btn) {
     let send_number = $(`#quantity-${code}`).val()
+    let current_product = $(`#current-products-${code}`).text()
 	if(send_number == 0){
 		delete_row_product(btn)
 	}else{
-		let current_product = $(`#current-products-${code}`).text()
-		$(`#remaining-products-${code}`).text(Number(current_product) - Number(send_number))
-	}
+        if(Number(current_product) - Number(send_number) < 0){
+            $(`#quantity-${code}`).val(current_product)
+            $(`#remaining-products-${code}`).text(0)
+        }else{
+            $(`#remaining-products-${code}`).text(Number(current_product) - Number(send_number))
+        }	
+    }
+    
     total_get_goods()
 }
 

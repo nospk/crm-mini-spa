@@ -80,7 +80,22 @@ function search_product() {
 
 function add_product(product){
     product = product.split(':')
-    let check = $(`#quantity-${product[1]}`).val()
+	let check = $(`#quantity-${product[1]}`).val()
+	if(product[4] == 0){
+		Swal.fire({
+			title: "Sản phẩm hết hàng",
+			text: "Vui lòng chọn sản phẩm khác hoặc thêm sản phẩm",
+			icon: "error",
+			showConfirmButton: false,
+			timer: 3000
+		}).then((result) => {
+			// cho vào để ko báo lỗi uncaught
+		})
+		.catch(timer => {
+				// cho vào để ko báo lỗi uncaught
+		});
+		return;
+	}
     if(!check){
         let html = `<tr>
                     <td><span class="number-code">${product[1]}</span></td>
@@ -88,7 +103,7 @@ function add_product(product){
                     <td><span id="price-${product[1]}">${convert_vnd(Number(product[2]))}</span>
 				   `
 		if(product[4]=="max"){
-			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" value="1"></td>`
+			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" max="999" value="1"></td>`
 		}else{
 			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" max="${product[4]}" value="1"></td>`
 		}  
@@ -114,12 +129,21 @@ function delete_row_product(btn) {
 
 function change_quantity(code, btn){
 	let number = $(`#quantity-${code}`).val()
+	let current_product = $(`#quantity-${code}`).attr('max');
 	if(number == 0){
 		delete_row_product(btn)
 	}else{
 		let value = convert_number($(`#price-${code}`).text())
-		$(`#total-${code}`).text(convert_vnd(value*number))
-	}
+		// $(`#total-${code}`).text(convert_vnd(value*number))
+		if(Number(current_product) - Number(number) < 0){
+            $(`#quantity-${code}`).val(current_product)
+            $(`#total-${code}`).text(convert_vnd(value*current_product))
+        }else{
+            $(`#total-${code}`).text(convert_vnd(value*number))
+        }	
+    }
+		
+	
     total_sale();
 }
 
@@ -130,6 +154,6 @@ function total_sale(){
     $(".total").each(function () {                  
         money+= convert_number($(this).text()); 
     });
-	console.log(money)
+
 
 }

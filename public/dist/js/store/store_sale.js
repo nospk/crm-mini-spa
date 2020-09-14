@@ -25,9 +25,9 @@ $(window).on("click", function () {
 
 });
 $( document ).ready(()=>{
-    const currencyInput = document.querySelector('input[type="currency"]')
-    currencyInput.addEventListener('focus', onFocus)
-    currencyInput.addEventListener('blur', onBlur)
+    // const currencyInput = document.querySelector('input[type="currency"]')
+    // currencyInput.addEventListener('focus', onFocus)
+    // currencyInput.addEventListener('blur', onBlur)
 })
 function search_product() {
 	if ($('#search_product').val() != "") {
@@ -43,7 +43,7 @@ function search_product() {
 					if (data.data.length > 0) {
 						let html = ""
 						data.data.forEach(item => {
-							html += `<li class="search_product" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}')">
+							html += `<li class="search_product" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 										<span class="font-weight-bold">${item.name}</span><br>
 										<span class="number_code">Mã: ${item.number_code}</span><span class="float-right">Giá bán: ${convert_vnd(item.price)}</span><br>
 									`
@@ -86,14 +86,17 @@ function add_product(product){
                     <td><span class="number-code">${product[1]}</span></td>
                     <td><span id="name-product-${product[1]}">${product[0]}</span><input type="hidden" id="id-product-${product[1]}" value="${product[3]}"></td>
                     <td><span id="price-${product[1]}">${convert_vnd(Number(product[2]))}</span>
-                    <td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" value="1"></td>
-                    <td><span class="total" id="total-${product[1]}" >${convert_vnd(Number(product[2]))}</span></td>
+				   `
+		if(product[4]=="max"){
+			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" value="1"></td>`
+		}else{
+			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" max="${product[4]}" value="1"></td>`
+		}  
+             html+= `<td><span class="total" id="total-${product[1]}" >${convert_vnd(Number(product[2]))}</span></td>
                     <td><span style="color:red; cursor: pointer" onclick="delete_row_product(this)"><i class="fas fa-times-circle"></i></span></td>
                 </tr>`
         $('#add_product').append(html)
-        input.addEventListener('focus', onFocus)
-        input.addEventListener('blur', onBlur)
-        total_get_goods();
+        total_sale();
     }else{
         let quantity = $(`#quantity-${product[1]}`).val()
         $(`#quantity-${product[1]}`).val(Number(quantity)+1)
@@ -105,35 +108,28 @@ function add_product(product){
 function delete_row_product(btn) {
     var row = btn.parentNode.parentNode;
     row.parentNode.removeChild(row);
-    total_get_goods();
+    total_sale();
 }
 
-function change_price(code){
-	let value = convert_number($(`#cost-price-${code}`).val())
-	let number = $(`#quantity-${code}`).val()
-    $(`#total-${code}`).text(convert_vnd(value*number))
-    total_get_goods();
-}
 
 function change_quantity(code, btn){
 	let number = $(`#quantity-${code}`).val()
 	if(number == 0){
 		delete_row_product(btn)
 	}else{
-		let value = convert_number($(`#cost-price-${code}`).val())
+		let value = convert_number($(`#price-${code}`).text())
 		$(`#total-${code}`).text(convert_vnd(value*number))
 	}
-    total_get_goods();
+    total_sale();
 }
 
 
-function total_get_goods(){
+function total_sale(){
     let money = 0;
-	let payment = convert_number($('#payment').val());
+	//let payment = convert_number($('#payment').val());
     $(".total").each(function () {                  
         money+= convert_number($(this).text()); 
     });
-	$('#debt').val(convert_vnd(money - payment))
-    $('#total_get_goods').text(convert_vnd(money))
-    money_total = money;
+	console.log(money)
+
 }

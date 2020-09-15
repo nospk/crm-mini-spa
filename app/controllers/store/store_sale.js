@@ -28,6 +28,18 @@ class Store_sale extends Controller{
 			Store_sale.sendError(res, err, err.message);
 		}
     }
+	static async get_service(req, res){
+        try{
+			let match = {
+				$and: [ {company :req.session.store.company, isSale: true, type: "service"} ] 
+			}
+			let services = await Product_service.find(match).sort({createdAt: -1})
+			Store_sale.sendData(res, services);
+		}catch(err){
+			console.log(err)
+			Store_sale.sendError(res, err, err.message);
+		}
+    }
 }
 
 module.exports = Store_sale

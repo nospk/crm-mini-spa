@@ -5,7 +5,7 @@ $( document ).ready(()=>{
 function render_data(data){
 	let html = '';
 	data.forEach(item =>{
-		html+=`<div class="col-6">
+		html+=`
 				<div class="card">
 				  <img class="card-img-top" src="${item.image_store}" alt="Hình cửa hàng">
 				  <div class="card-body">
@@ -14,7 +14,7 @@ function render_data(data){
 					<a href="#" class="btn btn-primary float-right" onClick="active_store('${item._id}'); return false;">Chọn cửa hàng</a>
 				  </div>
 				 </div>
-			   </div>`
+			   `
 	})
 	$('#show_data').html(html);
 }

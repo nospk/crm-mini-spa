@@ -25,6 +25,7 @@ $(window).on("click", function () {
 
 });
 $( document ).ready(()=>{
+	get_service()
     // const currencyInput = document.querySelector('input[type="currency"]')
     // currencyInput.addEventListener('focus', onFocus)
     // currencyInput.addEventListener('blur', onBlur)
@@ -43,7 +44,7 @@ function search_product() {
 					if (data.data.length > 0) {
 						let html = ""
 						data.data.forEach(item => {
-							html += `<li class="search_product" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+							html += `<li class="search_product pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 										<span class="font-weight-bold">${item.name}</span><br>
 										<span class="number_code">Mã: ${item.number_code}</span><span class="float-right">Giá bán: ${convert_vnd(item.price)}</span><br>
 									`
@@ -103,7 +104,7 @@ function add_product(product){
                     <td><span id="price-${product[1]}">${convert_vnd(Number(product[2]))}</span>
 				   `
 		if(product[4]=="max"){
-			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" max="999" value="1"></td>`
+			html += `<td><input class="form-control form-control-sm" style="max-width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" max="999" value="1"></td>`
 		}else{
 			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" max="${product[4]}" value="1"></td>`
 		}  
@@ -156,4 +157,42 @@ function total_sale(){
     });
 
 
+}
+
+
+function get_service(){
+	$.ajax({
+			url: '/store_sale/get_service',
+			method: 'POST',
+			data: {
+				_csrf: $('#_csrf').val()
+			},
+			success: function (data) {
+				if (data.status == 1) {
+					let html = ''
+					data.data.forEach(item => {
+						html+= `<div class="col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+								  <div class="card-body">
+									<h5 class="card-title">${item.name}</h5>
+									<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+								  </div>
+								</div>`
+					})
+					$('#get_service').html(html)
+				} else {
+					Swal.fire({
+						title: data.error,
+						text: data.message,
+						icon: "error",
+						showConfirmButton: false,
+						timer: 3000
+					}).then((result) => {
+						// cho vào để ko báo lỗi uncaught
+					})
+					.catch(timer => {
+							// cho vào để ko báo lỗi uncaught
+					});
+				}
+			}
+		})
 }

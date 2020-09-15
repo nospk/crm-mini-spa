@@ -44,18 +44,37 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			background: #555;
 		}
 		body {
-		--table-width: 100%; /* Or any value, this will change dinamically */
+			--table-width: 100%; /* Or any value, this will change dinamically */
 		}
 		tbody {
-		display:block;
-		max-height:500px;
-		overflow-y:auto;
+			display:block;
+			max-height:60vh;
+			overflow-y:auto;
+		}
+		@media screen and (max-width:500px) {
+			tbody {
+				display:block;
+				max-height:380px;
+				overflow-y:auto;
+			}
 		}
 		thead, tbody tr {
-		display:table;
-		width: var(--table-width);
-		table-layout:fixed;
+			display:table;
+			word-break: break-all;
+			width: var(--table-width);
+			table-layout:fixed;
 		}
+		.pointer {cursor: pointer;}
+		
+		.card-body{
+			padding: 10px;
+			word-break: break-all;
+		}
+		ul#show_search_product{
+			z-index: 4;
+			position: relative;
+		}
+		
 	</style>
 </head>
 
@@ -70,13 +89,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<section class="content">
 			<div class="container-fluid">
 				<!-- Small boxes (Stat box) -->
-				<div class="row" style="height: 75vh;">
-					<div class="col-8" style="padding: 0;">
-						<div style="height: 100%">
+						<div class="card" style="height: 75vh;">
 							<div class="card-header"
-								style="height: 50px; background-color: #007bff; padding:10px 20px 0px 20px; border-radius:0">
+								style="height: 50px; background-color: #007bff; padding:10px 20px 0px 20px;">
 								<div class="row">
-									<div class="col-7" style="height: 40px;">
+									<div class="col-8" style="height: 40px;">
 										<input class="form-control" style="height: 30px;padding: 5px 5px 5px 5px" id="search_product"
 											placeholder="Tìm theo tên hoặc mã">
 										<div style="display:block">
@@ -86,51 +103,44 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											</ul>
 										</div>
 									</div>
-									<div class="col-5" style="height: 40px;">
+									<div class="col-4" style="height: 40px;">
+										<h4 class="font-italic" style="display:inline; margin-left: 10px; color: #ffff">
+											<%-store_name%>
+										</h4>
+										<a class="nav-link float-right" href="/logout"
+											style="color: #ffff; position: relative; display:inline; padding:0;">
+											<strong>Logout</strong>
+											<i class="fas fa-sign-out-alt"></i>
+										</a>
 									</div>
 								</div>
 							</div>
-							<div class="card-body table-responsive" style="height: calc(100vh - 50px - 25vh);">
-								<table class="table table-striped" id="dtVerticalScrollExample" style="font-size: 14px;">
-									<thead>
-									  <tr>
-										<th width="15%">Mã</th>
-										<th width="30%">Tên</th>
-										<th width="15%">Giá</th>
-										<th width="15%">Số lượng</th>
-										<th width="15%">Tổng cộng</th>
-										<th width="5%"></th>
-									  </tr>
-									</thead>
-									<tbody style="overflow-y:scroll;" id="add_product">
-									  
-									</tbody>
-								</table>
+							<div class="card-body">
+								<div class="row">
+									<div class="col-xl-8">
+										<table class="table table-hover table-sm" cellspacing="0" style="font-size: 14px;">
+											<thead>
+											  <tr>
+												<th>Mã</th>
+												<th>Tên</th>
+												<th>Giá</th>
+												<th>Số lượng</th>
+												<th>Tổng cộng</th>
+												<th></th>
+											  </tr>
+											</thead>
+											<tbody id="add_product">
+											  
+											</tbody>
+										</table>
+									</div>
+									<div class="col-xl-4">
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="col-4" style="padding: 0;">
-						<div style="height: 100%">
-							<div class="card-header"
-								style="height: 50px; padding:7px 0px 7px 0px; text-align: center; background-color: #007bff; border-radius: 0">
-								<h4 class="font-italic" style="display:inline; margin-left: 10px; color: #ffff">
-									<%-store_name%></h4>
-								<a class="nav-link float-right" href="/logout"
-									style="color: #ffff; position: relative; display:inline; padding:0;">
-									<strong>Logout</strong>
-									<i class="fas fa-sign-out-alt"></i>
-								</a>
-							</div>
-							<div class="card-body " style="height: calc(100vh - 50px - 25vh);">
 
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="row" style="height: 25vh;">
-					<div class="col-12" style="background-color: green;">
-
-					</div>
+				<div class="row" style="height:25vh; padding:7.5px" id="get_service">
 				</div>
 			</div><!-- /.container-fluid -->
 		</section>

@@ -1,26 +1,34 @@
-let typingTimer;                //timer identifier
+let typingTimer_product;                //timer identifier
+let typingTimer_search;
 let doneTypingInterval = 500;  //time in ms, 1 second for example
-let $input = $('#search_product');
+let show_product = $('#search_product');
+let show_customer = $('#search_customer');
 
 //on keyup, start the countdown
-$input.on('keyup', function () {
-	clearTimeout(typingTimer);
-	typingTimer = setTimeout(search_product, doneTypingInterval);
+show_product.on('keyup', function () {
+	clearTimeout(typingTimer_product);
+	typingTimer_product = setTimeout(search_product, doneTypingInterval);
 });
 
 //on keydown, clear the countdown 
-$input.on('keydown', function () {
-	clearTimeout(typingTimer);
+show_product.on('keydown', function () {
+	clearTimeout(typingTimer_product);
 	$('#show_search_product').hide();
 });
 
-//user is "finished typing," do something
-function doneTyping() {
-	//do something
-}
+show_customer.on('keyup', function () {
+	clearTimeout(typingTimer_search);
+	typingTimer_search = setTimeout(search_customer, doneTypingInterval);
+});
+
+//on keydown, clear the countdown 
+show_customer.on('keydown', function () {
+	clearTimeout(typingTimer_search);
+	$('#show_search_customer').hide();
+});
 
 $(window).on("click", function () {
-
+	$('#show_search_customer').hide();
 	$('#show_search_product').hide();
 
 });
@@ -44,7 +52,7 @@ function search_product() {
 					if (data.data.length > 0) {
 						let html = ""
 						data.data.forEach(item => {
-							html += `<li class="search_product pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+							html += `<li class="show_search pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 										<span class="font-weight-bold">${item.name}</span><br>
 										<span class="number_code">Mã: ${item.number_code}</span><span class="float-right">Giá bán: ${convert_vnd(item.price)}</span><br>
 									`
@@ -78,7 +86,51 @@ function search_product() {
 	}
 
 }
+function search_customer() {
+	if ($('#search_customer').val() != "") {
+		$.ajax({
+			url: '/store_sale/search_customer',
+			method: 'POST',
+			data: {
+				search: $('#search_customer').val(),
+				_csrf: $('#_csrf').val()
+			},
+			success: function (data) {
+				if (data.status == 1) {
+					if (data.data.length > 0) {
+						let html = ""
+						data.data.forEach(item => {
+							html += `<li class="show_search pointer">
+										<span class="font-weight-bold">${item.name}</span><br>
+										<span class="number_code"><i class="fas fa-phone-square-alt"></i>  ${item.phone}</span>
+									 </li>
+									`
+						});
+						$('#show_search_customer').html(html)
+						$('#show_search_customer').show();
+					} else {
+						$('#show_search_customer').html(`<li><span>Không tìm thấy khách hàng</span></li>`);
+						$('#show_search_customer').show();
+					}
+				} else {
+					Swal.fire({
+						title: data.error,
+						text: data.message,
+						icon: "error",
+						showConfirmButton: false,
+						timer: 3000
+					}).then((result) => {
+						// cho vào để ko báo lỗi uncaught
+					})
+					.catch(timer => {
+							// cho vào để ko báo lỗi uncaught
+					});
+				}
+			}
+		})
+	}
 
+}
 function add_product(product){
     product = product.split(':')
 	let check = $(`#quantity-${product[1]}`).val()
@@ -169,15 +221,94 @@ function get_service(){
 			},
 			success: function (data) {
 				if (data.status == 1) {
-					let html = ''
-					data.data.forEach(item => {
-						html+= `<div class="col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
-								  <div class="card-body">
-									<h5 class="card-title">${item.name}</h5>
-									<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
-								  </div>
-								</div>`
+					let set_number = 8;
+					let html = `<div class="carousel-inner">`
+					data.data.forEach((item, index) => {
+						if(index == 0){
+							html+= `<div class="carousel-item active">
+										<div class="row">
+											<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+												<div class="card-body">
+													<h5 class="card-title">${item.name}</h5>
+													<p class="card-text">Mã: ${item.number_code}</p>
+													<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+												</div>
+											</div>
+								`
+						}
+						if((index+1)% set_number != 0 && (index+2)% set_number != 0 && (index+1) != data.data.length){
+							html+= `<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+										<div class="card-body">
+											<h5 class="card-title">${item.name}</h5>
+											<p class="card-text">Mã: ${item.number_code}</p>
+											<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+										</div>
+									</div>
+								`
+						}
+						if((index+1)% set_number != 0 && (index+2)% set_number == 0 && (index+1) != data.data.length){
+							html+= `<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+										<div class="card-body">
+											<h5 class="card-title">${item.name}</h5>
+											<p class="card-text">Mã: ${item.number_code}</p>
+											<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+										</div>
+									</div>
+								</div>
+								</div>
+								`
+						}
+						if((index+1)% set_number == 0 && (index+1) == data.data.length){
+							html+= `<div class="carousel-item">
+										<div class="row">
+											<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+												<div class="card-body">
+													<h5 class="card-title">${item.name}</h5>
+													<p class="card-text">Mã: ${item.number_code}</p>
+													<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+												</div>
+											</div>
+										</div>
+									</div>
+								`
+						}
+						if((index+1)% set_number == 0 && (index+1) != data.data.length){
+							html+= `<div class="carousel-item">
+										<div class="row">
+											<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+												<div class="card-body">
+													<h5 class="card-title">${item.name}</h5>
+													<p class="card-text">Mã: ${item.number_code}</p>
+													<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+												</div>
+											</div>
+								`
+						}
+						if((index+1)% set_number != 0 && (index+1) == data.data.length){
+							html+= `<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+										<div class="card-body">
+											<h5 class="card-title">${item.name}</h5>
+											<p class="card-text">Mã: ${item.number_code}</p>
+											<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+										</div>
+									</div>
+								</div>
+								</div>
+								`
+						}
 					})
+					html+=`
+						</div>
+						<a class="carousel-control-prev" href="#get_service" style="width:20px" role="button" data-slide="prev">
+							<span class="carousel-control-prev-icon" style="background-color:red" aria-hidden="true"></span>
+							<span class="sr-only">Previous</span>
+						</a>
+						<a class="carousel-control-next" href="#get_service" style="width:20px" role="button" data-slide="next">
+							<span class="carousel-control-next-icon" style="background-color:red" aria-hidden="true"></span>
+							<span class="sr-only">Next</span>
+						</a>
+					</div>
+					`
 					$('#get_service').html(html)
 				} else {
 					Swal.fire({

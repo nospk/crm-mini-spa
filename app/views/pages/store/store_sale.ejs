@@ -13,16 +13,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			margin: 0px 30px 0px 0px;
 		}
 
-		.search_product:hover {
-			background-color: #007bff;
-			color: #ffff;
-		}
-
 		ul#show_search_product li {
 			padding-left: 10px;
 			padding-right: 10px;
 		}
+		.show_search:hover {
+			background-color: #007bff;
+			color: #ffff;
+		}
 
+		ul#show_search_customer li {
+			padding-left: 10px;
+			padding-right: 10px;
+		}
 		::-webkit-scrollbar {
 			width: 5px;
 		}
@@ -30,7 +33,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		/* Track */
 		::-webkit-scrollbar-track {
 			background: #f1f1f1;
-			
+
 		}
 
 		/* Handle */
@@ -43,38 +46,56 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		::-webkit-scrollbar-thumb:hover {
 			background: #555;
 		}
+
 		body {
-			--table-width: 100%; /* Or any value, this will change dinamically */
+			--table-width: 100%;
+			/* Or any value, this will change dinamically */
 		}
+
 		tbody {
-			display:block;
-			max-height:60vh;
-			overflow-y:auto;
+			display: block;
+			max-height: 60vh;
+			overflow-y: auto;
 		}
+
 		@media screen and (max-width:500px) {
 			tbody {
-				display:block;
-				max-height:380px;
-				overflow-y:auto;
+				display: block;
+				max-height: 380px;
+				overflow-y: auto;
 			}
 		}
-		thead, tbody tr {
-			display:table;
+
+		thead,
+		tbody tr {
+			display: table;
 			word-break: break-all;
 			width: var(--table-width);
-			table-layout:fixed;
+			table-layout: fixed;
 		}
-		.pointer {cursor: pointer;}
-		
-		.card-body{
+
+		.pointer {
+			cursor: pointer;
+		}
+
+		.card {
+			margin-bottom: 0px;
+		}
+
+		.card-body {
 			padding: 10px;
 			word-break: break-all;
+
 		}
-		ul#show_search_product{
+
+		ul#show_search_product {
 			z-index: 4;
 			position: relative;
 		}
-		
+		ul#show_search_customer {
+			z-index: 4;
+			position: relative;
+		}
 	</style>
 </head>
 
@@ -89,13 +110,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<section class="content">
 			<div class="container-fluid">
 				<!-- Small boxes (Stat box) -->
-						<div class="card" style="height: 75vh;">
-							<div class="card-header"
-								style="height: 50px; background-color: #007bff; padding:10px 20px 0px 20px;">
+				<div class="card" style="min-height: 75vh;">
+					<div class="card-header"
+						style="height: 50px; background-color: #007bff; padding:10px 20px 0px 20px;">
+						<div class="row">
+							<div class="col-8" style="height: 40px;">
 								<div class="row">
-									<div class="col-8" style="height: 40px;">
-										<input class="form-control" style="height: 30px;padding: 5px 5px 5px 5px" id="search_product"
-											placeholder="Tìm theo tên hoặc mã">
+									<div class="col-6">
+										<input class="form-control" style="height: 30px;padding: 5px 5px 5px 5px"
+											id="search_product" placeholder="Tìm theo tên hoặc mã">
 										<div style="display:block">
 											<ul style="max-height: 60vh;margin:0px; overflow: auto; list-style-type:none; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index:10010; background-color: #ffff; padding: 0"
 												id="show_search_product">
@@ -103,44 +126,65 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											</ul>
 										</div>
 									</div>
-									<div class="col-4" style="height: 40px;">
-										<h4 class="font-italic" style="display:inline; margin-left: 10px; color: #ffff">
-											<%-store_name%>
-										</h4>
-										<a class="nav-link float-right" href="/logout"
-											style="color: #ffff; position: relative; display:inline; padding:0;">
-											<strong>Logout</strong>
-											<i class="fas fa-sign-out-alt"></i>
-										</a>
+									<div class="col-6">
+										
 									</div>
 								</div>
+
+
 							</div>
-							<div class="card-body">
-								<div class="row">
-									<div class="col-xl-8">
-										<table class="table table-hover table-sm" cellspacing="0" style="font-size: 14px;">
-											<thead>
-											  <tr>
-												<th>Mã</th>
-												<th>Tên</th>
-												<th>Giá</th>
-												<th>Số lượng</th>
-												<th>Tổng cộng</th>
-												<th></th>
-											  </tr>
-											</thead>
-											<tbody id="add_product">
-											  
-											</tbody>
-										</table>
-									</div>
-									<div class="col-xl-4">
-									</div>
-								</div>
+							<div class="col-4" style="height: 40px;">
+								<h4 class="font-italic" style="display:inline; margin-left: 10px; color: #ffff">
+									<%-store_name%>
+								</h4>
+								<a class="nav-link float-right" href="/logout"
+									style="color: #ffff; position: relative; display:inline; padding:0;">
+									<strong>Logout</strong>
+									<i class="fas fa-sign-out-alt"></i>
+								</a>
 							</div>
 						</div>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-8">
+								<table class="table table-hover table-sm" cellspacing="0" style="font-size: 14px;">
+									<thead>
+										<tr>
+											<th>Mã</th>
+											<th>Tên</th>
+											<th>Giá</th>
+											<th>Số lượng</th>
+											<th>Tổng cộng</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody id="add_product">
 
-				<div class="row" style="height:25vh; padding:7.5px" id="get_service">
+									</tbody>
+								</table>
+							</div>
+							<div class="col-xl-4">
+								<div class="input-group">
+									<div class="input-group-prepend " >
+									  <span class="input-group-text bg-success text-white">Khách hàng</span>
+									</div>
+									<input class="form-control" id="search_customer" placeholder="Tìm theo tên hoặc số điện thoại">
+								</div>
+								
+								<div style="display:block">
+									<ul style="max-height: 60vh;margin:0px; overflow: auto; list-style-type:none; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index:10010; background-color: #ffff; padding: 0"
+										id="show_search_customer">
+	
+									</ul>
+								</div>			
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="carousel" data-ride="carousel" style="height:25vh; padding:7.5px" data-interval="false" id="get_service">
+
 				</div>
 			</div><!-- /.container-fluid -->
 		</section>

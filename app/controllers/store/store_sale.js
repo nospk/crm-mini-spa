@@ -3,6 +3,7 @@ const Store = require('../../models/store');
 const Common = require("../../../core/common");
 const Product_service = require('../../models/product_service');
 const Store_stocks = require('../../models/store_stocks');
+const Customer = require('../../models/customer');
 class Store_sale extends Controller{
     static show(req, res){
         Store_sale.setLocalValue(req,res);
@@ -39,7 +40,19 @@ class Store_sale extends Controller{
 			console.log(err)
 			Store_sale.sendError(res, err, err.message);
 		}
-    }
+	}
+	static async search_customer(req, res){
+        try{
+			let match = {
+				$and: [ {company :req.session.store.company} ] 
+			}
+			let customers = await Customer.find(match).sort({createdAt: -1})
+			Store_sale.sendData(res, customers);
+		}catch(err){
+			console.log(err)
+			Store_sale.sendError(res, err, err.message);
+		}
+	}
 }
 
 module.exports = Store_sale

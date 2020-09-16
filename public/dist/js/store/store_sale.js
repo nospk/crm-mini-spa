@@ -221,75 +221,88 @@ function get_service(){
 			},
 			success: function (data) {
 				if (data.status == 1) {
-					let set_number = 8;
+
+					let set_number = 4;
 					let html = `<div class="carousel-inner">`
 					data.data.forEach((item, index) => {
 						if(index == 0){
 							html+= `<div class="carousel-item active">
-										<div class="row">
-											<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+										<div class="card-columns">
+											<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
-													<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+													<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
 												</div>
 											</div>
 								`
 						}
-						if((index+1)% set_number != 0 && (index+2)% set_number != 0 && (index+1) != data.data.length){
-							html+= `<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+						if((index+1)% set_number != 0 && (index+2)% set_number != 0 && (index+1) != data.data.length && index != 0){
+							html+= `<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 										<div class="card-body">
 											<h5 class="card-title">${item.name}</h5>
 											<p class="card-text">Mã: ${item.number_code}</p>
-											<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+											<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
 										</div>
 									</div>
 								`
 						}
-						if((index+1)% set_number != 0 && (index+2)% set_number == 0 && (index+1) != data.data.length){
-							html+= `<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+						if((index+1)% set_number != 0 && (index+2)% set_number == 0 && (index+1) != data.data.length && index != 0){
+							html+= `<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 										<div class="card-body">
 											<h5 class="card-title">${item.name}</h5>
 											<p class="card-text">Mã: ${item.number_code}</p>
-											<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+											<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
 										</div>
 									</div>
 								</div>
 								</div>
 								`
 						}
-						if((index+1)% set_number == 0 && (index+1) == data.data.length){
+						if((index+1)% set_number == 0 && (index+1) != data.data.length && index != 0){
+							html+= `<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+										<div class="card-body">
+											<h5 class="card-title">${item.name}</h5>
+											<p class="card-text">Mã: ${item.number_code}</p>
+											<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
+										</div>
+									</div>
+								</div>
+								</div>
+								`
+						}
+						if((index+1)% set_number == 0 && (index+1) == data.data.length && index != 0){
 							html+= `<div class="carousel-item">
-										<div class="row">
-											<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+										<div class="card-columns">
+											<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
-													<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+													<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
 												</div>
 											</div>
 										</div>
 									</div>
 								`
 						}
-						if((index+1)% set_number == 0 && (index+1) != data.data.length){
+						if((index+1)% set_number == 0 && (index+1) != data.data.length && index != 0){
 							html+= `<div class="carousel-item">
-										<div class="row">
-											<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+										<div class="card-columns">
+											<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
-													<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+													<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
 												</div>
 											</div>
 								`
 						}
-						if((index+1)% set_number != 0 && (index+1) == data.data.length){
-							html+= `<div class="col-6 col-xl-3 card pointer" style="margin-bottom:5px; padding:0px" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+						if((index+1)% set_number != 0 && (index+1) == data.data.length && index != 0){
+							html+= `<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 										<div class="card-body">
 											<h5 class="card-title">${item.name}</h5>
 											<p class="card-text">Mã: ${item.number_code}</p>
-											<p class="card-text"><small class="text-muted">${convert_vnd(item.price)}</small></p>
+											<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
 										</div>
 									</div>
 								</div>

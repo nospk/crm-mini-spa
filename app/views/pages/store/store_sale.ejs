@@ -80,14 +80,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 		.card {
 			margin-bottom: 0px;
+			
 		}
 
 		.card-body {
-			padding: 10px;
+			padding: 5px;
+			
 			word-break: break-all;
 
 		}
-
+		p.card-text{
+			margin-bottom: 5px;
+		}
 		ul#show_search_product {
 			z-index: 4;
 			position: relative;
@@ -95,6 +99,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		ul#show_search_customer {
 			z-index: 4;
 			position: relative;
+		}
+		@media (min-width: 576px) {
+			 .card-columns {
+				 column-count: 2;
+			}
+		}
+		 @media (min-width: 768px) {
+			 .card-columns {
+				 column-count: 2;
+			}
+		}
+		 @media (min-width: 992px) {
+			 .card-columns {
+				 column-count: 4;
+			}
+		}
+		 @media (min-width: 1200px) {
+			 .card-columns {
+				 column-count: 4;
+			}
 		}
 	</style>
 </head>
@@ -167,7 +191,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<div class="col-xl-4">
 								<div class="input-group">
 									<div class="input-group-prepend " >
-									  <span class="input-group-text bg-success text-white">Khách hàng</span>
+									  <span class="input-group-text bg-primary text-white">Khách hàng</span>
 									</div>
 									<input class="form-control" id="search_customer" placeholder="Tìm theo tên hoặc số điện thoại">
 								</div>
@@ -183,7 +207,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					</div>
 				</div>
 				
-				<div class="carousel" data-ride="carousel" style="height:25vh; padding:7.5px" data-interval="false" id="get_service">
+				<div class="carousel" data-ride="carousel" style="height:25vh; padding: 7.5px 0px 0px 0px" data-interval="false" id="get_service">
 
 				</div>
 			</div><!-- /.container-fluid -->

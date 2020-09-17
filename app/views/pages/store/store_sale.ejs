@@ -100,22 +100,39 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			z-index: 4;
 			position: relative;
 		}
-		@media (min-width: 576px) {
+		
+		@media (min-width: 300px) {
+			 #name_store{
+				  font-size: 12px;
+				  display: none;
+			  }
 			 .card-columns {
 				 column-count: 2;
 			}
 		}
 		 @media (min-width: 768px) {
+			  #name_store{
+				  font-size: 18px;
+				  display: inline;
+			  }
 			 .card-columns {
 				 column-count: 2;
 			}
 		}
 		 @media (min-width: 992px) {
+			  #name_store{
+				  font-size: 20px;
+				  display: inline;
+			  }
 			 .card-columns {
 				 column-count: 4;
 			}
 		}
 		 @media (min-width: 1200px) {
+			  #name_store{
+				  display: inline;
+				  font-size: 20px;
+			  }
 			 .card-columns {
 				 column-count: 4;
 			}
@@ -135,10 +152,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<div class="container-fluid">
 				<!-- Small boxes (Stat box) -->
 				<div class="card" style="min-height: 75vh;">
-					<div class="card-header"
-						style="height: 50px; background-color: #007bff; padding:10px 20px 0px 20px;">
+					<div class="card-header bg-primary text-white"
+						style="height: 50px;">
 						<div class="row">
-							<div class="col-8" style="height: 40px;">
+							<div class="col-8">
 								<div class="row">
 									<div class="col-6">
 										<input class="form-control" style="height: 30px;padding: 5px 5px 5px 5px"
@@ -157,12 +174,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
 							</div>
-							<div class="col-4" style="height: 40px;">
-								<h4 class="font-italic" style="display:inline; margin-left: 10px; color: #ffff">
+							<div class="col-4">
+								<span class="font-italic" id="name_store" style="margin-left: 10px;">
 									<%-store_name%>
-								</h4>
-								<a class="nav-link float-right" href="/logout"
-									style="color: #ffff; position: relative; display:inline; padding:0;">
+								</span>
+								<a class="nav-link float-right text-white" href="/logout"
+									style="position: relative; display:inline; padding:0;">
 									<strong>Logout</strong>
 									<i class="fas fa-sign-out-alt"></i>
 								</a>
@@ -207,7 +224,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					</div>
 				</div>
 				
-				<div class="carousel" data-ride="carousel" style="height:25vh; padding: 7.5px 0px 0px 0px" data-interval="false" id="get_service">
+				<div class="carousel" data-ride="carousel" style="min-height:25vh; padding: 7.5px 0px 0px 0px" data-interval="false" id="get_service">
 
 				</div>
 			</div><!-- /.container-fluid -->

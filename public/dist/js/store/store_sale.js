@@ -34,6 +34,8 @@ $(window).on("click", function () {
 });
 $( document ).ready(()=>{
 	get_service()
+	$('#birthday').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+	$('[data-mask]').inputmask()
     // const currencyInput = document.querySelector('input[type="currency"]')
     // currencyInput.addEventListener('focus', onFocus)
     // currencyInput.addEventListener('blur', onBlur)
@@ -328,7 +330,13 @@ function get_service(){
 			}
 		})
 }
-
+function clear_new_customer(){
+	$('#create_new_customer #name').val("")
+    $('#create_new_customer #birthday').val("")
+    $('#create_new_customer #address').val("")
+    $('#create_new_customer #phone').val("")
+	$('#create_new_customer #note').val("")
+}
 function create_new_customer(){
     let data = {
         name: $('#create_new_customer #name').val().trim(),
@@ -336,6 +344,7 @@ function create_new_customer(){
         address: $('#create_new_customer #address').val().trim(),
         phone: $('#create_new_customer #phone').val().trim(),
 		note: $('#create_new_customer #note').val().trim(),
+		gener: $('#create_new_customer #gener').val(),
         _csrf: $('#_csrf').val()
     }
     $.ajax({
@@ -351,10 +360,10 @@ function create_new_customer(){
                     showConfirmButton: false,
                     timer: 3000
                 }).then((result)=>{
-					//get_data()
+					clear_new_customer()
                 })
                 .catch(timer => {
-					//get_data()
+					clear_new_customer()
                 });    
             }else{
                 Swal.fire({

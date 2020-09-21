@@ -24,6 +24,9 @@ const CustomerSchema = mongoose.Schema({
 	debt:{
 		type: Number, default:0
 	},
+	gener:{
+		type: String
+	},
 	company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
 	},

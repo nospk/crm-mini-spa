@@ -152,11 +152,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<div class="container-fluid">
 				<!-- Small boxes (Stat box) -->
 				<div class="card" style="min-height: 75vh;">
-					<div class="card-header bg-primary text-white"
+					<div class="card-header bg-primary"
 						style="height: 50px;">
 						<div class="row">
 							<div class="col-8">
-								<div class="row">
+								<div class="row text-dark">
 									<div class="col-6">
 										<input class="form-control" style="height: 30px;padding: 5px 5px 5px 5px"
 											id="search_product" placeholder="Tìm theo tên hoặc mã">
@@ -217,7 +217,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								</div>
 								
 								<div style="display:block">
-									<ul style="max-height: 60vh;margin:0px; overflow: auto; list-style-type:none; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index:10010; background-color: #ffff; padding: 0"
+									<ul style="max-height: 60vh;margin:0px; overflow: auto; list-style-type:none; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index:10010; background-color: #ffff; padding: 0;"
 										id="show_search_customer">
 	
 									</ul>
@@ -246,27 +246,36 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			  <div class="modal-body">
 				<div class="input-group">
 					<div class="input-group-prepend">
-						<div class="input-group-text" id="btnGroupAddon1">Tên</div>
+						<div class="input-group-text">Tên</div>
 					</div>
-					<input type="text" class="form-control" id="name" placeholder="Nhập tên" aria-label="Name" aria-describedby="btnGroupAddon1">
+					<input type="text" class="form-control" id="name" placeholder="Nhập tên" aria-label="Name">
 				</div>
 				<div class="input-group">
 					<div class="input-group-prepend">
-						<div class="input-group-text" id="btnGroupAddon2">Ngày Tháng Năm Sinh</div>
+						<div class="input-group-text">Ngày Tháng Năm Sinh</div>
 					</div>
-					<input type="text" class="form-control" id="birthday" placeholder="Nhập sinh nhật" aria-label="Birthday" aria-describedby="btnGroupAddon2">
+					<input type="text" class="form-control" data-inputmask-alias="datetime" id="birthday" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
 				</div>
 				<div class="input-group">
 					<div class="input-group-prepend">
-						<div class="input-group-text" id="btnGroupAddon3">Số điện thoại</div>
+						<div class="input-group-text" >Giới tính</div>
 					</div>
-					<input type="text" class="form-control" id="phone" placeholder="Số điện thoại" aria-label="Phone" aria-describedby="btnGroupAddon3">
+					<select class="form-control" id="gener">
+						<option value="male">Nam</option>
+						<option value="female">Nữ</option>
+					</select>
 				</div>
 				<div class="input-group">
 					<div class="input-group-prepend">
-						<div class="input-group-text" id="btnGroupAddon4">Thông tin địa chỉ</div>
+						<div class="input-group-text">Số điện thoại</div>
 					</div>
-					<input type="text" class="form-control" id="address" placeholder="Nhập địa chỉ" aria-label="Address" aria-describedby="btnGroupAddon4">
+					<input type="text" class="form-control" id="phone" data-inputmask='"mask": "999 999 9999"' data-mask>
+				</div>
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text">Thông tin địa chỉ</div>
+					</div>
+					<input type="text" class="form-control" id="address" placeholder="Nhập địa chỉ" aria-label="Address">
 				</div> 
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">
@@ -295,6 +304,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<script src="/assets/dist/js/adminlte.min.js"></script>
 		<!-- Common -->
 		<script src="/dist/js/common.js"></script>
+		<!-- InputMask -->
+
+		<script src="assets/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
 </body>
 
 </html>

@@ -207,10 +207,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							</div>
 							<div class="col-xl-4">
 								<div class="input-group">
-									<div class="input-group-prepend " >
+									<div class="input-group-prepend">
 									  <span class="input-group-text bg-primary text-white">Khách hàng</span>
 									</div>
 									<input class="form-control" id="search_customer" placeholder="Tìm theo tên hoặc số điện thoại">
+									<div class="input-group-append">
+									  <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#create_new_customer"><i class="fas fa-plus"></i></button>
+									</div>
 								</div>
 								
 								<div style="display:block">
@@ -230,9 +233,58 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			</div><!-- /.container-fluid -->
 		</section>
 		<!-- /.content -->
-
+		<!-- Modal create customer -->
+		<div class="modal fade" id="create_new_customer" tabindex="-1" role="dialog" aria-labelledby="create_store" data-backdrop="static">
+		  <div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title">Tạo khách hàng mới </h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
+			  <div class="modal-body">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text" id="btnGroupAddon1">Tên</div>
+					</div>
+					<input type="text" class="form-control" id="name" placeholder="Nhập tên" aria-label="Name" aria-describedby="btnGroupAddon1">
+				</div>
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text" id="btnGroupAddon2">Ngày Tháng Năm Sinh</div>
+					</div>
+					<input type="text" class="form-control" id="birthday" placeholder="Nhập sinh nhật" aria-label="Birthday" aria-describedby="btnGroupAddon2">
+				</div>
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text" id="btnGroupAddon3">Số điện thoại</div>
+					</div>
+					<input type="text" class="form-control" id="phone" placeholder="Số điện thoại" aria-label="Phone" aria-describedby="btnGroupAddon3">
+				</div>
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text" id="btnGroupAddon4">Thông tin địa chỉ</div>
+					</div>
+					<input type="text" class="form-control" id="address" placeholder="Nhập địa chỉ" aria-label="Address" aria-describedby="btnGroupAddon4">
+				</div> 
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+					  <span class="input-group-text">Ghi chú</span>
+					</div>
+					<textarea class="form-control" rows="5" id="note"></textarea>
+				</div>			
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+				<button type="button" class="btn btn-primary" onclick="create_new_customer();" data-dismiss="modal">Tạo</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		<!-- End Modal create customer -->
 		<!-- /.content-wrapper -->
-		<input type="hidden" id="_csrf" value="<%=csrfToken %>" />
+		<input type="hidden" id="_csrf" value="<%=csrfToken%>" />
 		<script src="/dist/js/store/store_sale.js"></script>
 		<!-- Sweetalert2 -->
 		<link rel="stylesheet" href="/assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">

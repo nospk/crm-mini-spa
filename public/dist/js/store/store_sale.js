@@ -328,3 +328,49 @@ function get_service(){
 			}
 		})
 }
+
+function create_new_customer(){
+    let data = {
+        name: $('#create_new_customer #name').val().trim(),
+        birthday: $('#create_new_customer #birthday').val().trim(),
+        address: $('#create_new_customer #address').val().trim(),
+        phone: $('#create_new_customer #phone').val().trim(),
+		note: $('#create_new_customer #note').val().trim(),
+        _csrf: $('#_csrf').val()
+    }
+    $.ajax({
+        url:'/store_sale/create_customer',
+        method:'POST',
+        data: data,
+        success: function(data){
+            if(data.status == 1){
+                Swal.fire({
+                    title: "Thao tác thành công",
+                    text: data.message,
+                    icon: "info",
+                    showConfirmButton: false,
+                    timer: 3000
+                }).then((result)=>{
+					//get_data()
+                })
+                .catch(timer => {
+					//get_data()
+                });    
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
+}

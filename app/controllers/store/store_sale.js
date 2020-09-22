@@ -48,7 +48,7 @@ class Store_sale extends Controller{
 				$and: [ {company :req.session.store.company} ] 
 			}
 			if(search){
-				match.$and.push({$or:[{'phone': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
+				match.$and.push({$or:[{'phone': {$regex: search,$options:"mi"}},{'name': {$regex: search,$options:"i"}}]})
 			}
 			let customers = await Customer.find(match).sort({createdAt: -1})
 			Store_sale.sendData(res, customers);

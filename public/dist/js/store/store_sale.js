@@ -88,6 +88,20 @@ function search_product() {
 	}
 
 }
+function add_customer(customer){
+	customer = customer.split(':')
+	$('#customer').text(customer[0]);
+	$('#select_customer').val(customer[1]);
+	$('#find_customer').css('display', 'none');
+	$('#show_customer').css('display', 'flex');
+}
+function remove_customer(){
+	$('#customer').text("");
+	$('#select_customer').val("");
+	$('#search_customer').val("");
+	$('#find_customer').css('display', 'flex');
+	$('#show_customer').css('display', 'none');
+}
 function search_customer() {
 	if ($('#search_customer').val() != "") {
 		$.ajax({
@@ -102,9 +116,9 @@ function search_customer() {
 					if (data.data.length > 0) {
 						let html = ""
 						data.data.forEach(item => {
-							html += `<li class="show_search pointer">
-										<span class="font-weight-bold">${item.name}</span><br>
-										<span class="number_code"><i class="fas fa-phone-square-alt"></i>  ${item.phone}</span>
+							html += `<li class="show_search pointer" onclick="add_customer('${item.name}:${item._id}')">
+										<span class="font-weight-bold" >${item.name}</span><br>
+										<span class="number_code"><i class="fas fa-phone-square-alt"></i>  ${item.phone.replace(/(\d{3})(\d{3})(\d{4})/g, '$1 $2 $3')}</span>
 									 </li>
 									`
 						});
@@ -342,7 +356,7 @@ function create_new_customer(){
         name: $('#create_new_customer #name').val().trim(),
         birthday: $('#create_new_customer #birthday').val().trim(),
         address: $('#create_new_customer #address').val().trim(),
-        phone: $('#create_new_customer #phone').val().trim(),
+        phone: $('#create_new_customer #phone').val().replace(/ +/g, ""),
 		note: $('#create_new_customer #note').val().trim(),
 		gener: $('#create_new_customer #gener').val(),
         _csrf: $('#_csrf').val()

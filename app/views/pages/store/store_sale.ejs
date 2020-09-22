@@ -206,16 +206,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								</table>
 							</div>
 							<div class="col-xl-4">
-								<div class="input-group">
+								<div class="input-group" id="find_customer">
 									<div class="input-group-prepend">
-									  <span class="input-group-text bg-primary text-white">Khách hàng</span>
+									  <span class="input-group-text bg-primary text-white" style="cursor: default;">Khách hàng</span>
 									</div>
 									<input class="form-control" id="search_customer" placeholder="Tìm theo tên hoặc số điện thoại">
 									<div class="input-group-append">
-									  <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#create_new_customer"><i class="fas fa-plus"></i></button>
+									  <button class="btn btn-primary" type="button" style="width:38px" data-toggle="modal" data-target="#create_new_customer"><i class="fas fa-plus"></i></button>
 									</div>
 								</div>
-								
+								<div class="input-group" id="show_customer" style="display:none">
+									<div class="input-group-prepend">
+									  <span class="input-group-text bg-primary text-white" style="cursor: default;">Khách hàng</span>
+									</div>
+									<span class="form-control pointer"  style="color: #007bff ;background-color:#FFFFFF" id="customer"></span>
+									<input type="hidden" id="select_customer" value="">
+									<div class="input-group-append">
+									  <button class="btn btn-primary" type="button" style="width:38px" onclick="remove_customer()" ><i class="fas fa-times"></i></button>
+									</div>
+								</div>
 								<div style="display:block">
 									<ul style="max-height: 60vh;margin:0px; overflow: auto; list-style-type:none; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index:10010; background-color: #ffff; padding: 0;"
 										id="show_search_customer">
@@ -269,7 +278,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<div class="input-group-prepend">
 						<div class="input-group-text">Số điện thoại</div>
 					</div>
-					<input type="text" class="form-control" id="phone" data-inputmask='"mask": "999 999 9999"' data-mask>
+					<input type="text" class="form-control" id="phone" data-inputmask="'mask': '999 999 9999'" data-mask>
 				</div>
 				<div class="input-group">
 					<div class="input-group-prepend">

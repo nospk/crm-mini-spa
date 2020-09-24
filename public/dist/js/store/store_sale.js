@@ -33,7 +33,8 @@ $(window).on("click", function () {
 
 });
 $( document ).ready(()=>{
-	get_service()
+	get_service();
+	get_employees();
 	$('#birthday').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
 	$('[data-mask]').inputmask()
     // const currencyInput = document.querySelector('input[type="currency"]')
@@ -227,6 +228,39 @@ function total_sale(){
 
 }
 
+function get_employees(){
+	$.ajax({
+        url:'/store_sale/get_employees',
+        method:'POST',
+        data: {
+				_csrf: $('#_csrf').val()
+		},
+        success: function(data){
+            if(data.status == 1){
+				let html_employees = '';
+                data.data.forEach(item => {
+                    html_employees += `<option value="${item._id}">${item.name}</option>`
+                })
+				console.log(html_employees)
+				$('#select_employees').html(html_employees)
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
+}
 
 function get_service(){
 	$.ajax({

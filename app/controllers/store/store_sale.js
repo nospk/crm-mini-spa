@@ -4,6 +4,7 @@ const Common = require("../../../core/common");
 const Product_service = require('../../models/product_service');
 const Store_stocks = require('../../models/store_stocks');
 const Customer = require('../../models/customer');
+const Employees = require('../../models/employees');
 class Store_sale extends Controller{
     static show(req, res){
         Store_sale.setLocalValue(req,res);
@@ -36,6 +37,18 @@ class Store_sale extends Controller{
 			}
 			let services = await Product_service.find(match).sort({createdAt: -1})
 			Store_sale.sendData(res, services);
+		}catch(err){
+			console.log(err)
+			Store_sale.sendError(res, err, err.message);
+		}
+	}
+	static async get_employees(req, res){
+        try{
+			let match = {
+				$and: [ {company :req.session.store.company, isActive: true} ] 
+			}
+			let employees = await Employees.find(match).sort({createdAt: -1})
+			Store_sale.sendData(res, employees);
 		}catch(err){
 			console.log(err)
 			Store_sale.sendError(res, err, err.message);

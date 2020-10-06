@@ -190,7 +190,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					</div>
 					<div class="card-body">
 						<div class="row">
-							<div class="col-xl-8">
+							<div class="col-md-8">
 								<table class="table table-hover table-sm" cellspacing="0" style="font-size: 14px;">
 									<thead>
 										<tr>
@@ -207,7 +207,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									</tbody>
 								</table>
 							</div>
-							<div class="col-xl-4">
+							<div class="col-md-4">
 								<div class="input-group" style="padding-bottom:5px;">
 									<div class="input-group-prepend">
 									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Nhân Viên</span>
@@ -248,23 +248,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								</div>
 								<label>Giảm giá</label> <span class="float-right"></span>
 								<br>
-								<span>Tổng cộng</span> <span class="float-right">....... đồng</span>
+								<span>Tổng cộng</span> <span class="float-right"></span>
 								<br>
-								<span>Tiền giảm</span> <span class="float-right">....... đồng</span>
+								<span>Tiền giảm</span> <span class="float-right"></span>
 								<br>
-								<label>Số tiền phải thanh toán</label> <span class="float-right">....... đồng</span>
+								<label>Số tiền phải thanh toán</label> <span class="float-right"></span>
 								<br>
-								<span>Khách trả</span> <span class="float-right">....... đồng</span>
+								<span>Khách trả</span> <span class="float-right"></span>
 								<br>
-								<button type="button" id="payment_cash" style="width:49%;" onclick="change_payment_type('payment_cash')" class="btn btn-info float-left">Tiền mặt</button>
-								<button type="button" id="payment_card" style="width:49%;" onclick="change_payment_type('payment_card')"class="btn btn-outline-info float-right">Thẻ</button>
+								<div class="d-flex justify-content-between"> 
+									<button type="button" id="payment_cash" style="width:33%;" onclick="change_payment_type('payment_cash')" class="btn btn-outline-info">Tiền mặt</button>
+									<button type="button" id="payment_card" style="width:33%;" onclick="change_payment_type('payment_card')"class="btn btn-outline-info">Thẻ</button>
+									<button type="button" id="payment_both" style="width:33%;" onclick="change_payment_type('payment_both')"class="btn btn-outline-info">Khác</button>
+								</div>
 								<input type="hidden" id="payment_type" value="payment_cash">
+								<label>Trả lại khách</label> <span class="float-right"></span>
 								<br>
-								<label>Trả lại khách</label> <span class="float-right">....... đồng</span>
+								<textarea class="form-control form-control-sm" id="note_bill" style="resize:none;" placeholder="Ghi chú" rows="5"></textarea>
 								<br>
-								<textarea class="form-control form-control-sm" id="note_bill" style="resize:none;" placeholder="Ghi chú" rows="6"></textarea>
-								<br>
-								<button type="button"  onclick="" class="form-control btn btn-info float-left">Thanh toán</button>
+								<button type="button" style="height:50px"  onclick="" class="form-control btn btn-info float-left">Thanh toán</button>
 							</div>
 						</div>
 					</div>

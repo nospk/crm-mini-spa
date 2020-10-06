@@ -436,10 +436,17 @@ function change_payment_type(type){
 	if(type == "payment_cash"){
 		$('#payment_cash').removeClass('btn-outline-info').addClass('btn-info');
 		$('#payment_card').removeClass('btn-info').addClass('btn-outline-info');
+		$('#payment_both').removeClass('btn-info').addClass('btn-outline-info');
 		$('#payment_type').val('payment_cash')
-	}else{
+	}else if(type == "payment_card"){
 		$('#payment_card').removeClass('btn-outline-info').addClass('btn-info');
 		$('#payment_cash').removeClass('btn-info').addClass('btn-outline-info');
+		$('#payment_both').removeClass('btn-info').addClass('btn-outline-info');
 		$('#payment_type').val('payment_card')
+	}else{
+		$('#payment_both').removeClass('btn-outline-info').addClass('btn-info');
+		$('#payment_card').removeClass('btn-info').addClass('btn-outline-info');
+		$('#payment_cash').removeClass('btn-info').addClass('btn-outline-info');
+		$('#payment_type').val('payment_both')
 	}
 }

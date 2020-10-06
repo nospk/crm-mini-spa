@@ -100,7 +100,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			z-index: 4;
 			position: relative;
 		}
-		
+		.green-card{
+			background-color: #5c0110;
+		}
 		@media (min-width: 300px) {
 			 #name_store{
 				  font-size: 12px;
@@ -152,7 +154,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<div class="container-fluid">
 				<!-- Small boxes (Stat box) -->
 				<div class="card" style="min-height: 75vh;">
-					<div class="card-header bg-primary"
+					<div class="card-header green-card"
 						style="height: 50px;">
 						<div class="row">
 							<div class="col-8">
@@ -175,7 +177,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 							</div>
 							<div class="col-4">
-								<span class="font-italic" id="name_store" style="margin-left: 10px;">
+								<span class="font-italic text-white" id="name_store" style="margin-left: 10px;">
 									<%-store_name%>
 								</span>
 								<a class="nav-link float-right text-white" href="/logout"
@@ -208,31 +210,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<div class="col-xl-4">
 								<div class="input-group" style="padding-bottom:5px;">
 									<div class="input-group-prepend">
-									  <span class="input-group-text bg-primary text-white" style="cursor: default; width: 105px;">Nhân Viên</span>
+									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Nhân Viên</span>
 									</div>
 									<select class="form-control" id="select_employees">
 									</select>
 								</div>
 								<div class="input-group" id="find_customer">
 									<div class="input-group-prepend">
-									  <span class="input-group-text bg-primary text-white" style="cursor: default; width: 105px;">Khách hàng</span>
+									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Khách hàng</span>
 									</div>
 									<input class="form-control" id="search_customer" placeholder="Tìm theo tên hoặc số điện thoại">
 									<div class="input-group-append">
-									  <button class="btn btn-primary" type="button" style="width:38px" data-toggle="modal" data-target="#create_new_customer"><i class="fas fa-plus"></i></button>
+									  <button class="btn btn-info" type="button" style="width:38px" data-toggle="modal" data-target="#create_new_customer"><i class="fas fa-plus"></i></button>
 									</div>
 								</div>
 								<div class="input-group" id="show_customer" style="display:none">
 									<div class="input-group-prepend">
-									  <span class="input-group-text bg-primary text-white" style="cursor: default; width: 105px;">Khách hàng</span>
+									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Khách hàng</span>
 									</div>
 									<span class="form-control pointer"  style="color: #007bff ;background-color:#FFFFFF" id="customer"></span>
 									<input type="hidden" id="select_customer" value="">
 									<div class="input-group-append">
-									  <button class="btn btn-primary" type="button" style="width:38px" onclick="remove_customer()" ><i class="fas fa-times"></i></button>
+									  <button class="btn btn-info" type="button" style="width:38px" onclick="remove_customer()" ><i class="fas fa-times"></i></button>
 									</div>
 								</div>
-								<div style="display:block">
+								<div style="display:block; z-index:10; position: absolute; left: 7.5px; right: 7.5px;">
 									<ul style="max-height: 60vh;margin:0px; overflow: auto; list-style-type:none; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index:10010; background-color: #ffff; padding: 0;"
 										id="show_search_customer">
 	
@@ -240,10 +242,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								</div>
 								<div class="input-group" style="padding-bottom:5px; padding-top:5px;">
 									<div class="input-group-prepend">
-									  <span class="input-group-text bg-primary text-white" style="cursor: default; width: 105px;">Mã giảm giá</span>
+									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Mã giảm giá</span>
 									</div>
 									<input type="text" class="form-control">
 								</div>
+								<label>Giảm giá</label> <span class="float-right"></span>
+								<br>
+								<span>Tổng cộng</span> <span class="float-right">....... đồng</span>
+								<br>
+								<span>Tiền giảm</span> <span class="float-right">....... đồng</span>
+								<br>
+								<label>Số tiền phải thanh toán</label> <span class="float-right">....... đồng</span>
+								<br>
+								<span>Khách trả</span> <span class="float-right">....... đồng</span>
+								<br>
+								<button type="button" id="payment_cash" style="width:49%;" onclick="change_payment_type('payment_cash')" class="btn btn-info float-left">Tiền mặt</button>
+								<button type="button" id="payment_card" style="width:49%;" onclick="change_payment_type('payment_card')"class="btn btn-outline-info float-right">Thẻ</button>
+								<input type="hidden" id="payment_type" value="payment_cash">
+								<br>
+								<label>Trả lại khách</label> <span class="float-right">....... đồng</span>
+								<br>
+								<textarea class="form-control form-control-sm" id="note_bill" style="resize:none;" placeholder="Ghi chú" rows="6"></textarea>
+								<br>
+								<button type="button"  onclick="" class="form-control btn btn-info float-left">Thanh toán</button>
 							</div>
 						</div>
 					</div>
@@ -303,7 +324,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<div class="input-group-prepend">
 					  <span class="input-group-text">Ghi chú</span>
 					</div>
-					<textarea class="form-control" rows="5" id="note"></textarea>
+					<textarea class="form-control" rows="5" id="note_customer"></textarea>
 				</div>			
 			  </div>
 			  <div class="modal-footer">

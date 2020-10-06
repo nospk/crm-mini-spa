@@ -279,7 +279,7 @@ function get_service(){
 						if(index == 0){ // if first item
 							html+= `<div class="carousel-item active">
 										<div class="card-columns">
-											<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+											<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
@@ -291,7 +291,7 @@ function get_service(){
 							if(index == count){ // if first card in columns
 								html+= `<div class="carousel-item">
 											<div class="card-columns">
-												<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+												<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 													<div class="card-body">
 														<h5 class="card-title">${item.name}</h5>
 														<p class="card-text">Mã: ${item.number_code}</p>
@@ -302,7 +302,7 @@ function get_service(){
 										</div>
 									`
 							}else{
-								html+= `<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+								html+= `<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
@@ -315,7 +315,7 @@ function get_service(){
 							}
 						}else if ((index+1) == count){ // if last card in columns
 							
-							html+= `<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+							html+= `<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
@@ -329,7 +329,7 @@ function get_service(){
 							count += set_number;
 							html+= `<div class="carousel-item">
 										<div class="card-columns">
-											<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+											<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
@@ -338,7 +338,7 @@ function get_service(){
 											</div>
 								`
 						}else{
-							html+= `<div class="card bg-primary text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+							html+= `<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 										<div class="card-body">
 											<h5 class="card-title">${item.name}</h5>
 											<p class="card-text">Mã: ${item.number_code}</p>
@@ -391,7 +391,7 @@ function create_new_customer(){
         birthday: $('#create_new_customer #birthday').val().trim(),
         address: $('#create_new_customer #address').val().trim(),
         phone: $('#create_new_customer #phone').val().replace(/ +/g, ""),
-		note: $('#create_new_customer #note').val().trim(),
+		note: $('#create_new_customer #note_customer').val().trim(),
 		gener: $('#create_new_customer #gener').val(),
         _csrf: $('#_csrf').val()
     }
@@ -430,4 +430,16 @@ function create_new_customer(){
             }
         }
     })
+}
+
+function change_payment_type(type){
+	if(type == "payment_cash"){
+		$('#payment_cash').removeClass('btn-outline-info').addClass('btn-info');
+		$('#payment_card').removeClass('btn-info').addClass('btn-outline-info');
+		$('#payment_type').val('payment_cash')
+	}else{
+		$('#payment_card').removeClass('btn-outline-info').addClass('btn-info');
+		$('#payment_cash').removeClass('btn-info').addClass('btn-outline-info');
+		$('#payment_type').val('payment_card')
+	}
 }

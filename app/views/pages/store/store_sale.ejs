@@ -246,23 +246,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									</div>
 									<input type="text" class="form-control">
 								</div>
-								<label>Giảm giá</label> <span class="float-right"></span>
+								<label>Giảm giá</label> <span id="discount" class="float-right">10%</span>
 								<br>
-								<span>Tổng cộng</span> <span class="float-right"></span>
+								<span>Tổng cộng</span> <span id="total_sale" class="float-right"></span>
 								<br>
-								<span>Tiền giảm</span> <span class="float-right"></span>
+								<span>Tiền giảm</span> <span id="money_discount" class="float-right"></span>
 								<br>
-								<label>Số tiền phải thanh toán</label> <span class="float-right"></span>
+								<label>Số tiền phải thanh toán</label> <span id="bill_money" class="float-right"></span>
 								<br>
-								<span>Khách trả</span> <span class="float-right"></span>
+								<span>Khách trả</span> <span id="customer_pay" class="float-right"></span>
 								<br>
-								<div class="d-flex justify-content-between"> 
+								<div class="d-none justify-content-between" id="selection_pay"> 
 									<button type="button" id="payment_cash" style="width:33%;" onclick="change_payment_type('payment_cash')" class="btn btn-outline-info">Tiền mặt</button>
 									<button type="button" id="payment_card" style="width:33%;" onclick="change_payment_type('payment_card')"class="btn btn-outline-info">Thẻ</button>
 									<button type="button" id="payment_both" style="width:33%;" onclick="change_payment_type('payment_both')"class="btn btn-outline-info">Khác</button>
 								</div>
 								<input type="hidden" id="payment_type" value="payment_cash">
-								<label>Trả lại khách</label> <span class="float-right"></span>
+								<label>Trả lại khách</label> <span class="float-right" id="money_return"></span>
 								<br>
 								<textarea class="form-control form-control-sm" id="note_bill" style="resize:none;" placeholder="Ghi chú" rows="5"></textarea>
 								<br>
@@ -332,6 +332,33 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			  <div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
 				<button type="button" class="btn btn-primary" onclick="create_new_customer();" data-dismiss="modal">Tạo</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		<!-- End Modal create customer -->
+		
+		<!-- Modal cash -->
+		<div class="modal fade" id="type_cash" tabindex="-1" role="dialog" aria-labelledby="type_cash" data-backdrop="static">
+		  <div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title">Tiền mặt</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
+			  <div class="modal-body">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text">Khách trả</div>
+					</div>
+					<input type="currency" class="form-control" id="pay_cash" placeholder="Nhập số tiền" aria-label="Cash">
+				</div>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+				<button type="button" class="btn btn-primary" onclick="pay_cash();" data-dismiss="modal">Nhập</button>
 			  </div>
 			</div>
 		  </div>

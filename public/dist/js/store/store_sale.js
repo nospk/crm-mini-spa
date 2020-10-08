@@ -37,9 +37,9 @@ $( document ).ready(()=>{
 	get_employees();
 	$('#birthday').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
 	$('[data-mask]').inputmask()
-    // const currencyInput = document.querySelector('input[type="currency"]')
-    // currencyInput.addEventListener('focus', onFocus)
-    // currencyInput.addEventListener('blur', onBlur)
+    const currencyInput = document.querySelector('input[type="currency"]')
+    currencyInput.addEventListener('focus', onFocus)
+    currencyInput.addEventListener('blur', onBlur)
 })
 function search_product() {
 	if ($('#search_product').val() != "") {
@@ -190,6 +190,7 @@ function add_product(product){
 
 }
 
+
 function delete_row_product(btn) {
     var row = btn.parentNode.parentNode;
     row.parentNode.removeChild(row);
@@ -220,12 +221,31 @@ function change_quantity(code, btn){
 
 function total_sale(){
     let money = 0;
+	let money_discount = 0;
 	//let payment = convert_number($('#payment').val());
     $(".total").each(function () {                  
         money+= convert_number($(this).text()); 
     });
-
-
+	if(money != 0){
+		if($("#discount").text() != ""){
+			money_discount = Math.ceil(money * 10 /100)
+			$('#money_discount').text(convert_vnd(money_discount))
+		}
+		$('#total_sale').text(convert_vnd(money))
+		$('#bill_money').text(convert_vnd(money - money_discount))
+		$('#selection_pay').removeClass("d-none").addClass("d-flex");
+		if($('#customer_pay').text() != ""){
+			$('#money_return').text(convert_vnd(convert_number($('#customer_pay').text()) - convert_number($('#bill_money').text())))
+		}else{
+			$('#money_return').text("")
+		}
+	}else{
+		$('#total_sale').text("")
+		$('#customer_pay').text("")
+		$('#money_return').text("")
+		$('#bill_money').text("")
+		$('#selection_pay').removeClass("d-flex").addClass("d-none");
+	}
 }
 
 function get_employees(){
@@ -431,12 +451,20 @@ function create_new_customer(){
         }
     })
 }
-
+function pay_cash(){
+	$('#customer_pay').text($('#pay_cash').val())
+	if($('#customer_pay').text() != ""){
+		$('#money_return').text(convert_vnd(convert_number($('#customer_pay').text()) - convert_number($('#bill_money').text())))
+	}else{
+		$('#money_return').text("")
+	}
+}
 function change_payment_type(type){
 	if(type == "payment_cash"){
 		$('#payment_cash').removeClass('btn-outline-info').addClass('btn-info');
 		$('#payment_card').removeClass('btn-info').addClass('btn-outline-info');
 		$('#payment_both').removeClass('btn-info').addClass('btn-outline-info');
+		$('#type_cash').modal('show');
 		$('#payment_type').val('payment_cash')
 	}else if(type == "payment_card"){
 		$('#payment_card').removeClass('btn-outline-info').addClass('btn-info');

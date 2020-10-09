@@ -37,9 +37,11 @@ $( document ).ready(()=>{
 	get_employees();
 	$('#birthday').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
 	$('[data-mask]').inputmask()
-    const currencyInput = document.querySelector('input[type="currency"]')
-    currencyInput.addEventListener('focus', onFocus)
-    currencyInput.addEventListener('blur', onBlur)
+    const currencyInputAll = document.querySelectorAll('input[type="currency"]')
+	currencyInputAll.forEach(currencyInput=>{
+		currencyInput.addEventListener('focus', onFocus)
+		currencyInput.addEventListener('blur', onBlur)
+	})
 })
 function search_product() {
 	if ($('#search_product').val() != "") {
@@ -227,21 +229,22 @@ function total_sale(){
         money+= convert_number($(this).text()); 
     });
 	if(money != 0){
-		if($("#discount").text() != ""){
+		if($("#discount_type").val() != ""){
 			money_discount = Math.ceil(money * 10 /100)
 			$('#money_discount').text(convert_vnd(money_discount))
 		}
 		$('#total_sale').text(convert_vnd(money))
 		$('#bill_money').text(convert_vnd(money - money_discount))
 		$('#selection_pay').removeClass("d-none").addClass("d-flex");
-		if($('#customer_pay').text() != ""){
-			$('#money_return').text(convert_vnd(convert_number($('#customer_pay').text()) - convert_number($('#bill_money').text())))
+		if($('#customer_pay_cash').text() != "" || $('#customer_pay_card').text() != ""){
+			$('#money_return').text(convert_vnd(convert_number($('#customer_pay_cash').text()) + convert_number($('#customer_pay_card').text()) - convert_number($('#bill_money').text())))
 		}else{
 			$('#money_return').text("")
 		}
 	}else{
 		$('#total_sale').text("")
-		$('#customer_pay').text("")
+		$('#customer_pay_cash').text("")
+		$('#customer_pay_card').text("")
 		$('#money_return').text("")
 		$('#bill_money').text("")
 		$('#selection_pay').removeClass("d-flex").addClass("d-none");
@@ -261,7 +264,6 @@ function get_employees(){
                 data.data.forEach(item => {
                     html_employees += `<option value="${item._id}">${item.name}</option>`
                 })
-				console.log(html_employees)
 				$('#select_employees').html(html_employees)
             }else{
                 Swal.fire({
@@ -452,29 +454,33 @@ function create_new_customer(){
     })
 }
 function pay_cash(){
-	$('#customer_pay').text($('#pay_cash').val())
-	if($('#customer_pay').text() != ""){
-		$('#money_return').text(convert_vnd(convert_number($('#customer_pay').text()) - convert_number($('#bill_money').text())))
+	$('#customer_pay_cash').text($('#pay_cash').val())
+	$('#customer_pay_card').text("")
+	if($('#customer_pay_cash').text() != ""){
+		$('#money_return').text(convert_vnd(convert_number($('#customer_pay_cash').text()) - convert_number($('#bill_money').text())))
 	}else{
 		$('#money_return').text("")
 	}
 }
+function pay_both(){
+	$('#customer_pay_cash').text($('#both_pay_cash').val())
+	$('#customer_pay_card').text($('#both_pay_card').val())
+	$('#money_return').text(convert_vnd(convert_number($('#customer_pay_cash').text()) + convert_number($('#customer_pay_card').text()) - convert_number($('#bill_money').text())))
+}
 function change_payment_type(type){
 	if(type == "payment_cash"){
-		$('#payment_cash').removeClass('btn-outline-info').addClass('btn-info');
-		$('#payment_card').removeClass('btn-info').addClass('btn-outline-info');
-		$('#payment_both').removeClass('btn-info').addClass('btn-outline-info');
 		$('#type_cash').modal('show');
-		$('#payment_type').val('payment_cash')
+		$('#both_pay_cash').val("");
+		$('#both_pay_card').val("");
 	}else if(type == "payment_card"){
-		$('#payment_card').removeClass('btn-outline-info').addClass('btn-info');
-		$('#payment_cash').removeClass('btn-info').addClass('btn-outline-info');
-		$('#payment_both').removeClass('btn-info').addClass('btn-outline-info');
-		$('#payment_type').val('payment_card')
+		$('#customer_pay_card').text($('#bill_money').text())
+		$('#money_return').text(convert_vnd(0))
+		$('#customer_pay_cash').text("")
+		$('#both_pay_cash').val("")
+		$('#both_pay_card').val("")
+		$('#pay_cash').val("")
 	}else{
-		$('#payment_both').removeClass('btn-outline-info').addClass('btn-info');
-		$('#payment_card').removeClass('btn-info').addClass('btn-outline-info');
-		$('#payment_cash').removeClass('btn-info').addClass('btn-outline-info');
-		$('#payment_type').val('payment_both')
+		$('#type_both').modal('show');
+		$('#pay_cash').val("")
 	}
 }

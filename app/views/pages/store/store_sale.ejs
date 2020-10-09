@@ -160,8 +160,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<div class="col-8">
 								<div class="row text-dark">
 									<div class="col-6">
-										<input class="form-control" style="height: 30px;padding: 5px 5px 5px 5px"
-											id="search_product" placeholder="Tìm theo tên hoặc mã">
+										<input class="form-control" style="height: 30px;padding: 5px 5px 5px 5px" autocomplete="off"
+											id="search_product" placeholder="Tìm theo tên hoặc mã"> 
 										<div style="display:block">
 											<ul style="max-height: 60vh;margin:0px; overflow: auto; list-style-type:none; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index:10010; background-color: #ffff; padding: 0"
 												id="show_search_product">
@@ -243,10 +243,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<div class="input-group" style="padding-bottom:5px; padding-top:5px;">
 									<div class="input-group-prepend">
 									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Mã giảm giá</span>
+									  <input type="hidden" id="discount_type">
 									</div>
 									<input type="text" class="form-control">
 								</div>
-								<label>Giảm giá</label> <span id="discount" class="float-right">10%</span>
+								<label>Giảm giá</label> <span id="discount" class="float-right"></span>
 								<br>
 								<span>Tổng cộng</span> <span id="total_sale" class="float-right"></span>
 								<br>
@@ -254,19 +255,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<br>
 								<label>Số tiền phải thanh toán</label> <span id="bill_money" class="float-right"></span>
 								<br>
-								<span>Khách trả</span> <span id="customer_pay" class="float-right"></span>
+								<label style="margin-bottom: 0px">Khách trả</label><br>
+								<span>Tiền mặt</span> <span id="customer_pay_cash" class="float-right"></span><br>
+								<span>Thẻ</span> <span id="customer_pay_card" class="float-right"></span>
 								<br>
 								<div class="d-none justify-content-between" id="selection_pay"> 
 									<button type="button" id="payment_cash" style="width:33%;" onclick="change_payment_type('payment_cash')" class="btn btn-outline-info">Tiền mặt</button>
 									<button type="button" id="payment_card" style="width:33%;" onclick="change_payment_type('payment_card')"class="btn btn-outline-info">Thẻ</button>
 									<button type="button" id="payment_both" style="width:33%;" onclick="change_payment_type('payment_both')"class="btn btn-outline-info">Khác</button>
 								</div>
-								<input type="hidden" id="payment_type" value="payment_cash">
+								<input type="hidden" id="payment_type">
 								<label>Trả lại khách</label> <span class="float-right" id="money_return"></span>
 								<br>
-								<textarea class="form-control form-control-sm" id="note_bill" style="resize:none;" placeholder="Ghi chú" rows="5"></textarea>
-								<br>
-								<button type="button" style="height:50px"  onclick="" class="form-control btn btn-info float-left">Thanh toán</button>
+								<textarea class="form-control form-control-sm" id="note_bill" style="resize:none;" placeholder="Ghi chú" rows="5"></textarea>	
+								<button type="button" style="height:40px"  onclick="" class="form-control btn btn-info float-left">Thanh toán</button>
 							</div>
 						</div>
 					</div>
@@ -338,12 +340,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		</div>
 		<!-- End Modal create customer -->
 		
-		<!-- Modal cash -->
-		<div class="modal fade" id="type_cash" tabindex="-1" role="dialog" aria-labelledby="type_cash" data-backdrop="static">
+		<!-- Modal pay both -->
+		<div class="modal fade" id="type_both" tabindex="-1" role="dialog" aria-labelledby="type_both" data-backdrop="static">
 		  <div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
 			  <div class="modal-header">
-				<h5 class="modal-title">Tiền mặt</h5>
+				<h5 class="modal-title">Thanh Toán</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				  <span aria-hidden="true">&times;</span>
 				</button>
@@ -351,7 +353,41 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			  <div class="modal-body">
 				<div class="input-group">
 					<div class="input-group-prepend">
-						<div class="input-group-text">Khách trả</div>
+						<div class="input-group-text bg-info" style="width: 90px">Tiền mặt</div>
+					</div>
+					<input type="currency" class="form-control" id="both_pay_cash" placeholder="Nhập số tiền" aria-label="Cash">
+				</div>
+				<br>
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text bg-info" style="width: 90px">Thẻ</div>
+					</div>
+					<input type="currency" class="form-control" id="both_pay_card" placeholder="Nhập số tiền" aria-label="Card">
+				</div>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+				<button type="button" class="btn btn-primary" onclick="pay_both();" data-dismiss="modal">Nhập</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		<!-- End Modal pay both -->
+		
+		<!-- Modal pay cash -->
+		<div class="modal fade" id="type_cash" tabindex="-1" role="dialog" aria-labelledby="type_cash" data-backdrop="static">
+		  <div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title">Thanh Toán</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
+			  <div class="modal-body">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<div class="input-group-text bg-info" style="width: 90px">Tiền mặt</div>
 					</div>
 					<input type="currency" class="form-control" id="pay_cash" placeholder="Nhập số tiền" aria-label="Cash">
 				</div>
@@ -363,7 +399,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			</div>
 		  </div>
 		</div>
-		<!-- End Modal create customer -->
+		<!-- End Modal pay cash -->
+		
+		
 		<!-- /.content-wrapper -->
 		<input type="hidden" id="_csrf" value="<%=csrfToken%>" />
 		<script src="/dist/js/store/store_sale.js"></script>

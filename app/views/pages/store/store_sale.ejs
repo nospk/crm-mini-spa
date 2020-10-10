@@ -219,7 +219,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<div class="input-group-prepend">
 									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Khách hàng</span>
 									</div>
-									<input class="form-control" id="search_customer" placeholder="Tìm theo tên hoặc số điện thoại">
+									<input class="form-control" autocomplete="off" id="search_customer" placeholder="Tìm theo tên hoặc số điện thoại">
 									<div class="input-group-append">
 									  <button class="btn btn-info" type="button" style="width:38px" data-toggle="modal" data-target="#create_new_customer"><i class="fas fa-plus"></i></button>
 									</div>
@@ -231,7 +231,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<span class="form-control pointer"  style="color: #007bff ;background-color:#FFFFFF" id="customer"></span>
 									<input type="hidden" id="select_customer" value="">
 									<div class="input-group-append">
-									  <button class="btn btn-info" type="button" style="width:38px" onclick="remove_customer()" ><i class="fas fa-times"></i></button>
+									  <button class="btn btn-danger" type="button" style="width:38px" onclick="remove_customer()" ><i class="fas fa-times"></i></button>
 									</div>
 								</div>
 								<div style="display:block; z-index:10; position: absolute; left: 7.5px; right: 7.5px;">
@@ -264,7 +264,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<button type="button" id="payment_card" style="width:33%;" onclick="change_payment_type('payment_card')"class="btn btn-outline-info">Thẻ</button>
 									<button type="button" id="payment_both" style="width:33%;" onclick="change_payment_type('payment_both')"class="btn btn-outline-info">Khác</button>
 								</div>
-								<input type="hidden" id="payment_type">
 								<label>Trả lại khách</label> <span class="float-right" id="money_return"></span>
 								<br>
 								<textarea class="form-control form-control-sm" id="note_bill" style="resize:none;" placeholder="Ghi chú" rows="5"></textarea>	

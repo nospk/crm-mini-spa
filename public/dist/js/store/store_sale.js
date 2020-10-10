@@ -175,7 +175,7 @@ function add_product(product){
                     <td><span id="price-${product[1]}">${convert_vnd(Number(product[2]))}</span>
 				   `
 		if(product[4]=="max"){
-			html += `<td><input class="form-control form-control-sm" style="max-width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" max="999" value="1"></td>`
+			html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" max="999" value="1"></td>`
 		}else{
 			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" max="${product[4]}" value="1"></td>`
 		}  

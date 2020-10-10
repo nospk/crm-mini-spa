@@ -16,6 +16,7 @@ class Admin_customer extends Controller{
 				let new_customer = Customer({
 					name: req.body.name,
 					birthday: req.body.birthday,
+					gener: req.body.gener,
 					address: req.body.address,
 					note: req.body.note,
 					phone: req.body.phone,
@@ -73,6 +74,7 @@ class Admin_customer extends Controller{
 				}else{
 					find.name = req.body.name;
 					find.birthday = req.body.birthday;
+					find.gener = req.body.gener;
 					find.address = req.body.address;
 					find.phone = req.body.phone;
 					find.note = req.body.note;

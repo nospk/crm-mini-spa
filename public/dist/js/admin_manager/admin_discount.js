@@ -1,22 +1,41 @@
 $( document ).ready(()=>{
     get_data();
-    $('#birthday').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
-	$('[data-mask]').inputmask()
+    $('#type').change(function(){
+		if($('#type').val() == "limit"){
+			$('#times_show').show()
+		}else{
+			$('#times_show').hide()
+		}
+    })
+    $('#edit_type').change(function(){
+		if($('#edit_type').val() == "limit"){
+			$('#edit_times_show').show()
+            $('#edit_times_remain_show').show()
+        }else{
+            $('#edit_times_show').hide()
+            $('#edit_times_remain_show').hide()
+		}
+    })
+    $('#number_code').keyup(function() {
+            this.value = this.value.toLocaleUpperCase();
+    });
+    $('#edit_number_code').keyup(function() {
+        this.value = this.value.toLocaleUpperCase();
+    });
 })
 let page_now;
 
 function create_new(){
     let data = {
         name: $('#create_new #name').val().trim(),
-        birthday: $('#create_new #birthday').val().trim(),
-        gener: $('#create_new #gener').val(),
-        address: $('#create_new #address').val().trim(),
-        phone: $('#create_new #phone').val().trim(),
-		note: $('#create_new #note').val().trim(),
+        number_code: $('#create_new #number_code').val().trim(),
+        type: $('#create_new #type').val(),
+        times: $('#create_new #times').val(),
+        isActive: $('#create_new #isActive').val(),
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_customer/create',
+        url:'/admin_discount/create',
         method:'POST',
         data: data,
         success: function(data){
@@ -57,13 +76,11 @@ function render_data(data, pageCount, currentPage){
 		                        <thead>
                                     <tr>
                                     <th>Tên</th>
-                                    <th>Sinh nhật</th>
-                                    <th>Giới tính</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Địa chỉ</th>
-                                    <th>Ghi chú</th>
-									<th>Nợ</th>
-									<th>Tổng mua hàng</th>
+									<th>Mã</th>
+                                    <th>Loại</th>
+                                    <th>Áp dụng</th>
+                                    <th>Số lần</th>
+                                    <th>Sử dụng</th>
                                     <th>Hành Động</th>
                                     </tr>
 		                        </thead>
@@ -71,13 +88,11 @@ function render_data(data, pageCount, currentPage){
 	data.forEach(item =>{
 		html+=`<tr>
                 <td>${item.name}</td>
-                <td>${item.birthday}</td>
-                <td>${item.gener == "male" ? "Nam" : "Nữ"}</td>
-                <td>${item.phone}</td>
-                <td>${reduce_string(item.address)}</td>
-                <td>${reduce_string(item.note)}</td>
-				<td>${convert_vnd(item.debt)}</td>
-				<td>${convert_vnd(item.payment)}</td>
+				<td>${item.number_code}</td>
+                <td>${item.type == "limit" ? "Giới hạn" : "Không giới hạn"}</td>
+                <td>${item.isActive == true ? "Có" : "Không"}</td>
+                <td>${item.type == "limit" ? item.times : ""}</td>
+                <td>${item.times_used}</td>
                 <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;
 					<span style="color:red; cursor: pointer" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i></span>		
 				</td>
@@ -124,11 +139,8 @@ function render_data(data, pageCount, currentPage){
 }
 function get_data(paging_num){
     $('#create_new #name').val("")
-    $('#create_new #birthday').val("")
-    $('#create_new #phone').val("")
-    $('#create_new #address').val("")
-	$('#create_new #note').val("")
-    $('#edit_data #edit_id').val("");
+    $('#create_new #number_code').val("")
+    $('#create_new #times').val("")
     if(!paging_num){
         paging_num = page_now
     }
@@ -138,12 +150,13 @@ function get_data(paging_num){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_customer/get',
+        url:'/admin_discount/get',
         method:'POST',
         data: data,
         success: function(data){
             if(data.status == 1){
                 page_now = data.data.currentPage
+                console.log(data.data.data)
                 render_data(data.data.data, data.data.pageCount, data.data.currentPage);
             }else{
                 Swal.fire({
@@ -176,7 +189,7 @@ function comform_delete_data(id){
     }).then((result) => {
             if(result.value == true){
                 $.ajax({
-                    url:'/admin_product_service/delete_data',
+                    url:'/admin_discount/delete_data',
                     method:'delete',
                     data: {id: id, _csrf: $('#_csrf').val()},
                     success: function(data){
@@ -190,18 +203,24 @@ function comform_delete_data(id){
 }
 function edit_data(id){
 	$.ajax({
-		url:'/admin_customer/edit_data',
+		url:'/admin_discount/edit_data',
 		method:'post',
         data: {id: id, _csrf: $('#_csrf').val()},
         success: function(data){
 			if(data.status == 1){
 				$('#edit_data #edit_name').val(data.data.name);
-				$('#edit_data #edit_birthday').val(data.data.birthday);
-				$('#edit_data #edit_note').val(data.data.note),
-                $('#edit_data #edit_phone').val(data.data.phone);
-                $('#edit_data #edit_gener').val(data.data.gener);
-				$('#edit_data #edit_address').val(data.data.address);
-				$('#edit_data #edit_id').val(data.data._id);
+				$('#edit_data #edit_number_code').val(data.data.number_code);
+				$('#edit_data #edit_type').val(data.data.type),
+                $('#edit_data #edit_times').val(data.data.times);
+				$('#edit_data #edit_isActive').val(data.data.isActive == true ? "true" : "false");
+                $('#edit_data #edit_id').val(data.data._id);
+                if(data.data.type == "limit"){
+                    $('#edit_times_show').show()
+                    $('#edit_times_remain_show').show()
+                }else{
+                    $('#edit_times_show').hide()
+                    $('#edit_times_remain_show').hide()
+                }
 				$('#edit_data').modal('show');
             }
 		}
@@ -210,16 +229,15 @@ function edit_data(id){
 function update_data(){
 	let data = {
         name: $('#edit_data #edit_name').val().trim(),
-        birthday: $('#edit_data #edit_birthday').val().trim(),
-        address: $('#edit_data #edit_address').val().trim(),
-        phone: $('#edit_data #edit_phone').val().trim(),
-        gener:  $('#edit_data #edit_gener').val(),
-        note: $('#edit_data #edit_note').val().trim(),
+        number_code: $('#edit_data #edit_number_code').val().trim(),
+        type: $('#edit_data #edit_type').val(),
+        times: $('#edit_data #edit_times').val(),
+        isActive: $('#edit_data #edit_isActive').val(),
 		id: $('#edit_data #edit_id').val(),
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_customer/update_data',
+        url:'/admin_discount/update_data',
         method:'put',
         data: data,
         success: function(data){

@@ -196,6 +196,13 @@ function loginFull() {
                 "parent_id": "8",
                 "css_class": "nav-icon far fa-circle",
             },
+            {
+                "id": "15",
+                "name": "Mã giảm giá",
+                "url": "/admin_discount",
+                "parent_id": "8",
+                "css_class": "nav-icon far fa-circle",
+            },
 			
         ];
 
@@ -296,6 +303,13 @@ function activeFull() {
                 "id": "17",
                 "name": "Thu/Chi",
                 "url": "/admin_cash_book",
+                "parent_id": "10",
+                "css_class": "nav-icon far fa-circle",
+            },
+            {
+                "id": "18",
+                "name": "Mã giảm giá",
+                "url": "/admin_discount",
                 "parent_id": "10",
                 "css_class": "nav-icon far fa-circle",
             },

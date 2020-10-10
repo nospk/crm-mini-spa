@@ -82,7 +82,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   </div>
   <!-- /.content-wrapper -->
 
-	<!-- Modal create store -->
+	<!-- Modal create customer -->
 	<div class="modal fade" id="create_new" tabindex="-1" role="dialog" aria-labelledby="create_store" data-backdrop="static">
 	  <div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
@@ -103,13 +103,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				<div class="input-group-prepend">
 					<div class="input-group-text" id="btnGroupAddon2">Ngày Tháng Năm Sinh</div>
 				</div>
-				<input type="text" class="form-control" id="birthday" placeholder="Nhập sinh nhật" aria-label="Birthday" aria-describedby="btnGroupAddon2">
-            </div>
+				<input type="text" class="form-control" data-inputmask-alias="datetime" id="birthday" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+			</div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text" >Giới tính</div>
+				</div>
+				<select class="form-control" id="gener">
+					<option value="male">Nam</option>
+					<option value="female">Nữ</option>
+				</select>
+			</div>
 			<div class="input-group">
 				<div class="input-group-prepend">
 					<div class="input-group-text" id="btnGroupAddon3">Số điện thoại</div>
 				</div>
-				<input type="text" class="form-control" id="phone" placeholder="Số điện thoại" aria-label="Phone" aria-describedby="btnGroupAddon3">
+				<input type="text" class="form-control" id="phone" data-inputmask="'mask': '999 999 9999'" data-mask>
             </div>
 			<div class="input-group">
 				<div class="input-group-prepend">
@@ -131,9 +140,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		</div>
 	  </div>
 	</div>
-	<!-- End Modal create store -->
-	<!-- Modal create store -->
-	<div class="modal fade" id="edit_data" tabindex="-1" role="dialog" aria-labelledby="create_store" data-backdrop="static">
+	<!-- End Modal create customer -->
+	<!-- Modal edit customer -->
+	<div class="modal fade" id="edit_data" tabindex="-1" role="dialog" aria-labelledby="edit_data" data-backdrop="static">
 	  <div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
@@ -153,13 +162,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				<div class="input-group-prepend">
 					<div class="input-group-text" id="btnGroupAddon2">Ngày Tháng Năm Sinh</div>
 				</div>
-				<input type="text" class="form-control" id="edit_birthday" placeholder="Nhập sinh nhật" aria-label="Birthday" aria-describedby="btnGroupAddon2">
-            </div>
+				<input type="text" class="form-control" data-inputmask-alias="datetime" id="edit_birthday" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+			</div>
+			<div class="input-group">
+				<div class="input-group-prepend">
+					<div class="input-group-text" >Giới tính</div>
+				</div>
+				<select class="form-control" id="edit_gener">
+					<option value="male">Nam</option>
+					<option value="female">Nữ</option>
+				</select>
+			</div>
 			<div class="input-group">
 				<div class="input-group-prepend">
 					<div class="input-group-text" id="btnGroupAddon3">Số điện thoại</div>
 				</div>
-				<input type="text" class="form-control" id="edit_phone" placeholder="Nhập số điện thoại" aria-label="Phone" aria-describedby="btnGroupAddon3">
+				<input type="text" class="form-control" id="edit_phone" data-inputmask="'mask': '999 999 9999'" data-mask>
             </div>
 			<div class="input-group">
 				<div class="input-group-prepend">
@@ -182,9 +200,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		</div>
 	  </div>
 	</div>
-	<!-- End Modal create store -->
+	<!-- End Modal edit customer -->
   <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
   <%- include ('../../partials/footer') %>
   <script src="/dist/js/admin_manager/admin_customer.js"></script>
+  <!-- InputMask -->
+
+  <script src="assets/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
 </body>
 </html>

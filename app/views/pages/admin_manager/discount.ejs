@@ -4,205 +4,240 @@ This is a starter template page. Use this page to start your new project from
 scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <html lang="vi">
+
 <head>
   <%- include ('../../partials/head') %>
   <title> Quản lý giảm giá </title>
   <style>
-  .callout {
-	  padding: 10px;
-	  margin: 10px 0;
-	  border: 1px solid #eee;
-	  border-left-width: 5px;
-	  border-radius: 3px;
-  }
-  .callout-primary {
-	  border-left-color: #007BFF;
-  }
-  .input-group{
-	  margin: 10px 0;
-  }
+    .callout {
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #eee;
+      border-left-width: 5px;
+      border-radius: 3px;
+    }
+
+    .callout-primary {
+      border-left-color: #007BFF;
+    }
+
+    .input-group {
+      margin: 10px 0;
+    }
   </style>
 </head>
+
 <body class="hold-transition sidebar-mini sidebar-collapse">
-<div class="wrapper">
-  <%- include ('../../partials/header') %>
-  <%- include ('../../partials/menu') %>
+  <div class="wrapper">
+    <%- include ('../../partials/header') %>
+    <%- include ('../../partials/menu') %>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-	<!-- Content Header (Page header) -->
-    <section class="content-header">
-		<div class="container-fluid">
-			<div class="callout callout-primary">
-				<div class="row">
-					<div class="col-auto mr-auto">
-					</div>
-					<div class="col-auto">
-						<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#create_new">Tạo mới</button>
-					</div>
-				</div>
-			</div>
-		</div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content-header -->
-	
-	<!-- Main content -->
-    <section class="content">
-		<div class="container-fluid">
-			<!-- Small boxes (Stat box) -->
-				<div class="row">
-					<div class="col-12">
-						<div class="card">
-							<div class="card-header" style="background-color: black;">
-								<h3 class="card-title" style="color: whitesmoke;">Danh sách khách hàng</h3>
-								<div class="card-tools">
-									<div class="input-group input-group-sm" style="width: 150px;">
-										<input type="text" name="table_search" class="form-control float-right" id="search_word" placeholder="Tìm">
-	
-										<div class="input-group-append">
-											<button type="submit" class="btn btn-default" onclick="get_data()"><i class="fas fa-search"></i></button>
-										</div>
-									</div>
-								</div>
-							</div>
-							<!-- /.card-header -->
-							<div class="card-body table-responsive p-0" id="show_data">
-							</div> 
-							<!-- /.card-body -->
-							<div class="card-footer clearfix" id="pagination">
-							</div>
-							<!-- /.card-footer -->
-						</div>
-						<!-- /.card -->
-					</div>
-				</div>
-		</div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <section class="content-header">
+        <div class="container-fluid">
+          <div class="callout callout-primary">
+            <div class="row">
+              <div class="col-auto mr-auto">
+              </div>
+              <div class="col-auto">
+                <button type="button" class="btn btn-primary float-right" data-toggle="modal"
+                  data-target="#create_new">Tạo mới</button>
+              </div>
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+      <!-- /.content-header -->
 
-	<!-- Modal create discount -->
-	<div class="modal fade" id="create_new" tabindex="-1" role="dialog" data-backdrop="static">
-	  <div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<h5 class="modal-title">Tạo mã giảm giá mới </h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-		  </div>
-		  <div class="modal-body">
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon1">Tên</div>
-				</div>
-				<input type="text" class="form-control" id="name" placeholder="Nhập tên" >
-			</div>
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon2">Mã giảm giá</div>
-				</div>
-				<input type="text" class="form-control" id="number_code" placeholder="Nhập mã">
-            </div>
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon3">Loại</div>
-				</div>
-				<select class="custom-select" id="type">
-                    <option value="limit">Giới hạn</option>
-                    <option value="unlimit">Không giới hạn</option>
-                </select>
-            </div>
-			<div class="input-group" id="times_show">
-				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon4">Số lần</div>
-				</div>
-				<input type="number" class="form-control" id="times" placeholder="Nhập số lượng">
-            </div> 		
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                <div class="input-group-text" for="isActive">Trạng thái</div>
+      <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Small boxes (Stat box) -->
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header" style="background-color: black;">
+                  <h3 class="card-title" style="color: whitesmoke;">Danh sách khách hàng</h3>
+                  <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                      <input type="text" name="table_search" class="form-control float-right" id="search_word"
+                        placeholder="Tìm">
+
+                      <div class="input-group-append">
+                        <button type="submit" class="btn btn-default" onclick="get_data()"><i
+                            class="fas fa-search"></i></button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <select class="custom-select" id="isActive">
+                <!-- /.card-header -->
+                <div class="card-body table-responsive p-0" id="show_data">
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix" id="pagination">
+                </div>
+                <!-- /.card-footer -->
+              </div>
+              <!-- /.card -->
+            </div>
+          </div>
+        </div><!-- /.container-fluid -->
+      </section>
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Modal create discount -->
+    <div class="modal fade" id="create_new" tabindex="-1" role="dialog" data-backdrop="static">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Tạo mã giảm giá mới </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon1">Tên</div>
+              </div>
+              <input type="text" class="form-control" id="name" placeholder="Nhập tên">
+            </div>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon2">Mã giảm giá</div>
+              </div>
+              <input type="text" class="form-control" id="number_code" placeholder="Nhập mã">
+            </div>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon3">Loại sử dụng</div>
+              </div>
+              <select class="custom-select" id="type">
+                <option value="limit">Giới hạn</option>
+                <option value="unlimit">Không giới hạn</option>
+              </select>
+            </div>
+            <div class="input-group" id="times_show">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon4">Số lần</div>
+              </div>
+              <input type="number" class="form-control" id="times" placeholder="Nhập số lượng">
+            </div>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon3">Loại giảm giá</div>
+              </div>
+              <select class="custom-select" id="type_discount">
+                <option value="percent">Phần Trăm</option>
+                <option value="money">Số tiền</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon3">Giảm</div>
+              </div>
+              <input type="percent" class="form-control" id="value_percent" placeholder="Nhập số phần trăm giảm giá">
+              <input type="currency" style="display: none;" class="form-control" id="value_money" placeholder="Nhập số tiền giảm giá">
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <div class="input-group-text" for="isActive">Trạng thái</div>
+              </div>
+              <select class="custom-select" id="isActive">
                 <option value="true">Áp Dụng</option>
                 <option value="false">Không Áp Dụng</option>
-                </select>
+              </select>
             </div>
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-			<button type="button" class="btn btn-primary" onclick="create_new();" data-dismiss="modal">Tạo</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
-	<!-- End Modal create discount -->
-	<!-- Modal create discount -->
-	<div class="modal fade" id="edit_data" tabindex="-1" role="dialog" data-backdrop="static">
-        <div class="modal-dialog modal-lg" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Tạo mã giảm giá mới </h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="input-group">
-                  <div class="input-group-prepend">
-                      <div class="input-group-text" id="btnGroupAddon1">Tên</div>
-                  </div>
-                  <input type="text" class="form-control" id="edit_name" placeholder="Nhập tên" >
-              </div>
-              <div class="input-group">
-                  <div class="input-group-prepend">
-                      <div class="input-group-text" id="btnGroupAddon2">Mã giảm giá</div>
-                  </div>
-                  <input type="text" class="form-control" id="edit_number_code" placeholder="Nhập mã">
-              </div>
-              <div class="input-group">
-                  <div class="input-group-prepend">
-                      <div class="input-group-text" id="btnGroupAddon3">Loại</div>
-                  </div>
-                  <select class="custom-select" id="edit_type">
-                      <option value="limit">Giới hạn</option>
-                      <option value="unlimit">Không giới hạn</option>
-                  </select>
-              </div>
-              <div class="input-group" id="edit_times_show">
-                  <div class="input-group-prepend">
-                      <div class="input-group-text" id="btnGroupAddon4">Số lần</div>
-                  </div>
-                  <input type="number" class="form-control" id="edit_times" placeholder="Nhập số lượng">
-              </div> 	
-              <div class="input-group" id="edit_times_remain_show">
-                <div class="input-group-prepend">
-                    <div class="input-group-text" id="btnGroupAddon4">Còn lại</div>
-                </div>
-                <input type="number" class="form-control" id="edit_times_remain" placeholder="Nhập số lượng">
-            </div> 	
-              <div class="input-group mb-3">
-                  <div class="input-group-prepend">
-                  <div class="input-group-text" for="edit_isActive">Trạng thái</div>
-                  </div>
-                  <select class="custom-select" id="edit_isActive">
-                  <option value="true">Áp Dụng</option>
-                  <option value="false">Không Áp Dụng</option>
-                  </select>
-              </div>
-              <input type="hidden" id="edit_id" value="" />
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-              <button type="button" class="btn btn-primary" onclick="update_data();" data-dismiss="modal">Sửa</button>
-            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="button" class="btn btn-primary" onclick="create_new();" data-dismiss="modal">Tạo</button>
           </div>
         </div>
       </div>
-      <!-- End Modal create discount -->
-  <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
-  <%- include ('../../partials/footer') %>
-  <script src="/dist/js/admin_manager/admin_discount.js"></script>
+    </div>
+    <!-- End Modal create discount -->
+    <!-- Modal create discount -->
+    <div class="modal fade" id="edit_data" tabindex="-1" role="dialog" data-backdrop="static">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Tạo mã giảm giá mới </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon1">Tên</div>
+              </div>
+              <input type="text" class="form-control" id="edit_name" placeholder="Nhập tên">
+            </div>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon2">Mã giảm giá</div>
+              </div>
+              <input type="text" class="form-control" id="edit_number_code" placeholder="Nhập mã">
+            </div>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon3">Loại sử dụng</div>
+              </div>
+              <select class="custom-select" id="edit_type">
+                <option value="limit">Giới hạn</option>
+                <option value="unlimit">Không giới hạn</option>
+              </select>
+            </div>
+            <div class="input-group" id="edit_times_show">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon4">Số lần</div>
+              </div>
+              <input type="number" class="form-control" id="edit_times" placeholder="Nhập số lượng">
+            </div>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon3">Loại giảm giá</div>
+              </div>
+              <select class="custom-select" id="edit_type_discount">
+                <option value="percent">Phần Trăm</option>
+                <option value="money">Số tiền</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text" id="btnGroupAddon3">Giảm</div>
+              </div>
+              <input type="percent" class="form-control" id="edit_value_percent"
+                placeholder="Nhập số phần trăm giảm giá">
+              <input type="currency" style="display: none;" class="form-control" id="edit_value_money" placeholder="Nhập số tiền giảm giá">
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <div class="input-group-text" for="edit_isActive">Trạng thái</div>
+              </div>
+              <select class="custom-select" id="edit_isActive">
+                <option value="true">Áp Dụng</option>
+                <option value="false">Không Áp Dụng</option>
+              </select>
+            </div>
+            <input type="hidden" id="edit_id" value="" />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            <button type="button" class="btn btn-primary" onclick="update_data();" data-dismiss="modal">Sửa</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Modal create discount -->
+    <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
+    <%- include ('../../partials/footer') %>
+    <script src="/dist/js/admin_manager/admin_discount.js"></script>
 </body>
+
 </html>

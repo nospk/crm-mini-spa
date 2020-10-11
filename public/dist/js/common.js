@@ -9,6 +9,17 @@ function onBlur(e){
     ? value.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
     : ''
 }
+function onFocusPercent(e){
+  let value = convert_number(e.target.value);
+  e.target.value = value ? value : ''
+}
+
+function onBlurPercent(e){
+  let value = convert_number(e.target.value);
+  e.target.value = value 
+    ? value+' %'
+    : ''
+}
 const reduce_string = (string)=>{
     if(string.length > 25){
         return string.slice(0,25) + ' ...'
@@ -26,7 +37,10 @@ const convert_vnd = (number)=>{
 	}
 	
 }
+const convert_percent = (number)=>{
+	if(Number.isInteger(number))return number+ ' %';
+	else return "lỗi";
+}
 const convert_number = (string)=>{
   return Number(string.replace(/[^0-9 ]/g, ""))
-	
 }

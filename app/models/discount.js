@@ -9,6 +9,12 @@ const DiscountSchema = mongoose.Schema({
     type:{
         type: String, required: true // limit - unlimit
     },
+    type_discount:{
+        type:String, required: true //percent - money
+    },
+    value:{
+        type:Number, required: true 
+    },
     times:{
         type: Number
     },

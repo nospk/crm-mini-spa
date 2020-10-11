@@ -9,17 +9,28 @@ class Admin_discount extends Controller{
     }
 	static async create_new(req, res){
 		try{
+			if(req.body.name == ""){
+				return Admin_discount.sendError(res, "Chưa nhập tên", "Vui lòng nhập tên");
+			}
+			if(req.body.number_code == ""){
+				return Admin_discount.sendError(res, "Chưa nhập mã giảm giá", "Vui lòng nhập mã giảm giá");
+			}
 			let check = await Discount.findOne({company: req.session.user.company._id, number_code:req.body.number_code});
 			if(check){
 				return Admin_discount.sendError(res, "Mã này đã có", "Vui lòng chọn mã khác");
-            }
-            if(req.body.type_discount == "limit" && req.body.times == ""){
+			}
+            if(req.body.type == "limit" && req.body.times == ""){
 				return Admin_discount.sendError(res, "Mã giới hạn phải có số lượng", "Vui lòng nhập số lượng");
-            }
+			}
+			if(req.body.value == 0){
+				return Admin_discount.sendError(res, "Chưa nhập giảm giá bao nhiêu", "Vui lòng nhập giảm giá");
+			}
 			let new_discount = Discount({
 				name: req.body.name,
 				number_code: req.body.number_code,
 				type: req.body.type,
+				type_discount: req.body.type_discount,
+				value: req.body.value,
                 times: req.body.times,
                 isActive: req.body.isActive,
 				company: req.session.user.company._id
@@ -67,18 +78,29 @@ class Admin_discount extends Controller{
 	}
 	static async update_data(req, res){
 		try{
+			if(req.body.name == ""){
+				return Admin_discount.sendError(res, "Chưa nhập tên", "Vui lòng nhập tên");
+			}
+			if(req.body.number_code == ""){
+				return Admin_discount.sendError(res, "Chưa nhập mã giảm giá", "Vui lòng nhập mã giảm giá");
+			}
 			let find = await Discount.findOne({company: req.session.user.company._id, _id: req.body.id});
 			if(find){
 				let check = await Discount.findOne({company: req.session.user.company._id, number_code:req.body.number_code});
 				if(check && find.number_code != req.body.number_code){
 					return Admin_discount.sendError(res, "Mã này đã có", "Vui lòng chọn mã khác");
                 }
-                if(req.body.type_discount == "limit" && req.body.times == ""){
+                if(req.body.type == "limit" && req.body.times == ""){
                     return Admin_discount.sendError(res, "Mã giới hạn phải có số lượng", "Vui lòng nhập số lượng");
-                }
+				}
+				if(req.body.value == 0){
+					return Admin_discount.sendError(res, "Chưa nhập giảm giá bao nhiêu", "Vui lòng nhập giảm giá");
+				}
 				find.name = req.body.name;
 				find.number_code = req.body.number_code;
 				find.type = req.body.type;
+				find.type_discount = req.body.type_discount;
+				find.value = req.body.value;
                 find.times = req.body.times;
 				find.isActive = req.body.isActive;
 				await find.save();

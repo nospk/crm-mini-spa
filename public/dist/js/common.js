@@ -5,9 +5,12 @@ function onFocus(e){
 
 function onBlur(e){
   let value = convert_number(e.target.value);
-  e.target.value = value 
-    ? value.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
-    : ''
+  if(value == 0){
+	  e.target.value = value.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
+  }else{
+	  e.target.value = value ? value.toLocaleString('it-IT', {style : 'currency', currency : 'VND'}) : ''
+  }
+
 }
 function onFocusPercent(e){
   let value = convert_number(e.target.value);

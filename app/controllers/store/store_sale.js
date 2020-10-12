@@ -4,6 +4,7 @@ const Common = require("../../../core/common");
 const Product_service = require('../../models/product_service');
 const Store_stocks = require('../../models/store_stocks');
 const Customer = require('../../models/customer');
+const Discount = require('../../models/discount');
 const Employees = require('../../models/employees');
 class Store_sale extends Controller{
     static show(req, res){
@@ -65,6 +66,22 @@ class Store_sale extends Controller{
 			}
 			let customers = await Customer.find(match).sort({createdAt: -1})
 			Store_sale.sendData(res, customers);
+		}catch(err){
+			console.log(err)
+			Store_sale.sendError(res, err, err.message);
+		}
+	}
+	static async search_discount(req,res){
+		try{
+			let discount = await Discount.findOne({company :req.session.store.company, number_code: req.body.number_code, isActive : true})
+			if(discount){
+				if(discount.type == "limit" && discount.times == discount.times_used){
+					return Store_sale.sendError(res, "Mã đã hết lần sử dụng", "Vui lòng nhập lại mã");
+				}
+				Store_sale.sendData(res, discount);
+			}else{
+				return Store_sale.sendError(res, "Mã không hợp lệ", "Vui lòng nhập lại mã");
+			}
 		}catch(err){
 			console.log(err)
 			Store_sale.sendError(res, err, err.message);

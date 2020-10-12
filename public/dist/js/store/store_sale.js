@@ -42,6 +42,54 @@ $( document ).ready(()=>{
 		currencyInput.addEventListener('focus', onFocus)
 		currencyInput.addEventListener('blur', onBlur)
 	})
+	$('#number_code_discount').keyup(function() {
+        this.value = this.value.toLocaleUpperCase();
+    });
+	$('#number_code_discount').on('change', function(){
+		if (this.value != "") {
+			$.ajax({
+				url: '/store_sale/search_discount',
+				method: 'POST',
+				data: {
+					number_code: $('#number_code_discount').val(),
+					_csrf: $('#_csrf').val()
+				},
+				success: function (data) {
+					if (data.status == 1) {
+						if (data.data) {
+							let discount = data.data
+							$('#discount_type').val(discount.type_discount)
+							if(discount.type_discount == "percent"){
+								$('#discount_value').text(convert_percent(discount.value))
+								total_sale()
+							}else{
+								$('#discount_value').text(convert_vnd(discount.value))
+								total_sale()
+							}
+						}
+					} else {
+						Swal.fire({
+							title: data.error,
+							text: data.message,
+							icon: "error",
+							showConfirmButton: false,
+							timer: 3000
+						}).then((result) => {
+							// cho vào để ko báo lỗi uncaught
+						})
+						.catch(timer => {
+								// cho vào để ko báo lỗi uncaught
+						});
+					}
+				}
+			})
+		}else{
+			$('#discount_type').val("")
+			$('#discount_value').text("")
+			total_sale()
+		}
+
+	})
 })
 function search_product() {
 	if ($('#search_product').val() != "") {
@@ -230,11 +278,25 @@ function total_sale(){
     });
 	if(money != 0){
 		if($("#discount_type").val() != ""){
-			money_discount = Math.ceil(money * 10 /100)
-			$('#money_discount').text(convert_vnd(money_discount))
+			if($("#discount_type").val() == "percent"){
+				money_discount = Math.ceil(money * convert_number($('#discount_value').text()) /100)
+				$('#money_discount').text(convert_vnd(money_discount))
+			}
+			if($("#discount_type").val() == "money"){
+				money_discount = convert_number($('#discount_value').text())
+				$('#money_discount').text($('#discount_value').text())
+			}
+		}else{
+			$('#money_discount').text("")
 		}
 		$('#total_sale').text(convert_vnd(money))
-		$('#bill_money').text(convert_vnd(money - money_discount))
+		let bill_money = money - money_discount
+		if(bill_money < 0){
+			$('#bill_money').text(convert_vnd(0))
+		}else{
+			$('#bill_money').text(convert_vnd(bill_money))
+		}
+			
 		$('#selection_pay').removeClass("d-none").addClass("d-flex");
 		if($('#customer_pay_cash').text() != "" || $('#customer_pay_card').text() != ""){
 			$('#money_return').text(convert_vnd(convert_number($('#customer_pay_cash').text()) + convert_number($('#customer_pay_card').text()) - convert_number($('#bill_money').text())))
@@ -470,6 +532,7 @@ function pay_both(){
 function change_payment_type(type){
 	if(type == "payment_cash"){
 		$('#type_cash').modal('show');
+		$('#pay_cash').val($('#bill_money').text())
 		$('#both_pay_cash').val("");
 		$('#both_pay_card').val("");
 	}else if(type == "payment_card"){

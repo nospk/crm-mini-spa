@@ -363,7 +363,7 @@ function get_service(){
 						if(index == 0){ // if first item
 							html+= `<div class="carousel-item active">
 										<div class="card-columns">
-											<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
@@ -375,7 +375,7 @@ function get_service(){
 							if(index == count){ // if first card in columns
 								html+= `<div class="carousel-item">
 											<div class="card-columns">
-												<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+												<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 													<div class="card-body">
 														<h5 class="card-title">${item.name}</h5>
 														<p class="card-text">Mã: ${item.number_code}</p>
@@ -386,7 +386,7 @@ function get_service(){
 										</div>
 									`
 							}else{
-								html+= `<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+								html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
@@ -399,7 +399,7 @@ function get_service(){
 							}
 						}else if ((index+1) == count){ // if last card in columns
 							
-							html+= `<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
@@ -413,7 +413,7 @@ function get_service(){
 							count += set_number;
 							html+= `<div class="carousel-item">
 										<div class="card-columns">
-											<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
@@ -422,7 +422,7 @@ function get_service(){
 											</div>
 								`
 						}else{
-							html+= `<div class="card green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
 										<div class="card-body">
 											<h5 class="card-title">${item.name}</h5>
 											<p class="card-text">Mã: ${item.number_code}</p>

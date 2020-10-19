@@ -111,6 +111,15 @@ class Store_sale extends Controller{
 		}
 		
 	}
+	static async send_payment(req, res){
+		try{
+			console.log(req.body)
+			Store_sale.sendMessage(res, "Đã tạo thành công");
+		}catch(err){
+			console.log(err.message)
+			Store_sale.sendError(res, err, err.message);
+		}
+	}
 }
 
 module.exports = Store_sale

@@ -75,10 +75,10 @@ $( document ).ready(()=>{
 							showConfirmButton: false,
 							timer: 3000
 						}).then((result) => {
-							// cho vào để ko báo lỗi uncaught
+							clear_discount()
 						})
 						.catch(timer => {
-								// cho vào để ko báo lỗi uncaught
+							clear_discount()
 						});
 					}
 				}
@@ -91,6 +91,12 @@ $( document ).ready(()=>{
 
 	})
 })
+function clear_discount(){
+	$('#discount_type').val("")
+	$('#discount_value').text("")
+	$('#number_code_discount').val("")
+	total_sale()
+}
 function search_product() {
 	if ($('#search_product').val() != "") {
 		$.ajax({
@@ -546,4 +552,161 @@ function change_payment_type(type){
 		$('#type_both').modal('show');
 		$('#pay_cash').val("")
 	}
+}
+function check_payment(){
+	if($(".total").length == 0){
+		Swal.fire({
+			title: "Lỗi chưa chọn sản phẩm - dịch vụ",
+			text: "Vui lòng chọn lại",
+			icon: "error",
+			showConfirmButton: false,    
+			timer: 3000
+		}).then((result)=>{
+			// cho vào để ko báo lỗi uncaught
+		})
+		.catch(timer => {
+			// cho vào để ko báo lỗi uncaught
+		}); 
+	}else if($('#customer_pay_cash').text() == "" && $('#customer_pay_card').text() == ""){
+		Swal.fire({
+			title: "Lỗi chưa nhập số tiền thanh toán của khách",
+			text: "Vui lòng nhập lại",
+			icon: "error",
+			showConfirmButton: false,    
+			timer: 3000
+		}).then((result)=>{
+			// cho vào để ko báo lỗi uncaught
+		})
+		.catch(timer => {
+			// cho vào để ko báo lỗi uncaught
+		});
+	}else if($('#select_customer').val() == ""){
+		Swal.fire({
+			title: "Bạn chưa nhập thông tin khách hàng",
+			text: "Xác nhận đồng ý thanh toán cho khách lẻ",
+			icon: "info",
+			showCancelButton: true,
+			cancelButtonColor: '#d33',
+			confirmButtonColor: '#3085d6',
+			confirmButtonText: 'Đồng ý',
+			cancelButtonText: 'Từ chối'
+		}).then((result)=>{
+			if(result.value){
+				Swal.fire({
+					title: "Xác nhận thanh toán",
+					text: "Đã kiểm tra kỹ thông tin",
+					icon: "info",
+					showCancelButton: true,
+					cancelButtonColor: '#d33',
+					confirmButtonColor: '#3085d6',
+					confirmButtonText: 'Đồng ý',
+					cancelButtonText: 'Từ chối'
+				}).then((result)=>{
+					if(result.value){
+						send_payment()
+					}
+				})
+				.catch(timer => {
+					// cho vào để ko báo lỗi uncaught
+				});
+			}
+		})
+		.catch(timer => {
+			// cho vào để ko báo lỗi uncaught
+		});
+	}else{
+		Swal.fire({
+			title: "Xác nhận thanh toán",
+			text: "Đã kiểm tra kỹ thông tin",
+			icon: "info",
+			showCancelButton: true,
+			cancelButtonColor: '#d33',
+			confirmButtonColor: '#3085d6',
+			confirmButtonText: 'Đồng ý',
+			cancelButtonText: 'Từ chối'
+		}).then((result)=>{
+			if(result.value){
+				send_payment()
+			}
+		})
+		.catch(timer => {
+			// cho vào để ko báo lỗi uncaught
+		});
+	}
+}
+
+function get_list_item(){
+    let get_list_item = [];
+    $(".number-code").each(function () {                  
+        get_list_item.push($(this).text()); 
+    });
+    let data = [];
+    get_list_item.forEach((number_code)=>{
+        data.push({
+            quantity: convert_number($(`#quantity-${number_code}`).val()),
+            id: $(`#id-product-${number_code}`).val()
+        })
+    })
+    return data;
+}
+
+function send_payment(){
+	let data = {
+		customer_pay_card: convert_number($('#customer_pay_card').text()),
+		customer_pay_cash: convert_number($('#customer_pay_cash').text()),
+		number_code_discount: $('#number_code_discount').val(),
+		customer: $('#select_customer').val(),
+		note_bill: $('#note_bill').val(),
+        list_item: get_list_item(),
+        _csrf: $('#_csrf').val()
+    }
+	$.ajax({
+		url:'/store_sale/send_payment',
+		method:'POST',
+		contentType: "application/json; charset=utf-8",
+		data: JSON.stringify(data),
+		success: function(data){
+			if(data.status == 1){
+				Swal.fire({
+					title: "Thao tác thành công",
+					text: data.message,
+					icon: "info",
+					showConfirmButton: false,
+					timer: 3000
+				}).then((result)=>{
+					clear_data()
+				})
+				.catch(timer => {
+					clear_data()
+				});    
+			}else{
+				Swal.fire({
+					title: data.error,
+					text: data.message,
+					icon: "error",
+					showConfirmButton: false,    
+					timer: 3000
+				}).then((result)=>{
+					// cho vào để ko báo lỗi uncaught
+				})
+				.catch(timer => {
+					// cho vào để ko báo lỗi uncaught
+				}); 
+				
+			}
+		}
+	})
+}
+
+function clear_data(){
+	$('#add_product').html("")
+	$('#bill_money').text("")
+	$('#money_discount').text("")
+	$('#total_sale').text("")
+	$('#customer_pay_card').text("")
+	$('#customer_pay_cash').text("")
+	$('#money_return').text("")
+	$('#note_bill').val("")
+	remove_customer()
+	clear_discount()
 }

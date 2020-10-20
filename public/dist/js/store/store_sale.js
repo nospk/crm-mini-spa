@@ -652,6 +652,7 @@ function get_list_item(){
 
 function send_payment(){
 	let data = {
+		employees: $('#select_employees').val(),
 		customer_pay_card: convert_number($('#customer_pay_card').text()),
 		customer_pay_cash: convert_number($('#customer_pay_cash').text()),
 		number_code_discount: $('#number_code_discount').val(),
@@ -674,10 +675,10 @@ function send_payment(){
 					showConfirmButton: false,
 					timer: 3000
 				}).then((result)=>{
-					clear_data()
+					//clear_data()
 				})
 				.catch(timer => {
-					clear_data()
+					//clear_data()
 				});    
 			}else{
 				Swal.fire({

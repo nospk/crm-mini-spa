@@ -114,6 +114,32 @@ class Store_sale extends Controller{
 	static async send_payment(req, res){
 		try{
 			console.log(req.body)
+			//check employees
+			let check_employees = await Employees.findOne({company :req.session.store.company, _id: req.body.employees})
+			if(!check_employees) return Store_sale.sendError(res, "Không tìm thấy nhân viên", "Vui lòng kiểm tra lại thông tin");
+			console.log(check_employees)
+			//check discount
+			if(req.body.number_code_discount){
+				let check_discount = await Discount.findOne({company :req.session.store.company, number_code: req.body.number_code_discount, isActive : true})
+				if(check_discount){
+					if(check_discount.type == "limit" && check_discount.times == check_discount.times_used){
+						return Store_sale.sendError(res, "Mã giảm giá đã hết lần sử dụng", "Vui lòng nhập lại mã");
+					}
+					console.log(check_discount)
+				}else{
+					return Store_sale.sendError(res, "Mã giảm giá không hợp lệ", "Vui lòng nhập lại mã");
+				}
+			}
+			//check customer
+			if(req.body.customer){
+				let check_customer = await Customer.findOne({company: req.session.store.company, _id:req.body.customer})
+				if(!check_customer){
+					return Store_sale.sendError(res, "Khách hàng không hợp lệ", "Vui lòng kiểm tra lại thông tin");
+				}
+				console.log(check_customer)
+			}
+			// check quantity
+			
 			Store_sale.sendMessage(res, "Đã tạo thành công");
 		}catch(err){
 			console.log(err.message)

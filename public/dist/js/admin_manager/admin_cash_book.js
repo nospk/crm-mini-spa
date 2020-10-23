@@ -131,7 +131,6 @@ function render_data(data, pageCount, currentPage, company){
                                     <th>Ngày</th>
 									<th>Mã phiếu</th>
                                     <th>Nhóm</th>
-									<th>Lập tại</th>
                                     <th>Người tạo</th>
                                     <th>Nơi nhận/thanh toán</th>
                                     <th>Ghi chú</th>
@@ -145,7 +144,6 @@ function render_data(data, pageCount, currentPage, company){
                 <td>${new Date(item.createdAt).toLocaleString()}</td>
 				<td>${item.serial}</td>
                 <td>${showGroup(item.group)}</td>
-				<td>${item.isForCompany == true ? "Công ty " + company : "Cửa hàng " + item.store.name}</td>
 				<td>${(item.user_created)}</td>
                 <td>${item.member_name}</td>
                 <td>${item.note ? reduce_string(item.note) : ""}</td>

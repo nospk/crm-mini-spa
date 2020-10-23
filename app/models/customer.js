@@ -12,9 +12,6 @@ const CustomerSchema = mongoose.Schema({
     address:{
         type: String, required: true
     },
-	payment:{
-        type: Number
-    },
 	note:{
         type: String
     },

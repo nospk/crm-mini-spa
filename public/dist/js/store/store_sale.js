@@ -643,7 +643,7 @@ function get_list_item(){
     let data = [];
     get_list_item.forEach((number_code)=>{
         data.push({
-            quantity: convert_number($(`#quantity-${number_code}`).val()),
+            sell_quantity: convert_number($(`#quantity-${number_code}`).val()),
             id: $(`#id-product-${number_code}`).val()
         })
     })

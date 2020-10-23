@@ -113,11 +113,10 @@ class Store_sale extends Controller{
 	}
 	static async send_payment(req, res){
 		try{
-			console.log(req.body)
 			//check employees
 			let check_employees = await Employees.findOne({company :req.session.store.company, _id: req.body.employees})
 			if(!check_employees) return Store_sale.sendError(res, "Không tìm thấy nhân viên", "Vui lòng kiểm tra lại thông tin");
-			console.log(check_employees)
+				//console.log(check_employees)
 			//check discount
 			if(req.body.number_code_discount){
 				let check_discount = await Discount.findOne({company :req.session.store.company, number_code: req.body.number_code_discount, isActive : true})
@@ -125,7 +124,7 @@ class Store_sale extends Controller{
 					if(check_discount.type == "limit" && check_discount.times == check_discount.times_used){
 						return Store_sale.sendError(res, "Mã giảm giá đã hết lần sử dụng", "Vui lòng nhập lại mã");
 					}
-					console.log(check_discount)
+						//console.log(check_discount)
 				}else{
 					return Store_sale.sendError(res, "Mã giảm giá không hợp lệ", "Vui lòng nhập lại mã");
 				}
@@ -136,10 +135,25 @@ class Store_sale extends Controller{
 				if(!check_customer){
 					return Store_sale.sendError(res, "Khách hàng không hợp lệ", "Vui lòng kiểm tra lại thông tin");
 				}
-				console.log(check_customer)
+					//console.log(check_customer)
 			}
 			// check quantity
-			
+			if(req.body.list_item == false){
+				return Store_sale.sendError(res, "Lỗi chưa chọn sản phẩm - dịch vụ", "Vui lòng chọn lại");
+			}
+			let list_item = req.body.list_item;
+			for(let i = 0, list_item_length = list_item.length; i < list_item_length; i++){
+				let product = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:list_item[i].id},{name:1, type: 1,price:1,number_code:1,stocks_in_store:1}).populate({
+					path: 'stocks_in_store',
+					match: { store_id: req.session.store._id },
+					select: 'product_of_sale',
+				})
+				list_item[i] =  Object.assign(list_item[i], product._doc);
+				if(list_item[i].type == 'product' && list_item[i].sell_quantity > list_item[i].stocks_in_store[0].product_of_sale){
+					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
+				}
+			}	
+			console.log(list_item)
 			Store_sale.sendMessage(res, "Đã tạo thành công");
 		}catch(err){
 			console.log(err.message)

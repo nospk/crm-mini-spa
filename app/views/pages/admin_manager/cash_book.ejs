@@ -238,12 +238,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
         //Datemask dd/mm/yyyy
         $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
         //Datemask2 mm/dd/yyyy
-        $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+        $('#datemask2').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
         //Money Euro
         $('[data-mask]').inputmask()
 
         //Date range picker
-        $('#reservation').daterangepicker()
+        $('#reservation').daterangepicker({
+			locale: {
+				format: 'DD/MM/YYYY'
+			}	
+		})
       })
     </script>
 </body>

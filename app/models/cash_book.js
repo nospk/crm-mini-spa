@@ -6,8 +6,11 @@ const Cash_book_Schema = mongoose.Schema({
     type:{
         type: String, required: true // income - outcome
 	},
+	type_payment:{
+		type: String, required: true // cash - card
+	},
 	group:{
-        type: String, required: true // Thanh toán nhà cung cấp - Thanh toán tiền lương - Các khoản khác - Nhận tiền cửa hàng
+        type: String, required: true //
     },
     company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 

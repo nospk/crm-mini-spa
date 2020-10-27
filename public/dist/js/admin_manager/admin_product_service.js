@@ -98,8 +98,8 @@ function render_data(data, pageCount, currentPage){
 		                        </thead>
 		                        <tbody>`;
 	data.forEach(item =>{
-		html+=`<tr>
-                <td>${item.name}</td>
+		html+=`<tr >
+                <td onclick="edit_data('${item._id}')" class="pointer">${item.name}</td>
 				<td>${item.type == 'product'? "Sản phẩm" : "Dịch vụ"}</td>
                 <td>${item.number_code}</td>
 				<td>${convert_vnd(item.cost_price)}</td>

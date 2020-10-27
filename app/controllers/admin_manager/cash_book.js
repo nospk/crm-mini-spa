@@ -15,7 +15,7 @@ class Admin_cash_book extends Controller{
     }
 	static async get_data(req, res){
         try{
-			let {search_find_store, search_find_selection}=req.body
+			let {search_find_store, search_find_selection, type_payment}=req.body
 			let match = {
 				$and: [ {company :req.session.user.company._id} ] 
 			}
@@ -23,6 +23,9 @@ class Admin_cash_book extends Controller{
 				match.$and.push({isForCompany: true})
 			}else{
 				match.$and.push({store: search_find_store})
+			}
+			if(type_payment != "both"){
+				match.$and.push({ type_payment: type_payment})
 			}
 			//set default variables
 			let pageSize = 10
@@ -57,7 +60,7 @@ class Admin_cash_book extends Controller{
 	}
 	static async create_new(req, res){
 		try{
-			const {type, type_receiver, select_supplier, select_employees, isForCompany, select_store, payment, note, group, accounting, select_customer} = req.body;
+			const {type, type_payment, type_receiver, select_supplier, select_employees, isForCompany, select_store, payment, note, group, accounting, select_customer} = req.body;
 			let serial, current_money, member_name, member_id, str;
 			if(isForCompany == true){
 				if(type == "outcome"){
@@ -104,6 +107,7 @@ class Admin_cash_book extends Controller{
 			let cash_book = Cash_book({
 				serial: serial,
 				type: type,
+				type_payment: type_payment,
 				company:req.session.user.company._id,
 				money: payment,
 				current_money: current_money,

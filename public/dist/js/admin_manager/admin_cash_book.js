@@ -1,7 +1,7 @@
 
 let page_now;
 $( document ).ready(()=>{
-    get_data();
+    get_data('1','cash');
 	getStoreSupplierCustomerEmployees();
 	$("#select_type_receiver").change(()=>{
 		if($("#select_type_receiver").val() == "employees"){
@@ -48,13 +48,14 @@ $( document ).ready(()=>{
 	currencyInput.addEventListener('blur', onBlur)
 })
 
-function get_data(paging_num){
+function get_data(paging_num, type){
     if(!paging_num){
         paging_num = page_now
     }
     let data = {
 		search_find_selection: $("#search_find_selection").val(),
-		search_find_store: $("#search_find_store").val(),
+        search_find_store: $("#search_find_store").val(),
+        type_payment: type,
         paging_num:paging_num,
         _csrf: $('#_csrf').val()
     }
@@ -65,7 +66,20 @@ function get_data(paging_num){
         success: function(data){
             if(data.status == 1){
                 page_now = data.data.currentPage
-                render_data(data.data.data, data.data.pageCount, data.data.currentPage, data.data.company);
+                render_data(data.data.data, data.data.pageCount, data.data.currentPage, type);
+                if(type=="cash"){
+                    $('#showDataCash').show()
+                    $('#showDataCard').hide()
+                    $('#showDataBoth').hide()
+                }else if(type == "card"){
+                    $('#showDataCash').hide()
+                    $('#showDataCard').show()
+                    $('#showDataBoth').hide()
+                }else{
+                    $('#showDataCash').hide()
+                    $('#showDataCard').hide()
+                    $('#showDataBoth').show()
+                }
             }else{
                 Swal.fire({
                     title: data.error,
@@ -123,13 +137,14 @@ function getStoreSupplierCustomerEmployees(){
         }
     })
 }
-function render_data(data, pageCount, currentPage, company){
+function render_data(data, pageCount, currentPage, type){
 	let html = `        
 		                    <table class="table table-hover text-nowrap">
 		                        <thead>
                                     <tr>
                                     <th>Ngày</th>
-									<th>Mã phiếu</th>
+                                    <th>Mã phiếu</th>
+                                    <th>Loại</th>
                                     <th>Nhóm</th>
                                     <th>Người tạo</th>
                                     <th>Nơi nhận/thanh toán</th>
@@ -142,7 +157,8 @@ function render_data(data, pageCount, currentPage, company){
 	data.forEach(item =>{
 		html+=`<tr>
                 <td>${new Date(item.createdAt).toLocaleString()}</td>
-				<td>${item.serial}</td>
+                <td>${item.serial}</td>
+                <td>${item.type == "income" ? "Thu" : "Chi"}</td>
                 <td>${showGroup(item.group)}</td>
 				<td>${(item.user_created)}</td>
                 <td>${item.member_name}</td>
@@ -154,7 +170,13 @@ function render_data(data, pageCount, currentPage, company){
     html+=`</tbody>
                 </table>
             `;
-    $('#show_data').html(html);
+    if(type=="cash"){
+        $('#showDataCash').html(html);
+    }else if(type == "card"){
+        $('#showDataCard').html(html);
+    }else{
+        $('#showDataBoth').html(html);
+    }
     let pageination = ''
 
     if (pageCount > 1) {
@@ -163,7 +185,7 @@ function render_data(data, pageCount, currentPage, company){
         if (currentPage == 1){
             pageination += `<li class="page-item disabled"><a class="page-link" href="#"><<</a></li>`  
         }else{
-            pageination += `<li class="page-item"><a class="page-link" onclick="get_data('1')"><<</a></li>`  
+            pageination += `<li class="page-item"><a class="page-link" onclick="get_data('1','${type}')"><<</a></li>`  
         }
         if (i != 1) {
             pageination += `<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`
@@ -173,7 +195,7 @@ function render_data(data, pageCount, currentPage, company){
             if (currentPage == i) {
                 pageination += `<li class="page-item active"><a class="page-link">${i}</a></li>`
             } else {
-                    pageination += `<li class="page-item"><a class="page-link" onclick="get_data('${i}')">${i}</a></li>`
+                    pageination += `<li class="page-item"><a class="page-link" onclick="get_data('${i}', '${type}')">${i}</a></li>`
             }
             if (i == Number(currentPage) + 4 && i < pageCount) {
                 pageination += `<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`
@@ -183,7 +205,7 @@ function render_data(data, pageCount, currentPage, company){
         if (currentPage == pageCount){
             pageination += `<li class="page-item disabled"><a class="page-link"">>></a></li>`
         }else{
-            pageination += `<li class="page-item"><a class="page-link" onclick="get_data('${i-1}')">>></a></li>`
+            pageination += `<li class="page-item"><a class="page-link" onclick="get_data('${i-1}', '${type})'">>></a></li>`
         }
             
         pageination += `</ul>`
@@ -215,6 +237,7 @@ function showGroup(str){
 function create_new(){
     let data = {
         type: $('#create_new #select_type').val(),
+        type_payment: $('#create_new #select_type_payment').val(),
         type_receiver: $('#create_new #select_type_receiver').val(),
         select_supplier: $('#create_new #select_supplier').val(),
         select_employees: $('#create_new #select_employees').val(),

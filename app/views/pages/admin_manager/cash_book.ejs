@@ -40,7 +40,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
       <!-- Content Header (Page header) -->
-      <section class="content-header">
+      <section class="content-header" style="padding: 0 7.5px 0 7.5px;">
         <div class="container-fluid">
           <div class="callout callout-primary">
             <div class="row">
@@ -84,14 +84,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <section class="content">
         <div class="container-fluid">
           <!-- Small boxes (Stat box) -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" onclick="get_data('1','cash')" data-toggle="pill" href="#" role="tab" aria-selected="true">Tiền mặt</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="get_data('1','card')" data-toggle="pill" href="#" role="tab" aria-selected="false">Ngân hàng</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="get_data('1','both')" data-toggle="pill" href="#" role="tab" aria-selected="false">Tất cả</a>
+            </li>
+          </ul>
           <div class="row">
-            <div class="col-12">
+            <div id="viewCard" class="col-12">
               <div class="card">
                 <div class="card-header" style="background-color: black;">
                   <h3 class="card-title" style="color: whitesmoke;">Lịch sử thu chi</h3>
                 </div>
                 <!-- /.card-header -->
-                <div class="card-body table-responsive p-0" id="show_data">
+                <div class="card-body table-responsive p-0" id="showDataCash">
+                </div>
+                <div class="card-body table-responsive p-0" style="display: none;" id="showDataCard">
+                </div>
+                <div class="card-body table-responsive p-0" style="display: none;" id="showDataBoth">
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix" id="pagination">
@@ -127,6 +142,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <select class="form-control" id="select_type">
                   <option value="income">Thu</option>
                   <option value="outcome">Chi</option>
+                </select>
+              </div>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Hình thức thanh toán</span>
+                </div>
+                <select class="form-control" id="select_type_payment">
+                  <option value="cash">Tiền Mặt</option>
+                  <option value="card">Ngân hàng</option>
                 </select>
               </div>
               <div class="input-group mb-3">

@@ -15,16 +15,13 @@ const CompanySchema = mongoose.Schema({
 	cash:{
 		type: Number, default: 0
 	},
-	serial_NH:{
+	card:{
+		type: Number, default : 0
+	},
+	serial_HH:{
 		type: Number, default: 0
 	},
-	serial_XH:{
-		type: Number, default: 0
-	},
-	serial_TTCT:{
-		type: Number, default: 0
-	},
-	serial_TTNT:{
+	serial_HD:{
 		type: Number, default: 0
 	},
 	money:{

@@ -159,7 +159,7 @@ function render_data(data, pageCount, currentPage, type){
                 <td>${new Date(item.createdAt).toLocaleString()}</td>
                 <td>${item.serial}</td>
                 <td>${item.type == "income" ? "Thu" : "Chi"}</td>
-                <td>${showGroup(item.group)}</td>
+                <td>${item.group}</td>
 				<td>${(item.user_created)}</td>
                 <td>${item.member_name}</td>
                 <td>${item.note ? reduce_string(item.note) : ""}</td>
@@ -212,28 +212,7 @@ function render_data(data, pageCount, currentPage, type){
     }   
     $("#pagination").html(pageination)
 }
-function showGroup(str){
-	switch (str){
-		case 'THUTMH':
-			return 'Thu Tiền Mua Hàng';
-			break;
-		case 'THUTCN':
-			return 'Thu Tiền Công Nợ';
-			break;
-		case 'THANHTNCC':
-			return 'Thanh Toán Nhà Cung Cấp';
-			break;
-		case 'THANHTCN':
-			return 'Thanh Toán Công Nợ';
-			break;
-		case 'THANHTCNV':
-			return 'Thanh Toán Cho Nhân Viên';
-			break;
-		default:
-			return 'Khác';
-			break;
-	}
-}
+
 function create_new(){
     let data = {
         type: $('#create_new #select_type').val(),
@@ -264,10 +243,10 @@ function create_new(){
                     showConfirmButton: false,
                     timer: 3000
                 }).then((result)=>{
-					get_data()
+					get_data('1',$('#create_new #select_type_payment').val());
                 })
                 .catch(timer => {
-					get_data()
+					get_data('1',$('#create_new #select_type_payment').val());
                 });    
             }else{
                 Swal.fire({

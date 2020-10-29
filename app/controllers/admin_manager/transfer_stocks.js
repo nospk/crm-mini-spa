@@ -60,7 +60,7 @@ class Admin_transfer_stocks extends Controller{
 		try{
             const {products, store, note} = req.body;
 			let serial_XH = await Common.get_serial_company(req.session.user.company._id, 'XH')
-			let serial_NK = await Common.get_serial_store(store, 'NK')
+			let serial_NH = await Common.get_serial_store(store, 'NH')
 			let invoice_product_storage = Invoice_product_storage({
 				serial: serial_XH,
 				type: 'transfer',
@@ -71,7 +71,7 @@ class Admin_transfer_stocks extends Controller{
 				list_products: products
 			});
 			let invoice_product_store = Invoice_product_store({
-				serial: serial_NK,
+				serial: serial_NH,
 				type: 'import',
 				company: req.session.user.company._id,
 				who_created: req.session.user.name,

@@ -130,6 +130,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </div>		
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">
+					  <span class="input-group-text">Hình thức thanh toán</span>
+					</div>
+					<select class="form-control" id="type_payment">
+					  <option value="cash">Tiền Mặt</option>
+					  <option value="card">Ngân hàng</option>
+					</select>
+				</div>
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
                         <span class="input-group-text">Số tiền còn nợ</span>
                     </div>
                     <input type="currency" disabled id="debt" value="0" class="form-control">

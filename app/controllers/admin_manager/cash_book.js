@@ -65,18 +65,18 @@ class Admin_cash_book extends Controller{
 			if(isForCompany == true){
 				if(type == "outcome"){
 					current_money = await Common.get_current_money(req.session.user.company._id, payment * -1)
-					serial = await Common.get_serial_company(req.session.user.company._id, 'TTCT')
+					serial = await Common.get_serial_company(req.session.user.company._id, 'HDCT')
 				}else{ 
 					current_money = await Common.get_current_money(req.session.user.company._id, payment)
-					serial = await Common.get_serial_company(req.session.user.company._id, 'TTNT')
+					serial = await Common.get_serial_company(req.session.user.company._id, 'HDTT')
 					}
 			}else{
 				if(type == "outcome"){ 
 					current_money = await Common.get_current_money_store(req.session.user.company._id, select_store, payment * -1)
-					serial = await Common.get_serial_store(select_store, 'TTCT')
+					serial = await Common.get_serial_store(select_store, 'HDCT')
 				}else{
 					current_money = await Common.get_current_money_store(req.session.user.company._id, select_store, payment)
-					serial = await Common.get_serial_store(select_store, 'TTNT')
+					serial = await Common.get_serial_store(select_store, 'HDTT')
 				}
 			}
 			let debt

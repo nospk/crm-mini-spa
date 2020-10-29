@@ -238,6 +238,7 @@ function create_new(){
         total_get_goods : Number(money_total),
         payment: convert_number($('#payment').val()),
 		debt: convert_number($('#debt').val()),
+		type_payment: $('#type_payment').val(),
 		supplier_id: $('#select_supplier').val(),
         products: get_list_product(),
         _csrf: $('#_csrf').val()

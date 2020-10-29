@@ -93,24 +93,21 @@ function render_data(data, pageCount, currentPage){
                                     <th>Giá bán</th>
                                     <th>Trạng thái</th>
 									<th>Tồn kho</th>
-                                    <th>Hành Động</th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
 	data.forEach(item =>{
-		html+=`<tr >
-                <td onclick="edit_data('${item._id}')" class="pointer">${item.name}</td>
+		html+=`<tr onclick="edit_data('${item._id}')" class="pointer">
+                <td>${item.name}</td>
 				<td>${item.type == 'product'? "Sản phẩm" : "Dịch vụ"}</td>
                 <td>${item.number_code}</td>
 				<td>${convert_vnd(item.cost_price)}</td>
 				<td>${convert_vnd(item.price)}</td>
                 <td>${item.isSale ? "Đang kinh doanh" : "Ngừng kinh doanh"}</td>
 				<td>${item.type == 'product'? item.quantity : ""}</td>
-                <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;
-					<span style="color:red; cursor: pointer" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i></span>		
-				</td>
                 </tr>`
     })
+	//comform_delete_data('${item._id}')
     html+=`</tbody>
                 </table>
             `;
@@ -192,7 +189,7 @@ function get_data(paging_num){
     })
 }
 
-function comform_delete_data(id){
+function comform_delete_data(){
     Swal.fire({
         title: 'Bạn muốn xóa ?',
         text: "Mọi thông tin trong này sẽ bị mất, bạn có chắc muốn xóa nó ?",
@@ -206,7 +203,7 @@ function comform_delete_data(id){
                 $.ajax({
                     url:'/admin_product_service/delete_data',
                     method:'delete',
-                    data: {id: id, _csrf: $('#_csrf').val()},
+                    data: {id: $('#edit_data #edit_id').val(), _csrf: $('#_csrf').val()},
                     success: function(data){
                         if(data.status == 1){
                             get_data();

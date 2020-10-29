@@ -38,16 +38,13 @@ const StoreSchema = mongoose.Schema({
 	cash:{
 		type: Number, "default" : 0
 	},
-	serial_NK:{
+	card:{
 		type: Number, "default" : 0
 	},
-	serial_TTCT:{
+	serial_HH:{
 		type: Number, "default" : 0
 	},
-	serial_TTNT:{
-		type: Number, "default" : 0
-	},
-	serial_HDBH:{
+	serial_HD:{
 		type: Number, "default" : 0
 	},
     isActive:{

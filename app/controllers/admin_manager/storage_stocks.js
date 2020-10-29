@@ -56,7 +56,7 @@ class Admin_store_stocks extends Controller{
     }
     static async create_new(req, res){
 		try{
-            const {total_get_goods, payment, debt, supplier_id = "", products} = req.body;
+            const {total_get_goods, payment, debt, supplier_id = "", products, type_payment} = req.body;
 			if(supplier_id == ""){
 				return Admin_store_stocks.sendError(res, "Lỗi thiếu thông tin", "Vui lòng chọn nhà cung cấp hoặc tạo mới");
 			}
@@ -77,16 +77,17 @@ class Admin_store_stocks extends Controller{
 			supplier.last_history = await Common.last_history(supplier.last_history, invoice_product_storage._id)
 			await supplier.save();
 			if(Number(payment) > 0){
-				let serial_TTCT = await Common.get_serial_company(req.session.user.company._id, 'TTCT')
+				let serial_TTCT = await Common.get_serial_company(req.session.user.company._id, 'HDCT')
 				let cash_book = Cash_book({
 					serial: serial_TTCT,
 					type: "outcome",
+					type_payment:type_payment,
 					company:req.session.user.company._id,
 					money: payment,
 					current_money: await Common.get_current_money(req.session.user.company._id, (Number(payment) * -1)),
 					reference: invoice_product_storage._id,
 					isForCompany: true,
-					group: 'THANHTNCC',
+					group: 'Thanh toán tiền hàng',
 					user_created: req.session.user.name,
 					member_name: supplier.name,
 					member_id: supplier._id,

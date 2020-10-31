@@ -3,7 +3,7 @@ let typingTimer_search;
 let doneTypingInterval = 500;  //time in ms, 1 second for example
 let show_product = $('#search_product');
 let show_customer = $('#search_customer');
-
+let tab_list = [];
 //on keyup, start the countdown
 show_product.on('keyup', function () {
 	clearTimeout(typingTimer_product);
@@ -111,7 +111,7 @@ function search_product() {
 					if (data.data.length > 0) {
 						let html = ""
 						data.data.forEach(item => {
-							html += `<li class="show_search pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+							html += `<li class="show_search pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
 										<span class="font-weight-bold">${item.name}</span><br>
 										<span class="number_code">Mã: ${item.number_code}</span><span class="float-right">Giá bán: ${convert_vnd(item.price)}</span><br>
 									`
@@ -206,7 +206,7 @@ function search_customer() {
 }
 function add_product(product){
     product = product.split(':')
-	let check = $(`#quantity-${product[1]}`).val()
+	let tab_number = 0;
 	if(product[4] == 0){
 		Swal.fire({
 			title: "Sản phẩm hết hàng",
@@ -222,56 +222,74 @@ function add_product(product){
 		});
 		return;
 	}
-    if(!check){
-        let html = `<tr>
-                    <td><span class="number-code">${product[1]}</span></td>
-                    <td><span id="name-product-${product[1]}">${product[0]}</span><input type="hidden" id="id-product-${product[1]}" value="${product[3]}"></td>
-                    <td><span id="price-${product[1]}">${convert_vnd(Number(product[2]))}</span>
-				   `
-		if(product[4]=="max"){
-			html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" max="999" value="1"></td>`
-		}else{
-			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity('${product[1]}', this)" id="quantity-${product[1]}" max="${product[4]}" value="1"></td>`
-		}  
-             html+= `<td><span class="total" id="total-${product[1]}" >${convert_vnd(Number(product[2]))}</span></td>
-                    <td><span style="color:red; cursor: pointer" onclick="delete_row_product(this)"><i class="fas fa-times-circle"></i></span></td>
-                </tr>`
-        $('#add_product').append(html)
-        total_sale();
-    }else{
-        let quantity = $(`#quantity-${product[1]}`).val()
-        $(`#quantity-${product[1]}`).val(Number(quantity)+1)
-        change_quantity(product[1])
-    }
-
-}
-
-
-function delete_row_product(btn) {
-    var row = btn.parentNode.parentNode;
-    row.parentNode.removeChild(row);
-    total_sale();
-}
-
-
-function change_quantity(code, btn){
-	let number = $(`#quantity-${code}`).val()
-	let current_product = $(`#quantity-${code}`).attr('max');
-	if(number == 0){
-		delete_row_product(btn)
+	if(tab_list[tab_number] == undefined){
+		tab_list[tab_number] = ([product])
 	}else{
-		let value = convert_number($(`#price-${code}`).text())
-		// $(`#total-${code}`).text(convert_vnd(value*number))
-		if(Number(current_product) - Number(number) < 0){
-            $(`#quantity-${code}`).val(current_product)
-            $(`#total-${code}`).text(convert_vnd(value*current_product))
-        }else{
-            $(`#total-${code}`).text(convert_vnd(value*number))
-        }	
-    }
+		let check = tab_list[tab_number].findIndex(element => element[1] == product[1]);
+		if(check != -1){
+			if(tab_list[tab_number][check][4] != "max" && tab_list[tab_number][check][5]+1 <= tab_list[tab_number][check][4]){
+				tab_list[tab_number][check][5]++
+				tab_list[tab_number][check][6] = tab_list[tab_number][check][5] * tab_list[tab_number][check][2]
+				
+			}
+			if(tab_list[tab_number][check][4] == "max"){
+				tab_list[tab_number][check][5]++
+				tab_list[tab_number][check][6] = tab_list[tab_number][check][5] * tab_list[tab_number][check][2]
+			}
+		}else{
+			tab_list[tab_number].push(product)
+		}
+	}
+	render_tablist(tab_number)
+}
+function render_tablist(tab_number){
+	let html = ''
+	let money = 0
+	tab_list[tab_number].forEach((item, index) =>{
+		money+= tab_list[tab_number][index][6]
+		html += `<tr>
+                    <td><span class="number-code">${item[1]}</span></td>
+                    <td><span id="name-product-${item[1]}">${item[0]}</span><input type="hidden" id="id-product-${item[1]}" value="${item[3]}"></td>
+                    <td><span id="price-${item[1]}">${convert_vnd(Number(item[2]))}</span>
+				   `
+		if(item[4]=="max"){
+			html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item[1]}" max="999" value="${item[5]}"></td>`
+		}else{
+			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item[1]}" max="${item[4]}" value="${item[5]}"></td>`
+		}  
+             html+= `<td><span class="total" id="total-${item[1]}" >${convert_vnd(Number(item[6]))}</span></td>
+                    <td><span style="color:red; cursor: pointer" onclick="delete_row_product(${tab_number},${index})"><i class="fas fa-times-circle"></i></span></td>
+                </tr>`
+        
+	})
+	$('#add_product').html(html)
+	$('#total_sale').text(money)
+	//total_sale();
+}
+
+function delete_row_product(tab_number, index) {
+    tab_list[tab_number].splice(index,1)
+	render_tablist(tab_number)
+}
+
+
+function change_quantity(tab_number, index, btn){
+	let number = ($(btn).val())
+	if(number == 0){
+		tab_list[tab_number].splice(index,1)
+	}else{
+		if(tab_list[tab_number][index][4] != "max" && (tab_list[tab_number][index][5] == tab_list[tab_number][index][4] || tab_list[tab_number][index][5]+1 <= tab_list[tab_number][index][4])){
+			tab_list[tab_number][index][5]= number
+			tab_list[tab_number][index][6] = tab_list[tab_number][index][5] * tab_list[tab_number][index][2]
+				
+		}
+		if(tab_list[tab_number][index][4] == "max"){
+			tab_list[tab_number][index][5]= number
+			tab_list[tab_number][index][6] = tab_list[tab_number][index][5] * tab_list[tab_number][index][2]
+		}	
+    } 
 		
-	
-    total_sale();
+	render_tablist(tab_number)
 }
 
 
@@ -369,7 +387,7 @@ function get_service(){
 						if(index == 0){ // if first item
 							html+= `<div class="carousel-item active">
 										<div class="card-columns">
-											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
@@ -381,7 +399,7 @@ function get_service(){
 							if(index == count){ // if first card in columns
 								html+= `<div class="carousel-item">
 											<div class="card-columns">
-												<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+												<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
 													<div class="card-body">
 														<h5 class="card-title">${item.name}</h5>
 														<p class="card-text">Mã: ${item.number_code}</p>
@@ -392,7 +410,7 @@ function get_service(){
 										</div>
 									`
 							}else{
-								html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+								html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
@@ -405,7 +423,7 @@ function get_service(){
 							}
 						}else if ((index+1) == count){ // if last card in columns
 							
-							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
@@ -419,7 +437,7 @@ function get_service(){
 							count += set_number;
 							html+= `<div class="carousel-item">
 										<div class="card-columns">
-											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
@@ -428,7 +446,7 @@ function get_service(){
 											</div>
 								`
 						}else{
-							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}')">
+							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
 										<div class="card-body">
 											<h5 class="card-title">${item.name}</h5>
 											<p class="card-text">Mã: ${item.number_code}</p>

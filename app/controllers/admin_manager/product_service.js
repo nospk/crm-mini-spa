@@ -10,7 +10,16 @@ class Admin_product_service extends Controller{
         Admin_product_service.setLocalValue(req,res);
 		//console.log(req.session);
         res.render('./pages/admin_manager/product_service');
-    }
+	}
+	static async get_product_service(req, res){
+        try{
+			let product_service = await Product_service.find({company: req.session.user.company._id, type: {$ne:"combo"}, isActive: true});
+			Admin_product_service.sendData(res, product_service);
+		}catch(err){
+			console.log(err)
+			Admin_product_service.sendError(res, err, err.message);
+        }
+	}
 	static async get_data(req, res){
 		try{
 			let {search}=req.body
@@ -45,6 +54,9 @@ class Admin_product_service extends Controller{
 				path: 'stocks_in_storage',
 				populate: { path: 'Storage_stocks' },
 				select: 'quantity'
+			}).populate({
+				path: 'combo.id',
+				populate: { path: 'Product_services' },
 			});
 			Admin_product_service.sendData(res, data);
 		}catch(err){
@@ -93,11 +105,23 @@ class Admin_product_service extends Controller{
 				data.stocks_in_storage = storage_stocks._id
 				data.stocks_in_store = stocks_in_store
 				await data.save()
-			}else{
+			}else if(req.body.type == "service"){
 				let data = Product_service({
 					name: req.body.name,
 					type: req.body.type,
 					cost_price: req.body.cost_price,
+					price: req.body.price,
+					description: req.body.description,
+					number_code: req.body.number_code,
+					company: req.session.user.company._id,
+				});
+				await data.save()
+			}else{
+				let data = Product_service({
+					name: req.body.name,
+					type: req.body.type,
+					combo: req.body.combo,
+					cost_price: 0,
 					price: req.body.price,
 					description: req.body.description,
 					number_code: req.body.number_code,
@@ -121,9 +145,6 @@ class Admin_product_service extends Controller{
 				if(check && find.number_code != req.body.number_code){
 					return Admin_product_service.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
 				}else{
-					if(find.type == "service"){
-						find.cost_price = req.body.cost_price;
-					}
 					find.name = req.body.name;
 					find.isSale = req.body.isSale;
 					find.price = req.body.price;
@@ -131,6 +152,13 @@ class Admin_product_service extends Controller{
 					find.number_code = req.body.number_code;
 					find.brand = req.body.brand;
 					find.group = req.body.group;
+					if(find.type == "service"){
+						find.cost_price = req.body.cost_price;
+					}
+					if(find.type == "combo"){
+						find.combo = req.body.combo;
+					}
+					
 					await find.save();
 					Admin_product_service.sendMessage(res, "Đã thay đổi thành công");
 				}

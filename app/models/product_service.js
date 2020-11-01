@@ -27,6 +27,11 @@ const Product_Service_Schema = mongoose.Schema({
 	isActive:{
 		type: Boolean, default:true 
 	},
+	combo:[{
+		id: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'},
+		quantity: {type: Number, required:true},
+		_id: false
+	}],
 	isSale:{
 		type: Boolean, default:true
 	},

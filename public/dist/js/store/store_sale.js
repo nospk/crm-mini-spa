@@ -4,6 +4,7 @@ let doneTypingInterval = 500;  //time in ms, 1 second for example
 let show_product = $('#search_product');
 let show_customer = $('#search_customer');
 let tab_list = [];
+let tab_number = 0;
 //on keyup, start the countdown
 show_product.on('keyup', function () {
 	clearTimeout(typingTimer_product);
@@ -61,10 +62,10 @@ $( document ).ready(()=>{
 							$('#discount_type').val(discount.type_discount)
 							if(discount.type_discount == "percent"){
 								$('#discount_value').text(convert_percent(discount.value))
-								total_sale()
+								render_tablist(tab_number)
 							}else{
 								$('#discount_value').text(convert_vnd(discount.value))
-								total_sale()
+								render_tablist(tab_number)
 							}
 						}
 					} else {
@@ -86,7 +87,7 @@ $( document ).ready(()=>{
 		}else{
 			$('#discount_type').val("")
 			$('#discount_value').text("")
-			total_sale()
+			render_tablist(tab_number)
 		}
 
 	})
@@ -95,7 +96,7 @@ function clear_discount(){
 	$('#discount_type').val("")
 	$('#discount_value').text("")
 	$('#number_code_discount').val("")
-	total_sale()
+	render_tablist(tab_number)
 }
 function search_product() {
 	if ($('#search_product').val() != "") {
@@ -206,7 +207,6 @@ function search_customer() {
 }
 function add_product(product){
     product = product.split(':')
-	let tab_number = 0;
 	if(product[4] == 0){
 		Swal.fire({
 			title: "Sản phẩm hết hàng",
@@ -222,31 +222,36 @@ function add_product(product){
 		});
 		return;
 	}
+	//convert to number because split will be string
+	product[2]= Number(product[2])
+	product[5]= Number(product[5])
+	product[6]= Number(product[6])
 	if(tab_list[tab_number] == undefined){
-		tab_list[tab_number] = ([product])
+		tab_list[tab_number] = {item:[product]}
 	}else{
-		let check = tab_list[tab_number].findIndex(element => element[1] == product[1]);
+		let check = tab_list[tab_number].item.findIndex(element => element[1] == product[1]);
 		if(check != -1){
-			if(tab_list[tab_number][check][4] != "max" && tab_list[tab_number][check][5]+1 <= tab_list[tab_number][check][4]){
-				tab_list[tab_number][check][5]++
-				tab_list[tab_number][check][6] = tab_list[tab_number][check][5] * tab_list[tab_number][check][2]
+			if(tab_list[tab_number].item[check][4] != "max" && tab_list[tab_number].item[check][5]+1 <= tab_list[tab_number].item[check][4]){
+				tab_list[tab_number].item[check][5]++
+				tab_list[tab_number].item[check][6] = tab_list[tab_number].item[check][5] * tab_list[tab_number].item[check][2]
 				
 			}
-			if(tab_list[tab_number][check][4] == "max"){
-				tab_list[tab_number][check][5]++
-				tab_list[tab_number][check][6] = tab_list[tab_number][check][5] * tab_list[tab_number][check][2]
+			if(tab_list[tab_number].item[check][4] == "max"){
+				tab_list[tab_number].item[check][5]++
+				tab_list[tab_number].item[check][6] = tab_list[tab_number].item[check][5] * tab_list[tab_number].item[check][2]
 			}
 		}else{
-			tab_list[tab_number].push(product)
+			tab_list[tab_number].item.push(product)
 		}
 	}
 	render_tablist(tab_number)
 }
 function render_tablist(tab_number){
-	let html = ''
-	let money = 0
-	tab_list[tab_number].forEach((item, index) =>{
-		money+= tab_list[tab_number][index][6]
+	let html = '';
+	let money = 0;
+	let money_discount = 0;
+	tab_list[tab_number].item.forEach((item, index) =>{
+		money+= item[6]
 		html += `<tr>
                     <td><span class="number-code">${item[1]}</span></td>
                     <td><span id="name-product-${item[1]}">${item[0]}</span><input type="hidden" id="id-product-${item[1]}" value="${item[3]}"></td>
@@ -263,50 +268,14 @@ function render_tablist(tab_number){
         
 	})
 	$('#add_product').html(html)
-	$('#total_sale').text(money)
-	//total_sale();
-}
-
-function delete_row_product(tab_number, index) {
-    tab_list[tab_number].splice(index,1)
-	render_tablist(tab_number)
-}
-
-
-function change_quantity(tab_number, index, btn){
-	let number = ($(btn).val())
-	if(number == 0){
-		tab_list[tab_number].splice(index,1)
-	}else{
-		if(tab_list[tab_number][index][4] != "max" && (tab_list[tab_number][index][5] == tab_list[tab_number][index][4] || tab_list[tab_number][index][5]+1 <= tab_list[tab_number][index][4])){
-			tab_list[tab_number][index][5]= number
-			tab_list[tab_number][index][6] = tab_list[tab_number][index][5] * tab_list[tab_number][index][2]
-				
-		}
-		if(tab_list[tab_number][index][4] == "max"){
-			tab_list[tab_number][index][5]= number
-			tab_list[tab_number][index][6] = tab_list[tab_number][index][5] * tab_list[tab_number][index][2]
-		}	
-    } 
-		
-	render_tablist(tab_number)
-}
-
-
-function total_sale(){
-    let money = 0;
-	let money_discount = 0;
-	//let payment = convert_number($('#payment').val());
-    $(".total").each(function () {                  
-        money+= convert_number($(this).text()); 
-    });
+	$('#total_sale').text(convert_vnd(money))
 	if(money != 0){
-		if($("#discount_type").val() != ""){
-			if($("#discount_type").val() == "percent"){
+		if($("#discount_type").val() != ""){//if have discount code
+			if($("#discount_type").val() == "percent"){ // type percent
 				money_discount = Math.ceil(money * convert_number($('#discount_value').text()) /100)
 				$('#money_discount').text(convert_vnd(money_discount))
 			}
-			if($("#discount_type").val() == "money"){
+			if($("#discount_type").val() == "money"){// type money
 				money_discount = convert_number($('#discount_value').text())
 				$('#money_discount').text($('#discount_value').text())
 			}
@@ -336,6 +305,76 @@ function total_sale(){
 		$('#selection_pay').removeClass("d-flex").addClass("d-none");
 	}
 }
+
+function delete_row_product(tab_number, index) {
+    tab_list[tab_number].splice(index,1)
+	render_tablist(tab_number)
+}
+
+
+function change_quantity(tab_number, index, btn){
+	let number = ($(btn).val())
+	if(number == 0){
+		tab_list[tab_number].item.splice(index,1)
+	}else{
+		if(tab_list[tab_number].item[index][4] != "max" && (tab_list[tab_number].item[index][5] == tab_list[tab_number].item[index][4] || tab_list[tab_number].item[index][5]+1 <= tab_list[tab_number].item[index][4])){
+			tab_list[tab_number].item[index][5]= number
+			tab_list[tab_number].item[index][6] = tab_list[tab_number].item[index][5] * tab_list[tab_number].item[index][2]
+				
+		}
+		if(tab_list[tab_number].item[index][4] == "max"){
+			tab_list[tab_number].item[index][5]= number
+			tab_list[tab_number].item[index][6] = tab_list[tab_number].item[index][5] * tab_list[tab_number].item[index][2]
+		}	
+    } 
+		
+	render_tablist(tab_number)
+}
+
+
+// function total_sale(){
+//     let money = 0;
+// 	let money_discount = 0;
+// 	//let payment = convert_number($('#payment').val());
+//     $(".total").each(function () {                  
+//         money+= convert_number($(this).text()); 
+//     });
+// 	if(money != 0){
+// 		if($("#discount_type").val() != ""){
+// 			if($("#discount_type").val() == "percent"){
+// 				money_discount = Math.ceil(money * convert_number($('#discount_value').text()) /100)
+// 				$('#money_discount').text(convert_vnd(money_discount))
+// 			}
+// 			if($("#discount_type").val() == "money"){
+// 				money_discount = convert_number($('#discount_value').text())
+// 				$('#money_discount').text($('#discount_value').text())
+// 			}
+// 		}else{
+// 			$('#money_discount').text("")
+// 		}
+// 		$('#total_sale').text(convert_vnd(money))
+// 		let bill_money = money - money_discount
+// 		if(bill_money < 0){
+// 			$('#bill_money').text(convert_vnd(0))
+// 		}else{
+// 			$('#bill_money').text(convert_vnd(bill_money))
+// 		}
+			
+// 		$('#selection_pay').removeClass("d-none").addClass("d-flex");
+// 		if($('#customer_pay_cash').text() != "" || $('#customer_pay_card').text() != ""){
+// 			$('#money_return').text(convert_vnd(convert_number($('#customer_pay_cash').text()) + convert_number($('#customer_pay_card').text()) - convert_number($('#bill_money').text())))
+// 		}else{
+// 			$('#money_return').text("")
+// 		}
+// 	}else{
+// 		$('#total_sale').text("")
+// 		$('#customer_pay_cash').text("")
+// 		$('#customer_pay_card').text("")
+// 		$('#money_return').text("")
+// 		$('#bill_money').text("")
+// 		$('#selection_pay').removeClass("d-flex").addClass("d-none");
+// 	}
+// }
 
 function get_employees(){
 	$.ajax({

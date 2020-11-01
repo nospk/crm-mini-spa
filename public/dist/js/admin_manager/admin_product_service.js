@@ -25,25 +25,181 @@ $( document ).ready(()=>{
 	});
 	$('#type_product_service').change(function(){
 		if($('#type_product_service').val() == "product"){
-			$('#brand_show').show()
+            $('#brand_show').show()
+            $('.combo-off').show()
+            $('.combo-on').hide()
+            $('#cost_price').prop("disabled", false);
+		}else if($('#type_product_service').val() == "service"){
+            $('.combo-off').show()
+            $('.combo-on').hide()
+            $('#brand_show').hide()
+            $('#cost_price').prop("disabled", false);
 		}else{
-			$('#brand_show').hide()
-		}
+            get_product_service()
+            $('.combo-off').hide()
+            $('.combo-on').show()
+            $('#cost_price').prop("disabled", true);
+        }
 	})
 })
 let page_now;
-
-function create_new(){
+const show_type = type =>{
+    if(type == "product")   return "Sản Phẩm"
+    else if (type == "service") return "Dịch vụ"
+    else return "Combo"
+}
+function get_product_service(){
     let data = {
-        name: $('#create_new #name').val().trim(),
-        type: $('#create_new #type_product_service').val(),
-        price: convert_number($('#create_new #price').val()),
-		cost_price: convert_number($('#create_new #cost_price').val()),
-        number_code: $('#create_new #number_code').val(),
-        description: $('#create_new #description').val(),
-		brand: $('#brand').val() == "" ? undefined : $('#brand').val(),
-		group: $('#group').val(),
         _csrf: $('#_csrf').val()
+    }
+    $.ajax({
+        url:'/admin_product_service/get_product_service',
+        method:'POST',
+        data: data,
+        success: function(data){
+            if(data.status == 1){
+                let html = ""   
+                data.data.forEach(item =>{
+                    html +=`<option value="${item.name}:${item.number_code}:${item.cost_price}:${item._id}">${item.name}</option>`
+                })
+                $('#edit_select_items').html(html)
+                $('#select_items').html(html)
+                $('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
+            }
+        }
+    })
+}
+function add_combo(){
+    let value = $('#select_items').val()
+    value = value.split(':')
+    let check = $(`#quantity-${value[1]}`).val()
+    if(!check){
+        let html = `<tr>
+                    <td><span class="number-code">${value[1]}</span></td>
+                    <td><span>${value[0]}</span><input type="hidden" id="id-product-${value[1]}" value="${value[3]}"></td>
+                    <td><span id="cost-price-${value[1]}">${convert_vnd(Number(value[2]))}</span></td>
+                    <td><input class="form-control form-control-sm" min="0" type="number" onchange="change_quantity('${value[1]}', this)" id="quantity-${value[1]}" value="1"></td>
+                    <td><span class="total" id="total-${value[1]}" >${convert_vnd(Number(value[2]))}</span></td>
+                    <td><span style="color:red; cursor: pointer" onclick="delete_row_product(this)"><i class="fas fa-times-circle"></i></span></td>
+                </tr>`
+        $('#add_items').append(html)
+        total_get_goods();
+    }else{
+        let quantity = $(`#quantity-${value[1]}`).val()
+        $(`#quantity-${value[1]}`).val(Number(quantity)+1)
+        change_quantity(value[1])
+    }
+
+}
+function edit_add_combo(){
+    let value = $('#edit_select_items').val()
+    console.log(value)
+    value = value.split(':')
+    let check = $(`#quantity-${value[1]}`).val()
+    if(!check){
+        let html = `<tr>
+                    <td><span class="number-code">${value[1]}</span></td>
+                    <td><span>${value[0]}</span><input type="hidden" id="id-product-${value[1]}" value="${value[3]}"></td>
+                    <td><span id="cost-price-${value[1]}">${convert_vnd(Number(value[2]))}</span></td>
+                    <td><input class="form-control form-control-sm" min="0" type="number" onchange="edit_change_quantity('${value[1]}', this)" id="quantity-${value[1]}" value="1"></td>
+                    <td><span class="total" id="total-${value[1]}" >${convert_vnd(Number(value[2]))}</span></td>
+                    <td><span style="color:red; cursor: pointer" onclick="edit_delete_row_product(this)"><i class="fas fa-times-circle"></i></span></td>
+                </tr>`
+        $('#edit_add_items').append(html)
+        edit_total_get_goods();
+    }else{
+        let quantity = $(`#quantity-${value[1]}`).val()
+        $(`#quantity-${value[1]}`).val(Number(quantity)+1)
+        edit_change_quantity(value[1])
+    }
+}
+function edit_change_quantity(code, btn){
+	let number = $(`#quantity-${code}`).val()
+	if(number == 0){
+		delete_row_product(btn)
+	}else{
+		let value = convert_number($(`#cost-price-${code}`).text())
+		$(`#total-${code}`).text(convert_vnd(value*number))
+	}
+    edit_total_get_goods();
+}
+function edit_delete_row_product(btn) {
+    var row = btn.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+    edit_total_get_goods();
+}
+function delete_row_product(btn) {
+    var row = btn.parentNode.parentNode;
+    row.parentNode.removeChild(row);
+    total_get_goods();
+}
+function edit_total_get_goods(){
+    let money = 0;
+    $(".total").each(function () {                  
+        money+= convert_number($(this).text()); 
+    });
+    $('#edit_cost_price').val(convert_vnd(money))
+}
+function change_quantity(code, btn){
+	let number = $(`#quantity-${code}`).val()
+	if(number == 0){
+		delete_row_product(btn)
+	}else{
+		let value = convert_number($(`#cost-price-${code}`).text())
+		$(`#total-${code}`).text(convert_vnd(value*number))
+	}
+    total_get_goods();
+}
+function total_get_goods(){
+    let money = 0;
+    $(".total").each(function () {                  
+        money+= convert_number($(this).text()); 
+    });
+    $('#cost_price').val(convert_vnd(money))
+}
+function get_list_items(){
+    let list_product = [];
+    $(".number-code").each(function () {                  
+        list_product.push($(this).text()); 
+    });
+    let data = [];
+    list_product.forEach((number_code)=>{
+        data.push({
+            quantity: convert_number($(`#quantity-${number_code}`).val()),
+            id: $(`#id-product-${number_code}`).val()
+        })
+    })
+    return data;
+}
+function create_new(){
+    let data;
+    if($('#create_new #type_product_service').val() != "combo"){
+        data = {    
+            name: $('#create_new #name').val().trim(),
+            type: $('#create_new #type_product_service').val(),
+            price: convert_number($('#create_new #price').val()),
+            cost_price: convert_number($('#create_new #cost_price').val()),
+            number_code: $('#create_new #number_code').val(),
+            description: $('#create_new #description').val(),
+            brand: $('#brand').val() == "" ? undefined : $('#brand').val(),
+            group: $('#group').val(),
+            _csrf: $('#_csrf').val()
+        }
+    }else{
+        data = {
+            name: $('#create_new #name').val().trim(),
+            type: $('#create_new #type_product_service').val(),
+            price: convert_number($('#create_new #price').val()),
+            cost_price: convert_number($('#create_new #cost_price').val()),
+            combo: get_list_items(),
+            number_code: $('#create_new #number_code').val(),
+            description: $('#create_new #description').val(),
+            brand: $('#brand').val() == "" ? undefined : $('#brand').val(),
+            group: $('#group').val(),
+            _csrf: $('#_csrf').val()
+        }
     }
     $.ajax({
         url:'/admin_product_service/create',
@@ -57,11 +213,11 @@ function create_new(){
                     icon: "info",
                     showConfirmButton: false,
                     timer: 3000
-                }).then((result)=>{
-					get_data()
+                }).then(()=>{
+					//get_data()
                 })
                 .catch(timer => {
-					get_data()
+					//get_data()
                 });    
             }else{
                 Swal.fire({
@@ -70,7 +226,7 @@ function create_new(){
                     icon: "error",
                     showConfirmButton: false,    
                     timer: 3000
-                }).then((result)=>{
+                }).then(()=>{
                     // cho vào để ko báo lỗi uncaught
                 })
                 .catch(timer => {
@@ -99,7 +255,7 @@ function render_data(data, pageCount, currentPage){
 	data.forEach(item =>{
 		html+=`<tr onclick="edit_data('${item._id}')" class="pointer">
                 <td>${item.name}</td>
-				<td>${item.type == 'product'? "Sản phẩm" : "Dịch vụ"}</td>
+				<td>${show_type(item.type)}</td>
                 <td>${item.number_code}</td>
 				<td>${convert_vnd(item.cost_price)}</td>
 				<td>${convert_vnd(item.price)}</td>
@@ -147,7 +303,10 @@ function render_data(data, pageCount, currentPage){
     }   
     $("#pagination").html(pageination)
 }
+
 function get_data(paging_num){
+    $('#edit_add_items').html("")
+    $('#add_items').html("")
 	$('#create_new #cost_price').val("")
     $('#create_new #name').val("")
     $('#create_new #price').val("")
@@ -239,11 +398,15 @@ function edit_data(id){
                 if(data.data.type =="service"){
                     $('#edit_data #edit_cost_price').prop("disabled", false);
                     $('#edit_data #edit-stock').css("display", "none");
-					$('#edit_brand_show').hide();
-                }else{
+                    $('.combo-off').show()
+                    $('.combo-on').hide()
+                    $('#edit_brand_show').hide();
+                }else if(data.data.type =="product"){
                     $('#edit_data #edit_cost_price').prop("disabled", true);
                     $('#edit_data #edit-stock').css("display", "block");
-					$('#edit_brand_show').show();
+                    $('#edit_brand_show').show();
+                    $('.combo-off').show()
+                    $('.combo-on').hide()
                     let html = `<div class="info-box">
                                 <span class="info-box-icon bg-success"><i class="fas fa-boxes"></i></span>
                                 <div class="info-box-content">
@@ -267,10 +430,32 @@ function edit_data(id){
                                         <span class="info-box-text">Hàng bán:</span><span class="info-box-number">${data.data.stocks_in_store[i].product_of_service}</span>
 										<span class="info-box-text">Hàng dịch vụ:</span><span class="info-box-number">${data.data.stocks_in_store[i].product_of_sale}</span>
 										<span class="info-box-text">Hàng chưa phân loại:</span><span class="info-box-number">${data.data.stocks_in_store[i].product_of_undefined}</span>
-                                        </div>
+                                    </div>
                                 </div>`
                     }
                     $('#edit-stock-tab').html(html)
+                }else{
+                    $('#edit_data #edit_cost_price').prop("disabled", true);
+                    $('#edit_data #edit-stock').css("display", "none");
+                    $('#edit_brand_show').hide();
+                    get_product_service();
+                    $('.combo-off').hide()
+                    $('.combo-on').show()
+                    let html
+                    //${item.name}:${item.number_code}:${item.cost_price}:${item._id}
+                    data.data.combo.forEach(item=>{
+                        html += `<tr>
+                                    <td><span class="number-code">${item.id.number_code}</span></td>
+                                    <td><span>${item.id.name}</span><input type="hidden" id="id-product-${item.id.number_code}" value="${item.id._id}"></td>
+                                    <td><span id="cost-price-${item.id.number_code}">${convert_vnd(Number(item.id.cost_price))}</span></td>
+                                    <td><input class="form-control form-control-sm" min="0" type="number" onchange="edit_change_quantity('${item.id.number_code}', this)" id="quantity-${item.id.number_code}" value="${item.quantity}"></td>
+                                    <td><span class="total" id="total-${item.id.number_code}" >${convert_vnd(Number(item.id.cost_price)*Number(item.quantity))}</span></td>
+                                    <td><span style="color:red; cursor: pointer" onclick="edit_delete_row_product(this)"><i class="fas fa-times-circle"></i></span></td>
+                                </tr>`
+                            
+                    })
+                    $('#edit_add_items').append(html)
+                    edit_total_get_goods()
                 }
                 
             }
@@ -278,18 +463,35 @@ function edit_data(id){
 	})
 }
 function update_data(){
-	let data = {
-        name: $('#edit_data #edit_name').val().trim(),
-        cost_price: convert_number($('#edit_data #edit_cost_price').val()),
-        price: convert_number($('#edit_data #edit_price').val()),
-        number_code: $('#edit_data #edit_number_code').val(),
-        description: $('#edit_data #edit_description').val(),
-		isSale: $('#edit_data #isSale').val(),
-		brand: $('#edit_data #edit_brand').val() == "" ? undefined: $('#edit_data #edit_brand').val(),
-		group: $('#edit_data #edit_group').val(),
-		id: $('#edit_data #edit_id').val(),
-        _csrf: $('#_csrf').val()
+    let data
+    if($('#edit_data #edit_type_product_service').val() != "combo"){
+        data = {
+            name: $('#edit_data #edit_name').val().trim(),
+            cost_price: convert_number($('#edit_data #edit_cost_price').val()),
+            price: convert_number($('#edit_data #edit_price').val()),
+            number_code: $('#edit_data #edit_number_code').val(),
+            description: $('#edit_data #edit_description').val(),
+            isSale: $('#edit_data #isSale').val(),
+            brand: $('#edit_data #edit_brand').val() == "" ? undefined: $('#edit_data #edit_brand').val(),
+            group: $('#edit_data #edit_group').val(),
+            id: $('#edit_data #edit_id').val(),
+            _csrf: $('#_csrf').val()
+        }
+    }else{
+        data = {
+            name: $('#edit_data #edit_name').val().trim(),
+            combo: get_list_items(),
+            price: convert_number($('#edit_data #edit_price').val()),
+            number_code: $('#edit_data #edit_number_code').val(),
+            description: $('#edit_data #edit_description').val(),
+            isSale: $('#edit_data #isSale').val(),
+            brand: $('#edit_data #edit_brand').val() == "" ? undefined: $('#edit_data #edit_brand').val(),
+            group: $('#edit_data #edit_group').val(),
+            id: $('#edit_data #edit_id').val(),
+            _csrf: $('#_csrf').val()
+        }
     }
+	
     $.ajax({
         url:'/admin_product_service/update_data',
         method:'PUT',

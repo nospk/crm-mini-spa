@@ -214,10 +214,10 @@ function create_new(){
                     showConfirmButton: false,
                     timer: 3000
                 }).then(()=>{
-					//get_data()
+					get_data()
                 })
                 .catch(timer => {
-					//get_data()
+					get_data()
                 });    
             }else{
                 Swal.fire({
@@ -454,7 +454,7 @@ function edit_data(id){
                                 </tr>`
                             
                     })
-                    $('#edit_add_items').append(html)
+                    $('#edit_add_items').html(html)
                     edit_total_get_goods()
                 }
                 

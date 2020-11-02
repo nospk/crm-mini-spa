@@ -173,7 +173,10 @@ class Admin_product_service extends Controller{
 	}
 	static async delete_data(req, res){
 		try{
-			await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.id}, {isActive: false, isSale: false});
+			let check = await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.id}, {isActive: false, isSale: false});
+			if(check.type != "combo"){
+				await Product_service.findOneAndUpdate({company: req.session.user.company._id, type:"combo"}, {$pull: {combo: {id: check._id}}});
+			}
 			Admin_product_service.sendMessage(res, "Đã xóa thành công");
 		}catch(err){
 			console.log(err)

@@ -112,7 +112,7 @@ function search_product() {
 					if (data.data.length > 0) {
 						let html = ""
 						data.data.forEach(item => {
-							html += `<li class="show_search pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
+							html += `<li class="show_search pointer" onclick="add_product('${item._id}')">
 										<span class="font-weight-bold">${item.name}</span><br>
 										<span class="number_code">Mã: ${item.number_code}</span><span class="float-right">Giá bán: ${convert_vnd(item.price)}</span><br>
 									`
@@ -205,64 +205,88 @@ function search_customer() {
 	}
 
 }
-function add_product(product){
-    product = product.split(':')
-	if(product[4] == 0){
-		Swal.fire({
-			title: "Sản phẩm hết hàng",
-			text: "Vui lòng chọn sản phẩm khác hoặc thêm sản phẩm",
-			icon: "error",
-			showConfirmButton: false,
-			timer: 3000
-		}).then((result) => {
-			// cho vào để ko báo lỗi uncaught
-		})
-		.catch(timer => {
-				// cho vào để ko báo lỗi uncaught
-		});
-		return;
-	}
-	//convert to number because split will be string
-	product[2]= Number(product[2])
-	product[5]= Number(product[5])
-	product[6]= Number(product[6])
-	if(tab_list[tab_number] == undefined){
-		tab_list[tab_number] = {item:[product]}
-	}else{
-		let check = tab_list[tab_number].item.findIndex(element => element[1] == product[1]);
-		if(check != -1){
-			if(tab_list[tab_number].item[check][4] != "max" && tab_list[tab_number].item[check][5]+1 <= tab_list[tab_number].item[check][4]){
-				tab_list[tab_number].item[check][5]++
-				tab_list[tab_number].item[check][6] = tab_list[tab_number].item[check][5] * tab_list[tab_number].item[check][2]
-				
+
+function add_product(id){
+	$.ajax({
+			url: '/store_sale/get_by_id',
+			method: 'POST',
+			data: {
+				id: id,
+				_csrf: $('#_csrf').val()
+			},
+			success: function (data) {
+				if (data.status == 1) {
+					let product = data.data
+					if(tab_list[tab_number] == undefined){
+						tab_list[tab_number] = {item:[product]}
+						tab_list[tab_number].item[0].sale_quantity = 1
+						tab_list[tab_number].item[0].sale_money = product.price
+					}else{
+						let check = tab_list[tab_number].item.findIndex(element => element.number_code == product.number_code);
+						if(check != -1){
+							if(product.type == "product"){ 
+								if(tab_list[tab_number].item[check].sale_quantity +1 <= product.stocks_in_store[0].product_of_sale){
+									tab_list[tab_number].item[check].sale_quantity++
+									tab_list[tab_number].item[check].sale_money = tab_list[tab_number].item[check].sale_quantity * tab_list[tab_number].item[check].price
+									tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale 
+								}else{
+									tab_list[tab_number].item[check].sale_quantity = product.stocks_in_store[0].product_of_sale
+									tab_list[tab_number].item[check].sale_money = tab_list[tab_number].item[check].sale_quantity * tab_list[tab_number].item[check].price
+									tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale
+								}
+							}else{
+								tab_list[tab_number].item[check].sale_quantity++
+								tab_list[tab_number].item[check].sale_money = tab_list[tab_number].item[check].sale_quantity * tab_list[tab_number].item[check].price
+							}
+						}else{
+							tab_list[tab_number].item.push(Object.assign(product, {sale_quantity: 1, sale_money:product.price}))
+						}
+					}
+					render_tablist(tab_number)
+				} else {
+					Swal.fire({
+						title: data.error,
+						text: data.message,
+						icon: "error",
+						showConfirmButton: false,
+						timer: 3000
+					}).then((result) => {
+						// cho vào để ko báo lỗi uncaught
+					})
+					.catch(timer => {
+							// cho vào để ko báo lỗi uncaught
+					});
+				}
 			}
-			if(tab_list[tab_number].item[check][4] == "max"){
-				tab_list[tab_number].item[check][5]++
-				tab_list[tab_number].item[check][6] = tab_list[tab_number].item[check][5] * tab_list[tab_number].item[check][2]
-			}
-		}else{
-			tab_list[tab_number].item.push(product)
-		}
-	}
-	render_tablist(tab_number)
+	})
+	
 }
 function render_tablist(tab_number){
 	let html = '';
 	let money = 0;
 	let money_discount = 0;
 	tab_list[tab_number].item.forEach((item, index) =>{
-		money+= item[6]
+		money+= item.price
 		html += `<tr>
-                    <td><span class="number-code">${item[1]}</span></td>
-                    <td><span id="name-product-${item[1]}">${item[0]}</span><input type="hidden" id="id-product-${item[1]}" value="${item[3]}"></td>
-                    <td><span id="price-${item[1]}">${convert_vnd(Number(item[2]))}</span>
-				   `
-		if(item[4]=="max"){
-			html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item[1]}" max="999" value="${item[5]}"></td>`
+                    <td><span class="number-code">${item.number_code}</span></td>
+				`
+		if(item.type == "combo"){
+			html+= `<td><span id="name-product-${item.number_code}">${item.name}</span><input type="hidden" id="id-product-${item.number_code}" value="${item._id}">`
+			item.combo.forEach(combo =>{
+				html+= `<br><span> *${combo.id.name} (${combo.id.number_code}): ${combo.quantity}<span>`
+			})
+			html+= `</td>`
 		}else{
-			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item[1]}" max="${item[4]}" value="${item[5]}"></td>`
+			html+=`<td><span id="name-product-${item.number_code}">${item.name}</span><input type="hidden" id="id-product-${item.number_code}" value="${item._id}"></td>`
+		}		       		
+        html += `<td><span id="price-${item.number_code}">${convert_vnd(Number(item.price))}</span>
+				   `
+		if(item.type != "product"){
+			html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="999" value="${item.sale_quantity}"></td>`
+		}else{
+			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="${item.stocks_in_store[0].product_of_sale}" value="${item.sale_quantity}"></td>`
 		}  
-             html+= `<td><span class="total" id="total-${item[1]}" >${convert_vnd(Number(item[6]))}</span></td>
+             html+= `<td><span class="total" id="total-${item.number_code}" >${convert_vnd(Number(item.sale_money))}</span></td>
                     <td><span style="color:red; cursor: pointer" onclick="delete_row_product(${tab_number},${index})"><i class="fas fa-times-circle"></i></span></td>
                 </tr>`
         
@@ -317,64 +341,23 @@ function change_quantity(tab_number, index, btn){
 	if(number == 0){
 		tab_list[tab_number].item.splice(index,1)
 	}else{
-		if(tab_list[tab_number].item[index][4] != "max" && (tab_list[tab_number].item[index][5] == tab_list[tab_number].item[index][4] || tab_list[tab_number].item[index][5]+1 <= tab_list[tab_number].item[index][4])){
-			tab_list[tab_number].item[index][5]= number
-			tab_list[tab_number].item[index][6] = tab_list[tab_number].item[index][5] * tab_list[tab_number].item[index][2]
-				
-		}
-		if(tab_list[tab_number].item[index][4] == "max"){
-			tab_list[tab_number].item[index][5]= number
-			tab_list[tab_number].item[index][6] = tab_list[tab_number].item[index][5] * tab_list[tab_number].item[index][2]
+		if(tab_list[tab_number].item[index].type == "product"){ 
+			if(number <= tab_list[tab_number].item[index].stocks_in_store[0].product_of_sale){
+				tab_list[tab_number].item[index].sale_quantity = number
+				tab_list[tab_number].item[index].sale_money = tab_list[tab_number].item[index].sale_quantity * tab_list[tab_number].item[index].price
+			}else{
+				tab_list[tab_number].item[index].sale_quantity = tab_list[tab_number].item[index].stocks_in_store[0].product_of_sale
+				tab_list[tab_number].item[index].sale_money = tab_list[tab_number].item[index].sale_quantity * tab_list[tab_number].item[index].price
+			}			
+		}else{
+			tab_list[tab_number].item[index].sale_quantity = number
+			tab_list[tab_number].item[index].sale_money = tab_list[tab_number].item[index].sale_quantity * tab_list[tab_number].item[index].price
 		}	
     } 
 		
 	render_tablist(tab_number)
 }
 
-
-// function total_sale(){
-//     let money = 0;
-// 	let money_discount = 0;
-// 	//let payment = convert_number($('#payment').val());
-//     $(".total").each(function () {                  
-//         money+= convert_number($(this).text()); 
-//     });
-// 	if(money != 0){
-// 		if($("#discount_type").val() != ""){
-// 			if($("#discount_type").val() == "percent"){
-// 				money_discount = Math.ceil(money * convert_number($('#discount_value').text()) /100)
-// 				$('#money_discount').text(convert_vnd(money_discount))
-// 			}
-// 			if($("#discount_type").val() == "money"){
-// 				money_discount = convert_number($('#discount_value').text())
-// 				$('#money_discount').text($('#discount_value').text())
-// 			}
-// 		}else{
-// 			$('#money_discount').text("")
-// 		}
-// 		$('#total_sale').text(convert_vnd(money))
-// 		let bill_money = money - money_discount
-// 		if(bill_money < 0){
-// 			$('#bill_money').text(convert_vnd(0))
-// 		}else{
-// 			$('#bill_money').text(convert_vnd(bill_money))
-// 		}
-			
-// 		$('#selection_pay').removeClass("d-none").addClass("d-flex");
-// 		if($('#customer_pay_cash').text() != "" || $('#customer_pay_card').text() != ""){
-// 			$('#money_return').text(convert_vnd(convert_number($('#customer_pay_cash').text()) + convert_number($('#customer_pay_card').text()) - convert_number($('#bill_money').text())))
-// 		}else{
-// 			$('#money_return').text("")
-// 		}
-// 	}else{
-// 		$('#total_sale').text("")
-// 		$('#customer_pay_cash').text("")
-// 		$('#customer_pay_card').text("")
-// 		$('#money_return').text("")
-// 		$('#bill_money').text("")
-// 		$('#selection_pay').removeClass("d-flex").addClass("d-none");
-// 	}
-// }
 
 function get_employees(){
 	$.ajax({
@@ -426,7 +409,7 @@ function get_service(){
 						if(index == 0){ // if first item
 							html+= `<div class="carousel-item active">
 										<div class="card-columns">
-											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
+											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
@@ -438,7 +421,7 @@ function get_service(){
 							if(index == count){ // if first card in columns
 								html+= `<div class="carousel-item">
 											<div class="card-columns">
-												<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
+												<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
 													<div class="card-body">
 														<h5 class="card-title">${item.name}</h5>
 														<p class="card-text">Mã: ${item.number_code}</p>
@@ -449,7 +432,7 @@ function get_service(){
 										</div>
 									`
 							}else{
-								html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
+								html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
@@ -462,7 +445,7 @@ function get_service(){
 							}
 						}else if ((index+1) == count){ // if last card in columns
 							
-							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
+							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
@@ -476,7 +459,7 @@ function get_service(){
 							count += set_number;
 							html+= `<div class="carousel-item">
 										<div class="card-columns">
-											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
+											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
@@ -485,7 +468,7 @@ function get_service(){
 											</div>
 								`
 						}else{
-							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item.name}:${item.number_code}:${item.price}:${item._id}:${item.type == "product" ? item.stocks_in_store[0].product_of_sale : "max"}:1:${item.price}')">
+							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
 										<div class="card-body">
 											<h5 class="card-title">${item.name}</h5>
 											<p class="card-text">Mã: ${item.number_code}</p>

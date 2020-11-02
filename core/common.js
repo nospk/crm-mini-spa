@@ -74,6 +74,10 @@ class Common {
 					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_HD:1}},{new: true});
 					resolve('HDTT_'+Number(store.serial_HD));
 					break;
+				case 'BH':
+					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_BH:1}},{new: true});
+					resolve('HDBH_'+Number(store.serial_BH));
+					break;
 				default:
 					reject(null)
 			}			

@@ -47,6 +47,9 @@ const StoreSchema = mongoose.Schema({
 	serial_HD:{
 		type: Number, "default" : 0
 	},
+	serial_BH:{
+		type: Number, "default" : 0
+	},
     isActive:{
 		type: Boolean, default:true
 	}

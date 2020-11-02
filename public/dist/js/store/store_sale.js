@@ -59,6 +59,7 @@ $( document ).ready(()=>{
 					if (data.status == 1) {
 						if (data.data) {
 							let discount = data.data
+							$('#discount_id').val(discount._id)
 							$('#discount_type').val(discount.type_discount)
 							if(discount.type_discount == "percent"){
 								$('#discount_value').text(convert_percent(discount.value))
@@ -96,6 +97,7 @@ function clear_discount(){
 	$('#discount_type').val("")
 	$('#discount_value').text("")
 	$('#number_code_discount').val("")
+	$('#discount_id').val("")
 	render_tablist(tab_number)
 }
 function search_product() {
@@ -264,35 +266,48 @@ function add_product(id){
 function render_tablist(tab_number){
 	let html = '';
 	let money = 0;
+	let combo = false;
 	let money_discount = 0;
-	tab_list[tab_number].item.forEach((item, index) =>{
-		money+= item.price
-		html += `<tr>
-                    <td><span class="number-code">${item.number_code}</span></td>
-				`
-		if(item.type == "combo"){
-			html+= `<td><span id="name-product-${item.number_code}">${item.name}</span><input type="hidden" id="id-product-${item.number_code}" value="${item._id}">`
-			item.combo.forEach(combo =>{
-				html+= `<br><span> *${combo.id.name} (${combo.id.number_code}): ${combo.quantity}<span>`
-			})
-			html+= `</td>`
+	if(tab_list[tab_number] != undefined){
+		tab_list[tab_number].item.forEach((item, index) =>{
+			money+= item.price
+			html += `<tr>
+						<td><span class="number-code">${item.number_code}</span></td>
+					`
+			if(item.type == "combo"){
+				combo = true
+				html+= `<td><span id="name-product-${item.number_code}">${item.name}</span><input type="hidden" id="id-product-${item.number_code}" value="${item._id}">`
+				item.combo.forEach(combo =>{
+					html+= `<br><span> *${combo.id.name} (${combo.id.number_code}): ${combo.quantity}<span>`
+				})
+				html+= `</td>`
+			}else{
+				html+=`<td><span id="name-product-${item.number_code}">${item.name}</span><input type="hidden" id="id-product-${item.number_code}" value="${item._id}"></td>`
+			}		       		
+			html += `<td><span id="price-${item.number_code}">${convert_vnd(Number(item.price))}</span>
+					   `
+			if(item.type != "product"){
+				html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="999" value="${item.sale_quantity}"></td>`
+			}else{
+				html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="${item.stocks_in_store[0].product_of_sale}" value="${item.sale_quantity}"></td>`
+			}  
+				 html+= `<td><span class="total" id="total-${item.number_code}" >${convert_vnd(Number(item.sale_money))}</span></td>
+						<td><span style="color:red; cursor: pointer" onclick="delete_row_product(${tab_number},${index})"><i class="fas fa-times-circle"></i></span></td>
+					</tr>`
+			
+		})
+		if(combo == true){
+			$('#discount_type').val("")
+			$('#discount_value').text("")
+			$('#number_code_discount').val("")
+			$('#discount_id').val("")
+			$('#number_code_discount').prop("disabled", true);
 		}else{
-			html+=`<td><span id="name-product-${item.number_code}">${item.name}</span><input type="hidden" id="id-product-${item.number_code}" value="${item._id}"></td>`
-		}		       		
-        html += `<td><span id="price-${item.number_code}">${convert_vnd(Number(item.price))}</span>
-				   `
-		if(item.type != "product"){
-			html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="999" value="${item.sale_quantity}"></td>`
-		}else{
-			html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="${item.stocks_in_store[0].product_of_sale}" value="${item.sale_quantity}"></td>`
-		}  
-             html+= `<td><span class="total" id="total-${item.number_code}" >${convert_vnd(Number(item.sale_money))}</span></td>
-                    <td><span style="color:red; cursor: pointer" onclick="delete_row_product(${tab_number},${index})"><i class="fas fa-times-circle"></i></span></td>
-                </tr>`
-        
-	})
-	$('#add_product').html(html)
-	$('#total_sale').text(convert_vnd(money))
+			$('#number_code_discount').prop("disabled", false);
+		}
+		$('#add_product').html(html)
+		$('#total_sale').text(convert_vnd(money))
+	}
 	if(money != 0){
 		if($("#discount_type").val() != ""){//if have discount code
 			if($("#discount_type").val() == "percent"){ // type percent
@@ -331,7 +346,7 @@ function render_tablist(tab_number){
 }
 
 function delete_row_product(tab_number, index) {
-    tab_list[tab_number].splice(index,1)
+    tab_list[tab_number].item.splice(index,1)
 	render_tablist(tab_number)
 }
 
@@ -643,7 +658,7 @@ function check_payment(){
 					cancelButtonText: 'Từ chối'
 				}).then((result)=>{
 					if(result.value){
-						send_payment()
+						check_out()
 					}
 				})
 				.catch(timer => {
@@ -666,7 +681,7 @@ function check_payment(){
 			cancelButtonText: 'Từ chối'
 		}).then((result)=>{
 			if(result.value){
-				send_payment()
+				check_out()
 			}
 		})
 		.catch(timer => {
@@ -690,19 +705,19 @@ function get_list_item(){
     return data;
 }
 
-function send_payment(){
+function check_out(){
 	let data = {
 		employees: $('#select_employees').val(),
 		customer_pay_card: convert_number($('#customer_pay_card').text()),
 		customer_pay_cash: convert_number($('#customer_pay_cash').text()),
-		number_code_discount: $('#number_code_discount').val(),
+		discount_id: $('#discount_id').val(),
 		customer: $('#select_customer').val(),
 		note_bill: $('#note_bill').val(),
         list_item: get_list_item(),
         _csrf: $('#_csrf').val()
     }
 	$.ajax({
-		url:'/store_sale/send_payment',
+		url:'/store_sale/check_out',
 		method:'POST',
 		contentType: "application/json; charset=utf-8",
 		data: JSON.stringify(data),

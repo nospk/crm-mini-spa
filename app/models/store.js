@@ -32,9 +32,6 @@ const StoreSchema = mongoose.Schema({
 		token: String,
 		date: Date
     },
-	money:{
-		type: Number, "default" : 0
-	},
 	cash:{
 		type: Number, "default" : 0
 	},

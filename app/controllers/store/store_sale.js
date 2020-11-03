@@ -8,6 +8,9 @@ const Discount = require('../../models/discount');
 const mongoose = require('mongoose');
 const Employees = require('../../models/employees');
 const Invoice_sale = require('../../models/invoice_sale');
+const Invoice_product_store = require('../../models/invoice_product_store');
+const Invoice_service = require('../../models/invoice_service');
+const Cash_book = require('../../models/cash_book');
 class Store_sale extends Controller{
     static show(req, res){
         Store_sale.setLocalValue(req,res);
@@ -141,8 +144,9 @@ class Store_sale extends Controller{
 			let check_employees = await Employees.findOne({company :req.session.store.company, _id: req.body.employees})
 			if(!check_employees) return Store_sale.sendError(res, "Không tìm thấy nhân viên", "Vui lòng kiểm tra lại thông tin");
 			//check customer
+			let check_customer = ""
 			if(req.body.customer){
-				let check_customer = await Customer.findOne({company: req.session.store.company, _id:req.body.customer})
+				check_customer = await Customer.findOne({company: req.session.store.company, _id:req.body.customer})
 				if(!check_customer){
 					return Store_sale.sendError(res, "Khách hàng không hợp lệ", "Vui lòng kiểm tra lại thông tin");
 				}
@@ -182,7 +186,7 @@ class Store_sale extends Controller{
 				}
 				if(list_item[i].type == 'service'){
 					for(let k = 0, length = list_item[i].sell_quantity; k < length; k++){
-						list_service.push({service: mongoose.Types.ObjectId(list_item[i].id)})
+						list_service.push({service: mongoose.Types.ObjectId(list_item[i].id), name: list_item[i].name})
 					}
 				}
 				if(list_item[i].type == 'product'){
@@ -195,7 +199,7 @@ class Store_sale extends Controller{
 					list_item[i].combo.forEach(async item =>{
 						if(item.id.type == 'service'){
 							for(let k = 0, length = list_item[i].sell_quantity *item.quantity; k < length; k++){
-								list_service.push({service: mongoose.Types.ObjectId(item.id._id)})
+								list_service.push({service: mongoose.Types.ObjectId(item.id._id), name: list_item[i].name})
 							}
 						}else{
 							let check_product = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:item.id._id}).populate({
@@ -214,7 +218,7 @@ class Store_sale extends Controller{
 					})
 				}
 			}
-
+			console.log(list_service)
 			//check discount
 			let money_discount = 0;
 			if(req.body.discount_id){
@@ -242,9 +246,10 @@ class Store_sale extends Controller{
 				return Store_sale.sendError(res, `Lỗi thanh toán chưa đủ số tiền`, "Kiểm tra lại số tiền đã nhập");
 			}
 			//invoice sale	
-			let serial =  await Common.get_serial_store(req.session.store._id, 'BH')
+			let serial_sale =  await Common.get_serial_store(req.session.store._id, 'BH')
+			let serial_stock =  await Common.get_serial_store(req.session.store._id, 'XH')
 			let invoice_sale = Invoice_sale({
-				serial: serial,
+				serial: serial_sale,
 				type : "sale",
 				company: req.session.store.company,
 				store: req.session.store._id,
@@ -253,11 +258,100 @@ class Store_sale extends Controller{
 				employees: req.body.employees,
 				customer: req.body.customer != "" ? req.body.customer : undefined,
 				discount: req.body.discount_id != "" ? req.body.discount_id : undefined,
-				note: req.body.note_bill
+				note: req.body.note_bill,
+				who_created: req.session.store.name,
+				bill:[]
 			})
-			//await invoice_sale.save()
-			//invoice stocks
-			let invoice_stock = Store_stocks
+			await invoice_sale.save()
+			//invoice store stocks
+			let invoice_stock = Invoice_product_store({
+				serial: serial_stock,
+				type: "sale",
+				company: req.session.store.company, 
+				store: req.session.store._id, 
+				list_products: list_product,
+				who_created: req.session.store.name,
+				invoice: invoice_sale._id,
+			})
+			
+			await invoice_stock.save()
+			for (let i = 0; i < list_product.length; i++){
+				let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.store.company, store_id:req.session.store._id, product: list_product[i].product},{$inc:{product_of_sale:Number(list_product[i].quantity)*-1, quantity:Number(list_product[i].quantity)*-1}},{new: true})
+				store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_stock._id);
+				invoice_stock.list_products[i].current_quantity = store_stocks.quantity
+				store_stocks.save();
+			}
+			await invoice_stock.save()
+
+			// create bill
+			if(req.body.customer_pay_card){//card
+				let serial_card_book = await Common.get_serial_store(req.session.store._id, 'HDTT')
+				let current_card = await Common.get_current_money_store(req.session.store.company, req.session.store._id, req.body.customer_pay_card, "card")
+				let card_book = Cash_book({
+					serial: serial_card_book,
+					type: "income",
+					type_payment: "card",
+					company:req.session.store.company,
+					money: req.body.customer_pay_card,
+					current_money: current_card,
+					isForCompany: false,
+					group: "Thanh toán tiền bán hàng",
+					user_created: req.session.store.name,
+					member_name: check_customer != false ? check_customer.name : "Khách lẻ",
+					member_id:check_customer != false ? check_customer._id : undefined,
+					accounting: true,
+					store: req.session.store._id
+				})
+				await card_book.save()
+				invoice_sale.bill.push(card_book._id)
+				await invoice_sale.save()
+				if(check_customer != false){
+					let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_customer._id},{$inc:{payment:req.body.customer_pay_card}},{new: true})
+					customer.point = Math.trunc(customer.payment / 10000)
+					await customer.save()
+				}
+			}
+			if(req.body.customer_pay_cash){//cash
+				let serial_cash_book = await Common.get_serial_store(req.session.store._id, 'HDTT')
+				let current_cash = await Common.get_current_money_store(req.session.store.company, req.session.store._id, req.body.customer_pay_cash, "cash")
+				let cash_book = Cash_book({
+					serial: serial_cash_book,
+					type: "income",
+					type_payment: "cash",
+					company:req.session.store.company,
+					money: req.body.customer_pay_cash,
+					current_money: current_cash,
+					isForCompany: false,
+					group: "Thanh toán tiền bán hàng",
+					user_created: req.session.store.name,
+					member_name: check_customer != false ? check_customer.name : "Khách lẻ",
+					member_id:check_customer != false ? check_customer._id : undefined,
+					accounting: true,
+					store: req.session.store._id
+				})
+				await cash_book.save()
+				invoice_sale.bill.push(cash_book._id)
+				await invoice_sale.save()
+				if(check_customer != false){
+					let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_customer._id},{$inc:{payment:req.body.customer_pay_cash}},{new: true})
+					customer.point = Math.trunc(customer.payment / 10000)
+					await customer.save()
+				}
+			}
+			// invoice service for customer
+			for(let t = 0; t < list_service.length;t++){
+				let serial_card_book = await Common.get_serial_service(req.session.store.company)
+				let invoice_service = Invoice_service({
+					company: req.session.store.company,
+					customer: check_customer != false ? check_customer._id : undefined,
+					serial:serial_card_book,
+					service:list_service[t].service,
+					invoice: invoice_sale._id
+				})
+				await invoice_service.save()
+				list_service[t].serial = serial_card_book
+			}
+			
 			Store_sale.sendMessage(res, "Đã tạo thành công");
 		}catch(err){
 			console.log(err.message)

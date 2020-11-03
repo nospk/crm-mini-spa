@@ -1,5 +1,6 @@
 
 let page_now;
+let active_type = "cash"
 $( document ).ready(()=>{
     get_data('1','cash');
 	getStoreSupplierCustomerEmployees();
@@ -51,6 +52,11 @@ $( document ).ready(()=>{
 function get_data(paging_num, type){
     if(!paging_num){
         paging_num = page_now
+    }
+    if(!type){
+        type = active_type
+    }else{
+        active_type = type
     }
     let data = {
 		search_find_selection: $("#search_find_selection").val(),
@@ -156,7 +162,7 @@ function render_data(data, pageCount, currentPage, type){
 		                        <tbody>`;
 	data.forEach(item =>{
 		html+=`<tr>
-                <td>${new Date(item.createdAt).toLocaleString()}</td>
+                <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
                 <td>${item.serial}</td>
                 <td>${item.type == "income" ? "Thu" : "Chi"}</td>
                 <td>${item.group}</td>

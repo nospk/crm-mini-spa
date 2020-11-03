@@ -82,7 +82,8 @@ class Admin_transfer_stocks extends Controller{
 			await invoice_product_storage.save()
             for (let i = 0; i < products.length; i++){
 				let storage_stocks = await Storage_stocks.findOne({company: req.session.user.company._id, product: products[i].product})
-				let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.user.company._id, store_id:store, product: products[i].product},{$inc:{product_of_undefined:Number(products[i].quantity), quantity:Number(products[i].quantity)}})
+				let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.user.company._id, store_id:store, product: products[i].product},{$inc:{product_of_undefined:Number(products[i].quantity), quantity:Number(products[i].quantity)}},{new: true})
+				invoice_product_store.list_products[i].current_quantity = store_stocks.quantity
 				store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_product_store._id)
 				storage_stocks.quantity = Number(storage_stocks.quantity) - Number(products[i].quantity)
 				invoice_product_storage.list_products[i].current_quantity = Number(storage_stocks.quantity)
@@ -90,6 +91,7 @@ class Admin_transfer_stocks extends Controller{
 				storage_stocks.save();
 				store_stocks.save();
 			}
+			invoice_product_store.save()
 			invoice_product_storage.save()
             Admin_transfer_stocks.sendMessage(res, "Đã tạo thành công");
 		}catch(err){

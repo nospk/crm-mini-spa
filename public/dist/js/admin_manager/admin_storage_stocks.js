@@ -88,7 +88,7 @@ function render_data(data, pageCount, currentPage){
 		                        <tbody>`;
 	data.forEach(item =>{
 		html+=`<tr>
-                <td>${new Date(item.createdAt).toLocaleString()}</td>
+                <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
 				<td>${item.serial}</td>
 				<td>${item.who_created}</td>
                 <td>`

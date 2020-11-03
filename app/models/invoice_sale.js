@@ -34,6 +34,9 @@ const Invoice_sale_Schema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, ref:'Cash_book',
 		_id: false		
     }],
+    who_created:{
+		type: String
+	},
 	note:{
 		type: String
 	}

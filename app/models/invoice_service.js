@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Invoice_sale_Schema = mongoose.Schema({	
+const Invoice_service_Schema = mongoose.Schema({	
     company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
 	},
@@ -11,13 +11,16 @@ const Invoice_sale_Schema = mongoose.Schema({
     },
 	service:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'
-	}
+	},
 	isUsed:{
 		type: Boolean, default:false 
 	},
+	who_did:{
+		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Employees'
+	},
 	invoice:{
-		mongoose.Schema.Types.ObjectId, ref:'Invoice_sale'
+		type: mongoose.Schema.Types.ObjectId, ref:'Invoice_sale'
 	}
 }, { timestamps: true });
 
-module.exports = mongoose.model('Invoice_sale_Schema', Invoice_sale_Schema);
+module.exports = mongoose.model('Invoice_service', Invoice_service_Schema);

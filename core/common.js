@@ -38,6 +38,12 @@ class Common {
 			}			
         })
 	}
+	static get_serial_service(id){
+		return new Promise(async (resolve, reject)=>{
+			let company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_DV:1}},{new: true});
+			resolve('MDV_'+ company.serial_DV)
+		})
+	}
 	static get_current_money(id, money){
 		return new Promise(async (resolve)=>{
 			let company = await Company.findOne({_id: id});
@@ -46,12 +52,18 @@ class Common {
 			resolve(company.money)
 		})
 	}
-	static get_current_money_store(company, id, money){
+	static get_current_money_store(company, id, money, type_payment){
 		return new Promise(async (resolve)=>{
 			let store = await Store.findOne({company : company,_id: id});
-			store.money = Number(store.money) + Number(money)
-			store.save()
-			resolve(store.money)
+			if(type_payment="card"){
+				store.card = Number(store.card) + Number(money)
+				store.save()
+				resolve(store.card)
+			}else{
+				store.cash = Number(store.cash) + Number(money)
+				store.save()
+				resolve(store.cash)
+			}
 		})
 	}
 	static get_serial_store(id, chartCode){

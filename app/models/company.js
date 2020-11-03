@@ -24,6 +24,9 @@ const CompanySchema = mongoose.Schema({
 	serial_HD:{
 		type: Number, default: 0
 	},
+	serial_DV:{
+		type: Number, default: 0
+	},
 	money:{
 		type: Number, default: 0
 	},

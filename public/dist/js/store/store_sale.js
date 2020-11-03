@@ -270,7 +270,7 @@ function render_tablist(tab_number){
 	let money_discount = 0;
 	if(tab_list[tab_number] != undefined){
 		tab_list[tab_number].item.forEach((item, index) =>{
-			money+= item.price
+			money+= item.sale_money
 			html += `<tr>
 						<td><span class="number-code">${item.number_code}</span></td>
 					`
@@ -712,7 +712,7 @@ function check_out(){
 		customer_pay_cash: convert_number($('#customer_pay_cash').text()),
 		discount_id: $('#discount_id').val(),
 		customer: $('#select_customer').val(),
-		note_bill: $('#note_bill').val(),
+		note: $('#note_bill').val(),
         list_item: get_list_item(),
         _csrf: $('#_csrf').val()
     }

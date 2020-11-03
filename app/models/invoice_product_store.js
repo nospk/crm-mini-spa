@@ -17,7 +17,13 @@ const Invoice_product_store_Schema = mongoose.Schema({
         quantity: {type: Number},
         current_quantity: {type: Number},
 		_id: false
-    }]
+    }],
+	who_created:{
+		type: String
+	},
+	invoice:{
+		type: mongoose.Schema.Types.ObjectId, ref:'Invoice_sale'
+	}
 }, { timestamps: true });
 
 module.exports = mongoose.model('Invoice_product_store', Invoice_product_store_Schema);

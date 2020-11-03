@@ -31,8 +31,12 @@ const Invoice_sale_Schema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, ref:'Customer' 
     },
     bill:[{
-        type: mongoose.Schema.Types.ObjectId, ref:'Cash_book' 
-    }]
+        type: mongoose.Schema.Types.ObjectId, ref:'Cash_book',
+		_id: false		
+    }],
+	note:{
+		type: String
+	}
 }, { timestamps: true });
 
-module.exports = mongoose.model('Invoice_sale_Schema', Invoice_sale_Schema);
+module.exports = mongoose.model('Invoice_sale', Invoice_sale_Schema);

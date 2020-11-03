@@ -5,6 +5,7 @@ const Product_service = require('../../models/product_service');
 const Store_stocks = require('../../models/store_stocks');
 const Customer = require('../../models/customer');
 const Discount = require('../../models/discount');
+const mongoose = require('mongoose');
 const Employees = require('../../models/employees');
 const Invoice_sale = require('../../models/invoice_sale');
 class Store_sale extends Controller{
@@ -139,20 +140,36 @@ class Store_sale extends Controller{
 			//check employees
 			let check_employees = await Employees.findOne({company :req.session.store.company, _id: req.body.employees})
 			if(!check_employees) return Store_sale.sendError(res, "Không tìm thấy nhân viên", "Vui lòng kiểm tra lại thông tin");
+			//check customer
+			if(req.body.customer){
+				let check_customer = await Customer.findOne({company: req.session.store.company, _id:req.body.customer})
+				if(!check_customer){
+					return Store_sale.sendError(res, "Khách hàng không hợp lệ", "Vui lòng kiểm tra lại thông tin");
+				}
+					
+			}
 			// check quantity
 			if(req.body.list_item == false){
 				return Store_sale.sendError(res, "Lỗi chưa chọn sản phẩm - dịch vụ", "Vui lòng chọn lại");
 			}
 			let list_item = req.body.list_item;
-			let list_sale = []
+			let list_sale = [];
+			let list_service = [];
+			let list_product = [];
 			let payment = 0;
 			for(let i = 0, list_item_length = list_item.length; i < list_item_length; i++){
-				let product = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:list_item[i].id},{name:1, type: 1,price:1,number_code:1,stocks_in_store:1}).populate({
+				let check_product_service = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:list_item[i].id}).populate({
 					path: 'stocks_in_store',
 					match: { store_id: req.session.store._id },
 					select: 'product_of_sale',
-				})
-				list_item[i] =  Object.assign(list_item[i], product._doc);
+				}).populate({
+					path: 'combo.id',
+					populate: { path: 'Product_services' },
+				});
+				if(!check_product_service){
+					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] không tồn tại`, "Vui lòng chọn lại");
+				}
+				list_item[i] =  Object.assign(list_item[i], check_product_service._doc);
 				if(list_item[i].type == 'product' && list_item[i].sell_quantity > list_item[i].stocks_in_store[0].product_of_sale){
 					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 				}else{
@@ -163,7 +180,41 @@ class Store_sale extends Controller{
 						price: list_item[i].price
 					})
 				}
+				if(list_item[i].type == 'service'){
+					for(let k = 0, length = list_item[i].sell_quantity; k < length; k++){
+						list_service.push({service: mongoose.Types.ObjectId(list_item[i].id)})
+					}
+				}
+				if(list_item[i].type == 'product'){
+					list_product.push({
+						product: mongoose.Types.ObjectId(list_item[i].id),
+						quantity: list_item[i].sell_quantity
+					})
+				}
+				if(list_item[i].type == 'combo'){
+					list_item[i].combo.forEach(async item =>{
+						if(item.id.type == 'service'){
+							for(let k = 0, length = list_item[i].sell_quantity *item.quantity; k < length; k++){
+								list_service.push({service: mongoose.Types.ObjectId(item.id._id)})
+							}
+						}else{
+							let check_product = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:item.id._id}).populate({
+								path: 'stocks_in_store',
+								match: { store_id: req.session.store._id },
+								select: 'product_of_sale',
+							})
+							if(list_item[i].sell_quantity *item.quantity > check_product.stocks_in_store[0].product_of_sale){
+								return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
+							}
+							list_product.push({
+								product: mongoose.Types.ObjectId(item.id._id),
+								quantity: list_item[i].sell_quantity *item.quantity
+							})
+						}
+					})
+				}
 			}
+
 			//check discount
 			let money_discount = 0;
 			if(req.body.discount_id){
@@ -183,20 +234,14 @@ class Store_sale extends Controller{
 				}
 			}
 			payment = payment - money_discount;
-			//check customer
-			if(req.body.customer){
-				let check_customer = await Customer.findOne({company: req.session.store.company, _id:req.body.customer})
-				if(!check_customer){
-					return Store_sale.sendError(res, "Khách hàng không hợp lệ", "Vui lòng kiểm tra lại thông tin");
-				}
-					//console.log(check_customer)
-			}
+			
 			
 			//check payment
+
 			if(req.body.customer_pay_card + req.body.customer_pay_cash < payment){
 				return Store_sale.sendError(res, `Lỗi thanh toán chưa đủ số tiền`, "Kiểm tra lại số tiền đã nhập");
 			}
-			//invoice	
+			//invoice sale	
 			let serial =  await Common.get_serial_store(req.session.store._id, 'BH')
 			let invoice_sale = Invoice_sale({
 				serial: serial,
@@ -205,11 +250,14 @@ class Store_sale extends Controller{
 				store: req.session.store._id,
 				list_sale: list_sale,
 				payment: payment,
-				employees: req.body.employees != "" ? req.body.employees : undefined,
-				customer: req.body.customer,
-				discount: req.body.discount_id != "" ? req.body.discount_id : undefined
+				employees: req.body.employees,
+				customer: req.body.customer != "" ? req.body.customer : undefined,
+				discount: req.body.discount_id != "" ? req.body.discount_id : undefined,
+				note: req.body.note_bill
 			})
-			await invoice_sale.save()
+			//await invoice_sale.save()
+			//invoice stocks
+			let invoice_stock = Store_stocks
 			Store_sale.sendMessage(res, "Đã tạo thành công");
 		}catch(err){
 			console.log(err.message)

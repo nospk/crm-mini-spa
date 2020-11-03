@@ -152,46 +152,71 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			</button>
 		  </div>
 		  <div class="modal-body">
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon1">Tên</div>
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="nav-item">
+					<a class="nav-link active" id="edit-information" data-toggle="pill"
+						href="#edit-information-tab" role="tab" data-toggle="tab" aria-controls="edit-information-tab"
+						aria-selected="true">Thông tin</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="edit-stock" data-toggle="pill" href="#edit-history-payment-tab" role="tab"
+						aria-controls="edit-history-payment-tab" data-toggle="tab" aria-selected="false">Lịch sử giao dịch</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" id="edit-stock" data-toggle="pill" href="#edit-service-tab" role="tab"
+						aria-controls="edit-service-tab" data-toggle="tab" aria-selected="false">Dịch vụ khách còn</a>
+				</li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane fade active show" id="edit-information-tab" role="tabpanel"
+									aria-labelledby="edit-information">
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" id="btnGroupAddon1">Tên</div>
+						</div>
+						<input type="text" class="form-control" id="edit_name" placeholder="Nhập tên" aria-label="Name" aria-describedby="btnGroupAddon1">
+					</div>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" id="btnGroupAddon2">Ngày Tháng Năm Sinh</div>
+						</div>
+						<input type="text" class="form-control" data-inputmask-alias="datetime" id="edit_birthday" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+					</div>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" >Giới tính</div>
+						</div>
+						<select class="form-control" id="edit_gener">
+							<option value="male">Nam</option>
+							<option value="female">Nữ</option>
+						</select>
+					</div>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" id="btnGroupAddon3">Số điện thoại</div>
+						</div>
+						<input type="text" class="form-control" id="edit_phone" data-inputmask="'mask': '999 999 9999'" data-mask>
+					</div>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text" id="btnGroupAddon4">Thông tin địa chỉ</div>
+						</div>
+						<input type="text" class="form-control" id="edit_address" placeholder="Nhập địa chỉ" aria-label="Address" aria-describedby="btnGroupAddon4">
+					</div>
+					<div class="input-group mb-3">
+						<div class="input-group-prepend">
+						<span class="input-group-text">Ghi chú</span>
+						</div>
+						<textarea class="form-control" rows="5" id="edit_note"></textarea>
+					</div>	
+					<input type="hidden" id="edit_id" value="" />
 				</div>
-				<input type="text" class="form-control" id="edit_name" placeholder="Nhập tên" aria-label="Name" aria-describedby="btnGroupAddon1">
+				<div class="tab-pane fade" id="edit-history-payment-tab" role="tabpanel" aria-labelledby="edit-history-payment">
+
+				</div>
+				<div class="tab-pane fade" id="edit-service-tab" role="tabpanel" aria-labelledby="edit-service">
+				</div>
 			</div>
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon2">Ngày Tháng Năm Sinh</div>
-				</div>
-				<input type="text" class="form-control" data-inputmask-alias="datetime" id="edit_birthday" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
-			</div>
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<div class="input-group-text" >Giới tính</div>
-				</div>
-				<select class="form-control" id="edit_gener">
-					<option value="male">Nam</option>
-					<option value="female">Nữ</option>
-				</select>
-			</div>
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon3">Số điện thoại</div>
-				</div>
-				<input type="text" class="form-control" id="edit_phone" data-inputmask="'mask': '999 999 9999'" data-mask>
-            </div>
-			<div class="input-group">
-				<div class="input-group-prepend">
-					<div class="input-group-text" id="btnGroupAddon4">Thông tin địa chỉ</div>
-				</div>
-				<input type="text" class="form-control" id="edit_address" placeholder="Nhập địa chỉ" aria-label="Address" aria-describedby="btnGroupAddon4">
-            </div>
-			<div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">Ghi chú</span>
-                </div>
-                <textarea class="form-control" rows="5" id="edit_note"></textarea>
-            </div>	
-			<input type="hidden" id="edit_id" value="" />
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>

@@ -16,7 +16,7 @@ const Invoice_service_Schema = mongoose.Schema({
 		type: Boolean, default:false 
 	},
 	who_did:{
-		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Employees'
+		type: mongoose.Schema.Types.ObjectId, ref:'Employees'
 	},
 	invoice:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Invoice_sale'

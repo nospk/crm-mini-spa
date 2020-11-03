@@ -29,7 +29,7 @@ $( document ).ready(()=>{
 		}
 	})
 	$("#select_type").change(()=>{
-		if($("#isForCompany").val() == "income"){
+		if($("#select_type").val() == "income"){
 			$("#select_group_income").show();
 			$("#select_group_outcome").hide();
 		}else{

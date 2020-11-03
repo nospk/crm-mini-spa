@@ -218,11 +218,12 @@ class Store_sale extends Controller{
 					})
 				}
 			}
-			console.log(list_service)
+
 			//check discount
 			let money_discount = 0;
+			let check_discount
 			if(req.body.discount_id){
-				let check_discount = await Discount.findOne({company :req.session.store.company, _id: req.body.discount_id, isActive : true})
+				check_discount = await Discount.findOne({company :req.session.store.company, _id: req.body.discount_id, isActive : true})
 				if(check_discount){
 					if(check_discount.type == "limit" && check_discount.times == check_discount.times_used){
 						return Store_sale.sendError(res, "Mã giảm giá đã hết lần sử dụng", "Vui lòng nhập lại mã");
@@ -232,18 +233,22 @@ class Store_sale extends Controller{
 						}else{
 							money_discount = Math.ceil(payment *check_discount.value /100)
 						}
+						
 					}
 				}else{
 					return Store_sale.sendError(res, "Mã giảm giá không hợp lệ", "Vui lòng nhập lại mã");
 				}
 			}
 			payment = payment - money_discount;
-			
-			
+
 			//check payment
 
 			if(req.body.customer_pay_card + req.body.customer_pay_cash < payment){
 				return Store_sale.sendError(res, `Lỗi thanh toán chưa đủ số tiền`, "Kiểm tra lại số tiền đã nhập");
+			}
+			if(req.body.discount_id){
+				check_discount.times_used = check_discount.times_used +1
+				await check_discount.save()
 			}
 			//invoice sale	
 			let serial_sale =  await Common.get_serial_store(req.session.store._id, 'BH')
@@ -254,7 +259,7 @@ class Store_sale extends Controller{
 				company: req.session.store.company,
 				store: req.session.store._id,
 				list_sale: list_sale,
-				payment: payment,
+				payment: payment > 0 ? payment : 0,
 				employees: req.body.employees,
 				customer: req.body.customer != "" ? req.body.customer : undefined,
 				discount: req.body.discount_id != "" ? req.body.discount_id : undefined,
@@ -284,7 +289,7 @@ class Store_sale extends Controller{
 			await invoice_stock.save()
 
 			// create bill
-			if(req.body.customer_pay_card){//card
+			if(req.body.customer_pay_card && payment > 0){//card
 				let serial_card_book = await Common.get_serial_store(req.session.store._id, 'HDTT')
 				let current_card = await Common.get_current_money_store(req.session.store.company, req.session.store._id, req.body.customer_pay_card, "card")
 				let card_book = Cash_book({
@@ -311,15 +316,21 @@ class Store_sale extends Controller{
 					await customer.save()
 				}
 			}
-			if(req.body.customer_pay_cash){//cash
+			if(req.body.customer_pay_cash && payment > 0){//cash
+				let money_payment;
+				if(req.body.customer_pay_card + req.body.customer_pay_cash > payment){
+					money_payment = payment - req.body.customer_pay_card 
+				}else{
+					money_payment = req.body.customer_pay_cash
+				}
 				let serial_cash_book = await Common.get_serial_store(req.session.store._id, 'HDTT')
-				let current_cash = await Common.get_current_money_store(req.session.store.company, req.session.store._id, req.body.customer_pay_cash, "cash")
+				let current_cash = await Common.get_current_money_store(req.session.store.company, req.session.store._id, money_payment, "cash")
 				let cash_book = Cash_book({
 					serial: serial_cash_book,
 					type: "income",
 					type_payment: "cash",
 					company:req.session.store.company,
-					money: req.body.customer_pay_cash,
+					money: money_payment,
 					current_money: current_cash,
 					isForCompany: false,
 					group: "Thanh toán tiền bán hàng",
@@ -333,7 +344,7 @@ class Store_sale extends Controller{
 				invoice_sale.bill.push(cash_book._id)
 				await invoice_sale.save()
 				if(check_customer != false){
-					let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_customer._id},{$inc:{payment:req.body.customer_pay_cash}},{new: true})
+					let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_customer._id},{$inc:{payment:money_payment}},{new: true})
 					customer.point = Math.trunc(customer.payment / 10000)
 					await customer.save()
 				}

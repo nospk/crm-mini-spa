@@ -86,9 +86,7 @@ $( document ).ready(()=>{
 				}
 			})
 		}else{
-			$('#discount_type').val("")
-			$('#discount_value').text("")
-			render_tablist(tab_number)
+			clear_discount()
 		}
 
 	})

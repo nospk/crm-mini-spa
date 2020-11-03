@@ -64,12 +64,11 @@ function render_data(data, pageCount, currentPage){
                                     <th>Ghi chú</th>
 									<th>Điểm</th>
 									<th>Tổng mua hàng</th>
-                                    <th>Hành Động</th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
 	data.forEach(item =>{
-		html+=`<tr>
+		html+=`<tr onclick="edit_data('${item._id}')">
                 <td>${item.name}</td>
                 <td>${item.birthday}</td>
                 <td>${item.gener == "male" ? "Nam" : "Nữ"}</td>
@@ -78,9 +77,6 @@ function render_data(data, pageCount, currentPage){
                 <td>${reduce_string(item.note)}</td>
 				<td>${item.point}</td>
 				<td>${convert_vnd(item.payment)}</td>
-                <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;
-					<span style="color:red; cursor: pointer" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i></span>		
-				</td>
                 </tr>`
     })
     html+=`</tbody>
@@ -164,30 +160,6 @@ function get_data(paging_num){
     })
 }
 
-function comform_delete_data(id){
-    Swal.fire({
-        title: 'Bạn muốn xóa ?',
-        text: "Mọi thông tin trong này sẽ bị mất, bạn có chắc muốn xóa nó ?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-            if(result.value == true){
-                $.ajax({
-                    url:'/admin_product_service/delete_data',
-                    method:'delete',
-                    data: {id: id, _csrf: $('#_csrf').val()},
-                    success: function(data){
-                        if(data.status == 1){
-                            get_data();
-                        }
-                    }
-                })
-            }
-    });
-}
 function edit_data(id){
 	$.ajax({
 		url:'/admin_customer/edit_data',
@@ -195,14 +167,62 @@ function edit_data(id){
         data: {id: id, _csrf: $('#_csrf').val()},
         success: function(data){
 			if(data.status == 1){
-				$('#edit_data #edit_name').val(data.data.name);
-				$('#edit_data #edit_birthday').val(data.data.birthday);
-				$('#edit_data #edit_note').val(data.data.note),
-                $('#edit_data #edit_phone').val(data.data.phone);
-                $('#edit_data #edit_gener').val(data.data.gener);
-				$('#edit_data #edit_address').val(data.data.address);
-				$('#edit_data #edit_id').val(data.data._id);
-				$('#edit_data').modal('show');
+                let customer = data.data.customer;
+                let history_sale = data.data.history_sale;
+                let service = data.data.service;
+				$('#edit_data #edit_name').val(customer.name);
+				$('#edit_data #edit_birthday').val(customer.birthday);
+				$('#edit_data #edit_note').val(customer.note),
+                $('#edit_data #edit_phone').val(customer.phone);
+                $('#edit_data #edit_gener').val(customer.gener);
+				$('#edit_data #edit_address').val(customer.address);
+				$('#edit_data #edit_id').val(customer._id);
+                $('#edit_data').modal('show');
+                let html_history_sale = `<table class="table table-sm  table-hover text-nowrap">
+                                        <thead>
+                                            <tr>
+                                            <th>Ngày</th>
+                                            <th>Mua hàng</th>
+                                            <th>Nhân viên bán</th>
+                                            <th>Số tiền</th>
+                                            <th>Mã giảm giá</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>`;
+                
+                history_sale.forEach((item, index)=>{
+                    html_history_sale+=`<tr>
+                            <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td><td>`
+                            history_sale[index].list_sale.forEach(sale=>{
+                            html_history_sale += `<p>${sale.id.name} (${sale.id.number_code}): ${sale.quantity}</p>`
+                        })        
+                    html_history_sale +=    `</td><td>${item.employees.name}</td>
+                            <td>${convert_vnd(item.payment)}</td>
+                            <td>${item.discount ? item.discount.number_code : ""}</td>
+                            </tr>`
+                })
+                html_history_sale+=`</tbody>
+                            </table>
+                        `;
+                $('#edit-history-payment-tab').html(html_history_sale);
+                let html_service= `<table class="table table-sm  table-hover text-nowrap">
+                                    <thead>
+                                        <tr>
+                                        <th>Dịch vụ</th>
+                                        <th>Mã</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+                service.forEach((item)=>{
+                    html_service+=`<tr>
+                            <td>${item.service.name}</td>
+                            <td>${item.serial}</td>
+                            </tr>`
+                })
+                html_service+=`</tbody>
+                            </table>
+                        `;
+                $('#edit-service-tab').html(html_service);
             }
 		}
 	})

@@ -1,6 +1,8 @@
 const Controller = require('../../../core/controller');
 const Customer = require('../../models/customer');
 const mongoose = require('mongoose');
+const Invoice_sale = require('../../models/invoice_sale');
+const Invoice_service = require('../../models/invoice_service');
 class Admin_customer extends Controller{
     static show(req, res){
         Admin_customer.setLocalValue(req,res);
@@ -57,8 +59,26 @@ class Admin_customer extends Controller{
 	}
 	static async edit_data(req, res){
 		try{
-			let data = await Customer.findOne({company: req.session.user.company._id, _id: req.body.id});
-			Admin_customer.sendData(res, data);
+			let customer = await Customer.findOne({company: req.session.user.company._id, _id: req.body.id});
+			let history_sale = await Invoice_sale.find({company: req.session.user.company._id, customer:req.body.id}).sort({createdAt: -1}).limit(20).populate({
+				path: 'list_sale.id',
+				populate: { path: 'Product_services'},
+				select:'name number_code'
+			}).populate({
+				path: 'employees',
+				populate: { path: 'Employees'},
+				select:'name'
+			}).populate({
+				path: 'discount',
+				populate: { path: 'Discount'},
+				select:'number_code'
+			});
+			let service = await Invoice_service.find({company: req.session.user.company._id, customer:req.body.id, isUsed: false}).populate({
+				path: 'service',
+				populate: { path: 'Product_services'},
+				select:'name number_code'
+			})
+			Admin_customer.sendData(res, {customer, history_sale, service});
 		}catch(err){
 			console.log(err.message)
 			Admin_customer.sendError(res, err, err.message);

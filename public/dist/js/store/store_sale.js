@@ -721,18 +721,8 @@ function check_out(){
 		data: JSON.stringify(data),
 		success: function(data){
 			if(data.status == 1){
-				Swal.fire({
-					title: "Thao tác thành công",
-					text: data.message,
-					icon: "info",
-					showConfirmButton: false,
-					timer: 3000
-				}).then((result)=>{
-					//clear_data()
-				})
-				.catch(timer => {
-					//clear_data()
-				});    
+				clear_data(tab_number)
+				document.getElementById('printer').src = "data:text/html;charset=utf-8," + data.data;	
 			}else{
 				Swal.fire({
 					title: data.error,
@@ -752,7 +742,8 @@ function check_out(){
 	})
 }
 
-function clear_data(){
+function clear_data(tab_number){
+	tab_list.splice(tab_number,1)
 	$('#add_product').html("")
 	$('#bill_money').text("")
 	$('#money_discount').text("")

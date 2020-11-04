@@ -366,8 +366,8 @@ class Store_sale extends Controller{
 				await invoice_service.save()
 				list_service[t].serial = serial_card_book
 			}
-			
-			Store_sale.sendMessage(res, "Đã tạo thành công");
+			let bill = await Common.print_bill()
+            Store_sale.sendData(res, bill);
 		}catch(err){
 			console.log(err.message)
 			Store_sale.sendError(res, err, err.message);

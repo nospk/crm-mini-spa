@@ -242,10 +242,14 @@ class Store_sale extends Controller{
 			payment = payment - money_discount;
 
 			//check payment
-
+			if(req.body.customer_pay_card > payment){
+				return Store_sale.sendError(res, `Lỗi thanh toán số tiền chuyển khoản lớn hơn số tiền trả`, "Kiểm tra lại số tiền đã nhập");
+			}
 			if(req.body.customer_pay_card + req.body.customer_pay_cash < payment){
 				return Store_sale.sendError(res, `Lỗi thanh toán chưa đủ số tiền`, "Kiểm tra lại số tiền đã nhập");
 			}
+			
+			//count discount used
 			if(req.body.discount_id){
 				check_discount.times_used = check_discount.times_used +1
 				await check_discount.save()

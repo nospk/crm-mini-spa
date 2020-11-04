@@ -37,7 +37,11 @@ class Admin_product_service extends Controller{
 			let pages = await Product_service.find(match).countDocuments()
 			// find total pages
 			let pageCount = Math.ceil(pages/pageSize)
-			let data = await Product_service.aggregate([{$match:match},{$sort:sort},{$skip:(pageSize * currentPage) - pageSize},{$limit:pageSize}])
+			let data = await Product_service.find(match).sort(sort).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
+				path: 'stocks_in_storage',
+				populate: { path: 'Storage_stocks' },
+				select: 'quantity'
+			})
 			Admin_product_service.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
 			console.log(err)
@@ -57,7 +61,14 @@ class Admin_product_service extends Controller{
 			}).populate({
 				path: 'combo.id',
 				populate: { path: 'Product_services' },
-			});
+			})
+			if(data.type == "product"){
+				let storage = await Storage_stocks.findOne({company: req.session.user.company._id, product: req.body.id}).populate({
+					path: 'last_history',
+					populate: { path: 'Invoice_product_storage' },
+				})
+				data = Object.assign(data._doc, {storage_history:storage._doc});
+			}
 			Admin_product_service.sendData(res, data);
 		}catch(err){
 			console.log(err)

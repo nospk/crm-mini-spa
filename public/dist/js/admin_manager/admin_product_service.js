@@ -242,13 +242,14 @@ function render_data(data, pageCount, currentPage){
 		                    <table class="table table-hover text-nowrap">
 		                        <thead>
                                     <tr>
-                                    <th>Tên</th>
+                                    <th width="20%">Tên</th>
 									<th>Loại</th>
 									<th>Mã số</th>
 									<th>Giá vốn</th>
                                     <th>Giá bán</th>
                                     <th>Trạng thái</th>
 									<th>Tồn kho</th>
+									<th>Tổng hàng</th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
@@ -260,7 +261,8 @@ function render_data(data, pageCount, currentPage){
 				<td>${convert_vnd(item.cost_price)}</td>
 				<td>${convert_vnd(item.price)}</td>
                 <td>${item.isSale ? "Đang kinh doanh" : "Ngừng kinh doanh"}</td>
-				<td>${item.type == 'product'? item.quantity : ""}</td>
+				<td class="text-center">${item.type == 'product'? item.stocks_in_storage.quantity : ""}</td>
+				<td class="text-center">${item.type == 'product'? item.quantity : ""}</td>
                 </tr>`
     })
 	//comform_delete_data('${item._id}')
@@ -398,12 +400,14 @@ function edit_data(id){
                 if(data.data.type =="service"){
                     $('#edit_data #edit_cost_price').prop("disabled", false);
                     $('#edit_data #edit-stock').css("display", "none");
+					$('#edit_data #edit-history').css("display", "none");
                     $('.combo-off').show()
                     $('.combo-on').hide()
                     $('#edit_brand_show').hide();
                 }else if(data.data.type =="product"){
                     $('#edit_data #edit_cost_price').prop("disabled", true);
                     $('#edit_data #edit-stock').css("display", "block");
+					$('#edit_data #edit-history').css("display", "block");
                     $('#edit_brand_show').show();
                     $('.combo-off').show()
                     $('.combo-on').hide()
@@ -433,10 +437,37 @@ function edit_data(id){
                                     </div>
                                 </div>`
                     }
+					let html_history= `<table class="table table-sm  table-hover text-nowrap">
+										<thead>
+											<tr>
+											<th>Ngày</th>
+											<th>Mã phiếu</th>
+											<th>Loại</th>
+											<th>Số lượng</th>
+											<th>Tồn</th>
+											</tr>
+										</thead>
+										<tbody>`;
+					data.data.storage_history.last_history.forEach((item)=>{
+						html_history+=`<tr>
+								<td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
+								<td>${item.serial}</td>
+								<td>${item.type}</td>`
+						let index = item.list_products.findIndex(element => element.product == data.data._id)
+						html_history+=`
+										<td>${item.list_products[index].quantity}</td>
+										<td>${item.list_products[index].current_quantity}</td></tr>
+									  `
+					})
+					html_history+=`</tbody>
+								</table>
+							`;
+					$('#edit-history-tab').html(html_history);
                     $('#edit-stock-tab').html(html)
                 }else{
                     $('#edit_data #edit_cost_price').prop("disabled", true);
                     $('#edit_data #edit-stock').css("display", "none");
+					$('#edit_data #edit-history').css("display", "none");
                     $('#edit_brand_show').hide();
                     get_product_service();
                     $('.combo-off').hide()

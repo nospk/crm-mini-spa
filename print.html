@@ -1,13 +1,14 @@
 <iframe id="myiframe" style="display:none"></iframe> 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-	let data = `<html><head><title>www.pos365.vn</title><style type="text/css">body {-webkit-print-color-adjust: exact; font-family: Arial; }</style></head><body onload="self.print(); self.close();self.focus()"><div>
+	let data = `<html><head><style type="text/css">body {-webkit-print-color-adjust: exact; font-family: Arial; }</style></head><body onload="self.print(); self.close();self.focus()"><div>
     <style type="text/css">
         .printBox {
             font-family: Arial, sans-serif;
             font-size: 11px;
 			width: 80mm;
         }
+		@page { size: auto;  margin: 0mm; }
     </style>
     <div class="printBox">
         <table style="width:100%;border-collapse:collapse;border-bottom:1px solid black;">

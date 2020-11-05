@@ -18,6 +18,9 @@ const CustomerSchema = mongoose.Schema({
 	point:{
 		type: Number, default:0
 	},
+	point_used:{
+		type: Number, default:0
+	},
 	payment:{
 		type: Number, default:0
 	},

@@ -12,12 +12,6 @@ const CompanySchema = mongoose.Schema({
 	type:{
 		type: String, default:'free'
 	},
-	cash:{
-		type: Number, default: 0
-	},
-	card:{
-		type: Number, default : 0
-	},
 	serial_HH:{
 		type: Number, default: 0
 	},

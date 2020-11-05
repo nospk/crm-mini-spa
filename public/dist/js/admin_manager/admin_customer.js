@@ -61,8 +61,8 @@ function render_data(data, pageCount, currentPage){
                                     <th>Giới tính</th>
                                     <th>Số điện thoại</th>
                                     <th>Địa chỉ</th>
-                                    <th>Ghi chú</th>
 									<th>Điểm</th>
+									<th>Nợ</th>
 									<th>Tổng mua hàng</th>
                                     </tr>
 		                        </thead>
@@ -74,8 +74,8 @@ function render_data(data, pageCount, currentPage){
                 <td>${item.gener == "male" ? "Nam" : "Nữ"}</td>
                 <td>${item.phone}</td>
                 <td>${reduce_string(item.address)}</td>
-                <td>${reduce_string(item.note)}</td>
-				<td>${item.point}</td>
+				<td>${item.point - item.point_used}</td>
+				<td>${convert_vnd(item.debt)}</td>
 				<td>${convert_vnd(item.payment)}</td>
                 </tr>`
     })

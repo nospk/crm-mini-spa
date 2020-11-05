@@ -156,7 +156,6 @@ function render_data(data, pageCount, currentPage, type){
                                     <th>Nơi nhận/thanh toán</th>
                                     <th>Ghi chú</th>
                                     <th style="text-align: right;">Tiền</th>
-									<th style="text-align: right;">Tồn Quỹ</th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
@@ -170,7 +169,6 @@ function render_data(data, pageCount, currentPage, type){
                 <td>${item.member_name}</td>
                 <td>${item.note ? reduce_string(item.note) : ""}</td>
                 <td style="text-align: right;">${item.type == "income" ? convert_vnd(item.money) : convert_vnd(item.money * -1)}</td>
-				<td style="text-align: right;">${convert_vnd(item.current_money)}</td>
                 </tr>`
     })
     html+=`</tbody>

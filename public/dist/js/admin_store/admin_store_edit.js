@@ -16,6 +16,7 @@ function get_store(){
                 $('#name').val(data.data.name);
 				$('#image').attr("src", data.data.image_store)
 				$('#address').val(data.data.address);
+				$('#phone').val(data.data.phone);
 				$('#username').val(data.data.username);
             }else{
                 Swal.fire({
@@ -40,6 +41,7 @@ function update_store(){
     let data = {
 		name:  $('#name').val(),
 		address: $('#address').val(),
+		phone: $('#phone').val(),
         _csrf: $('#_csrf').val()
     }
     $.ajax({

@@ -30,9 +30,6 @@ const Cash_book_Schema = mongoose.Schema({
 	note:{
 		type: String
 	},
-	current_money:{
-		type: Number, required: true
-	},
 	reference:{
 		type: mongoose.Schema.Types.ObjectId
 	},

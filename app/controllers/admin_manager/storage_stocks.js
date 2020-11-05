@@ -84,7 +84,6 @@ class Admin_store_stocks extends Controller{
 					type_payment:type_payment,
 					company:req.session.user.company._id,
 					money: payment,
-					current_money: await Common.get_current_money(req.session.user.company._id, (Number(payment) * -1)),
 					reference: invoice_product_storage._id,
 					isForCompany: true,
 					group: 'Thanh toán tiền hàng',

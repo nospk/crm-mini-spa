@@ -9,8 +9,9 @@ function render_data(data){
 				<div class="card">
 				  <img class="card-img-top" src="${item.image_store}" alt="Hình cửa hàng">
 				  <div class="card-body">
-					<h5 class="card-title">${item.name}</h5>
-					<p class="card-text">${item.address}</p>
+					<h4 class="card-title"><strong>${item.name}</strong></h5>
+					<p class="card-text">Địa chỉ: ${item.address}</p>
+					<p class="card-text">Số điện thoại: ${item.phone}</p>
 					<a href="#" class="btn btn-primary float-right" onClick="active_store('${item._id}'); return false;">Chọn cửa hàng</a>
 				  </div>
 				 </div>
@@ -49,6 +50,7 @@ function create_store(){
 		let data = {
 			name: $('#create_store #name').val().trim(),
 			address: $('#create_store #address').val().trim(),
+			phone: $('#create_store #phone').val().trim(),
 			username: $('#create_store #username').val().trim(),
 			password: $('#create_store #password').val().trim(),
 			_csrf: $('#_csrf').val()
@@ -94,6 +96,7 @@ function get_store(){
 	$('#create_store #name').val("")
     $('#create_store #address').val("")
 	$('#create_store #username').val("")
+	$('#create_store #address').val("")
 	$('#create_store #password').val("")
     let data = {
         _csrf: $('#_csrf').val()

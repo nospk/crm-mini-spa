@@ -34,6 +34,7 @@ class Admin_store extends Controller{
 			let store = Store({
 				name: req.body.name,
 				address: req.body.address,
+				phone: req.body.phone,
 				company: req.session.user.company._id,
 				username: req.body.username+req.session.user.company.name_account,
 				password: Common.generateHash(req.body.password),

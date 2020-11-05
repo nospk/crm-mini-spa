@@ -32,11 +32,8 @@ const StoreSchema = mongoose.Schema({
 		token: String,
 		date: Date
     },
-	cash:{
-		type: Number, "default" : 0
-	},
-	card:{
-		type: Number, "default" : 0
+	phone:{
+		type: String
 	},
 	serial_HH:{
 		type: Number, "default" : 0

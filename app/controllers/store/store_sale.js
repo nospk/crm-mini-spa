@@ -295,14 +295,12 @@ class Store_sale extends Controller{
 			// create bill
 			if(req.body.customer_pay_card && payment > 0){//card
 				let serial_card_book = await Common.get_serial_store(req.session.store._id, 'HDTT')
-				let current_card = await Common.get_current_money_store(req.session.store.company, req.session.store._id, req.body.customer_pay_card, "card")
 				let card_book = Cash_book({
 					serial: serial_card_book,
 					type: "income",
 					type_payment: "card",
 					company:req.session.store.company,
 					money: req.body.customer_pay_card,
-					current_money: current_card,
 					isForCompany: false,
 					group: "Thanh toán tiền bán hàng",
 					user_created: req.session.store.name,
@@ -328,14 +326,12 @@ class Store_sale extends Controller{
 					money_payment = req.body.customer_pay_cash
 				}
 				let serial_cash_book = await Common.get_serial_store(req.session.store._id, 'HDTT')
-				let current_cash = await Common.get_current_money_store(req.session.store.company, req.session.store._id, money_payment, "cash")
 				let cash_book = Cash_book({
 					serial: serial_cash_book,
 					type: "income",
 					type_payment: "cash",
 					company:req.session.store.company,
 					money: money_payment,
-					current_money: current_cash,
 					isForCompany: false,
 					group: "Thanh toán tiền bán hàng",
 					user_created: req.session.store.name,

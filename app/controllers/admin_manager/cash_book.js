@@ -61,23 +61,11 @@ class Admin_cash_book extends Controller{
 	static async create_new(req, res){
 		try{
 			const {type, type_payment, type_receiver, select_supplier, select_employees, isForCompany, select_store, payment, note, group, accounting, select_customer} = req.body;
-			let serial, current_money, member_name, member_id, str;
+			let serial, member_name, member_id, str;
 			if(isForCompany == true){
-				if(type == "outcome"){
-					current_money = await Common.get_current_money(req.session.user.company._id, payment * -1, type_payment)
-					serial = await Common.get_serial_company(req.session.user.company._id, 'HDCT')
-				}else{ 
-					current_money = await Common.get_current_money(req.session.user.company._id, payment, type_payment)
-					serial = await Common.get_serial_company(req.session.user.company._id, 'HDTT')
-					}
-			}else{
-				if(type == "outcome"){ 
-					current_money = await Common.get_current_money_store(req.session.user.company._id, select_store, payment * -1, type_payment)
-					serial = await Common.get_serial_store(select_store, 'HDCT')
-				}else{
-					current_money = await Common.get_current_money_store(req.session.user.company._id, select_store, payment, type_payment)
-					serial = await Common.get_serial_store(select_store, 'HDTT')
-				}
+				serial = await Common.get_serial_company(req.session.user.company._id, type == "outcome" ? 'HDCT' : 'HDTT')
+			}else{ 
+				serial = await Common.get_serial_store(select_store, type == "outcome" ? 'HDCT' : 'HDTT')
 			}
 			let debt
 			switch(type_receiver){
@@ -110,7 +98,6 @@ class Admin_cash_book extends Controller{
 				type_payment: type_payment,
 				company:req.session.user.company._id,
 				money: payment,
-				current_money: current_money,
 				isForCompany: isForCompany == true ? true : false,
 				group: group,
 				user_created: req.session.user.name,

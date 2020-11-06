@@ -24,6 +24,9 @@ const Invoice_sale_Schema = mongoose.Schema({
     payment:{
         type: Number, require: true
     },
+	payment_back:{
+		type: Number, require: true
+	},
     employees:{
         type: mongoose.Schema.Types.ObjectId, required: true, ref:'Employees' 
     },

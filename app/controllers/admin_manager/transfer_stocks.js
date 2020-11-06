@@ -91,8 +91,9 @@ class Admin_transfer_stocks extends Controller{
 				storage_stocks.save();
 				store_stocks.save();
 			}
-			invoice_product_store.save()
-			invoice_product_storage.save()
+			invoice_product_storage.invoice_store = invoice_product_store._id
+			await invoice_product_store.save()
+			await invoice_product_storage.save()
             Admin_transfer_stocks.sendMessage(res, "Đã tạo thành công");
 		}catch(err){
 			console.log(err)

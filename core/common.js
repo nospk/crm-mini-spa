@@ -1,6 +1,7 @@
 const Company = require('../app/models/company');
 const Store = require('../app/models/store');
 const bcrypt = require('bcrypt-nodejs');
+const convert_vnd_sting =function(){var t=["Không","Một","Hai","Ba","Bốn","Năm","Sáu","Bảy","Tám","Chín"],r=function(r,n){var o="",a=Math.floor(r/10),e=r%10;return a>1?(o=" "+t[a]+" Mươi",1==e&&(o+=" Mốt")):1==a?(o=" Mười",1==e&&(o+=" Một")):n&&e>0&&(o=" Lẻ"),5==e&&a>=1?o+=" Lăm":4==e&&a>=1?o+=" Tư":(e>1||1==e&&0==a)&&(o+=" "+t[e]),o},n=function(n,o){var a="",e=Math.floor(n/100),n=n%100;return o||e>0?(a=" "+t[e]+" Trăm",a+=r(n,!0)):a=r(n,!1),a},o=function(t,r){var o="",a=Math.floor(t/1e6),t=t%1e6;a>0&&(o=n(a,r)+" Triệu",r=!0);var e=Math.floor(t/1e3),t=t%1e3;return e>0&&(o+=n(e,r)+" Ngàn",r=!0),t>0&&(o+=n(t,r)),o};return{doc:function(r){if(0==r)return t[0];var n="",a="";do ty=r%1e9,r=Math.floor(r/1e9),n=r>0?o(ty,!0)+a+n:o(ty,!1)+a+n,a=" Tỷ";while(r>0);return n.trim()}}}();
 class Common {
 	static notEmpty(string){
 		if(string !== null && string !== '') 
@@ -88,7 +89,8 @@ class Common {
 	static generateHash(password) {
 		 return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 	};
-	static print_bill(data){
+	
+	static print_bill(items, service, customer, store, discount, payment, money_discount, cash, card, payment_back, invoice){
 		return new Promise(async (resolve, reject)=>{
 			let bill = `<html><head><style type="text/css">body {-webkit-print-color-adjust: exact; font-family: Arial; }</style></head><body onload="self.print(); self.close();"><div>
 				<style type="text/css">
@@ -113,13 +115,13 @@ class Common {
 						<tbody>
 							<tr>
 								<td rowspan="3"><img src="http://localhost/nospk.png" style="width: 50px;"></td>
-								<td style="text-align:center;"><span style="font-size:16px;"><strong>thebeauty</strong></span></td>
+								<td style="text-align:center;"><span style="font-size:16px;"><strong>${store.name}</strong></span></td>
 							</tr>
 							<tr>
 								<td style="text-align:center;"></td>
 							</tr>
 							<tr>
-								<td style="text-align:center;">ĐT: 0942222222</td>
+								<td style="text-align:center;">ĐT: ${store.phone}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -128,10 +130,10 @@ class Common {
 					<table style="width:100%">
 						<tbody>
 							<tr>
-								<td style="font-size:11px; text-align:center">Số : HD041120-0005 - Bàn : </td>
+								<td style="font-size:11px; text-align:center">Số : ${invoice.serial} </td>
 							</tr>
 							<tr>
-								<td style="font-size:11px; text-align:center"> 04 / 11 / 2020 - 14 : 41 </td>
+								<td style="font-size:11px; text-align:center"> ${new Date(invoice.createdAt).toLocaleString("vi-VN")} </td>
 							</tr>
 						</tbody>
 					</table>
@@ -139,13 +141,16 @@ class Common {
 					<table style="margin:10px 0 15px; width:100%">
 						<tbody>
 							<tr>
-								<td style="font-size:11px">Khách hàng: </td>
+								<td style="font-size:11px">Khách hàng: ${customer ? customer.name : ""}</td>
 							</tr>
 							<tr>
-								<td style="font-size:11px">SĐT: </td>
+								<td style="font-size:11px">Số điện thoại: ${customer ? customer.phone : ""}</td>
 							</tr>
 							<tr>
-								<td style="font-size:11px">Địa chỉ: </td>
+								<td style="font-size:11px">Địa chỉ: ${customer ? customer.address : ""}</td>
+							</tr>
+							<tr>
+								<td style="font-size:11px">Tích điểm: ${customer ? (customer.point - customer.point_used) : ""}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -153,44 +158,57 @@ class Common {
 					<table cellpadding="3" style="width:98%;border-collapse: collapse;">
 						<tbody>
 							<tr style="line-height: 12px;">
-								<td style="border-bottom:1px solid black; border-top:1px solid black; width:35%"><strong><span style="font-size:11px">Đơn giá</span></strong></td>
+								<td style="border-bottom:1px solid black; border-top:1px solid black; width:35%"><strong><span style="font-size:11px">Tên </span></strong></td>
 								<td style="border-bottom:1px solid black; border-top:1px solid black; text-align:right; width:30%"><strong><span style="font-size:11px">SL</span></strong></td>
 								<td style="border-bottom:1px solid black; border-top:1px solid black; text-align:right"><strong><span style="font-size:11px">Thành tiền</span></strong></td>
 							</tr>
-							<tr style="line-height: 12px;">
-								<td colspan="3" style="padding-top:3px"><span style="font-size:12px">Thuốc Marl blackddddddddddddd ddddddddddddddd dddddddddddd ddddddddddd dddddddd</span></td>
+				`
+				items.forEach(item =>{
+					console.log(item)
+					bill+=	`<tr style="line-height: 12px;">
+								<td colspan="3" style="padding-top:3px"><span style="font-size:12px">${item.name}</span></td>
 							</tr>
 							<tr style="line-height: 12px;">
-								<td style="border-bottom:1px solid black"><span style="font-size:11px">21,000 <del></del></span></td>
-								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">1</span></td>
-								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">21,000</span></td>
-							</tr>
-						</tbody>
+								<td style="border-bottom:1px solid black"><span style="font-size:11px">${String(item.price).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
+								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${item.sell_quantity}</span></td>
+								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${String(item.price * item.sell_quantity).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
+							</tr>`	
+				})
+				
+				bill+=`		</tbody>
 					</table>
 
 					<table border="0" cellpadding="3" cellspacing="0" style="border-collapse:collapse; margin-top:20px; width:98%">
 							<tbody><tr>
 								<td style="font-size:11px; font-weight:bold; text-align:right; white-space:nowrap">Cộng tiền hàng:</td>
-								<td style="font-size:11px; font-weight:bold; text-align:right">21,000</td>
+								<td style="font-size:11px; font-weight:bold; text-align:right">${String(payment+money_discount).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</td>
 							</tr>
 							<tr>
-								<td style="font-size:11px; font-weight:bold; text-align:right; white-space:nowrap">Chiết khấu:</td>
-								<td style="font-size:11px; font-weight:bold; text-align:right">0</td>
+								<td style="font-size:11px; font-weight:bold; text-align:right; white-space:nowrap">Giảm giá:</td>
+								<td style="font-size:11px; font-weight:bold; text-align:right">${String(money_discount).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</td>
 							</tr>
 							<tr>
 								<td style="font-size:11px; font-weight:bold; text-align:right; white-space:nowrap">Tổng cộng:</td>
-								<td style="font-size:11px; font-weight:bold; text-align:right">21,000</td>
+								<td style="font-size:11px; font-weight:bold; text-align:right">${String(payment).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</td>
 							</tr>
 							<tr>
 								<td style="font-size:11px;text-align:right; white-space:nowrap">Tiền khách đưa:</td>
-								<td style="font-size:11px;text-align:right">21,000</td>
+								
+							</tr>
+							<tr>
+								<td style="font-size:11px; font-weight:bold; text-align:right; white-space:nowrap">Tiền mặt : </td>
+								<td style="font-size:11px; font-weight:bold; text-align:right">${String(cash).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</td>
+							</tr>
+							<tr>
+								<td style="font-size:11px; font-weight:bold; text-align:right; white-space:nowrap">Thẻ : </td>
+								<td style="font-size:11px; font-weight:bold; text-align:right">${String(card).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</td>
 							</tr>
 							<tr>
 								<td style="font-size:11px;text-align:right; white-space:nowrap">Tiền thừa:</td>
-								<td style="font-size:11px;text-align:right">0</td>
+								<td style="font-size:11px;text-align:right">${String(payment_back).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</td>
 							</tr>
 							<tr>
-								<td colspan="2" style="font-size:11px; font-style:italic; text-align:left"><em>Hai  mươi mốt  nghìn đồng chẵn</em></td>
+								<td colspan="2" style="font-size:11px; font-style:italic; text-align:left"><em>${convert_vnd_sting.doc(payment)}</em></td>
 							</tr>
 					</tbody></table>
 
@@ -200,7 +218,7 @@ class Common {
 								<td style="font-size:11px; font-style:italic; text-align:center">Cảm ơn và hẹn gặp lại!</td>
 							</tr>
 							<tr>
-								<td style="font-size:11px; text-align:center">Powered by POS365.VN</td>
+								<td style="font-size:11px; text-align:center">Powered by Nospk.dev</td>
 							</tr>
 						</tbody>
 					</table>

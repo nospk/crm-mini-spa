@@ -7,5 +7,5 @@ module.exports = function (app) {
     app.post("/admin_supplier/get", supplier.loggedInadmin, supplier.get_data)
 	app.post("/admin_supplier/edit_data", supplier.loggedInadmin, supplier.edit_data)
 	app.put("/admin_supplier/update_data", supplier.loggedInadmin, supplier.update_data)
-    //app.delete("/admin_employees/delete_data", employees.loggedInadmin, employees.delete_data)
+    app.delete("/admin_supplier/delete_data", supplier.loggedInadmin, supplier.delete_data)
 }

@@ -262,6 +262,7 @@ function add_product(id){
 	
 }
 function render_tablist(tab_number){
+	$('#search_product').val("")
 	let html = '';
 	let money = 0;
 	let combo = false;
@@ -697,7 +698,8 @@ function get_list_item(){
     get_list_item.forEach((number_code)=>{
         data.push({
             sell_quantity: convert_number($(`#quantity-${number_code}`).val()),
-            id: $(`#id-product-${number_code}`).val()
+            id: $(`#id-product-${number_code}`).val(),
+			//name: $(`#name-product-${number_code}`).text(),
         })
     })
     return data;

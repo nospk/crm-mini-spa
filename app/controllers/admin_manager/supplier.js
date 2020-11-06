@@ -28,7 +28,7 @@ class Admin_supplier extends Controller{
 		try{
 			let {search}=req.body
 			let match = {
-				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id)} ] 
+				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id), isActive: true} ] 
 			}
 			if(search){
 				match.$and.push({'name': {$regex: search,$options:"i"}})
@@ -75,6 +75,15 @@ class Admin_supplier extends Controller{
 			Admin_supplier.sendError(res, err, err.message);
 		}
 		
+	}
+	static async delete_data(req, res){
+		try{
+			await Supplier.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.id}, {isActive: false});
+			Admin_supplier.sendMessage(res, "Đã xóa thành công");
+		}catch(err){
+			console.log(err)
+			Admin_supplier.sendError(res, err, err.message);
+		}
 	}
 }
 

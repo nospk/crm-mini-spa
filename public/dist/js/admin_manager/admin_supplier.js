@@ -58,21 +58,17 @@ function render_data(data, pageCount, currentPage){
                                     <th>Email</th>
                                     <th>Công nợ</th>
                                     <th>Tổng giao dịch</th>
-									<th></th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
 	data.forEach(item =>{
-		html+=`<tr>
+		html+=`<tr onclick="edit_data('${item._id}')">
                 <td>${item.name}</td>
 				<td>${reduce_string(item.address)}</td>
                 <td>${item.phone}</td>
                 <td>${item.email}</td>
                 <td>${convert_vnd(item.debt)}</td>
 				<td>${convert_vnd(item.totalMoney)}</td>
-                <td><span style="color:blue; cursor: pointer" onclick="edit_data('${item._id}')"><i class="far fa-edit"></i></i></span>&nbsp;
-					<span style="color:red; cursor: pointer" onclick="comform_delete_data('${item._id}')"><i class="fas fa-times-circle"></i></span>		
-				</td>
                 </tr>`
     })
     html+=`</tbody>
@@ -155,7 +151,7 @@ function get_data(paging_num){
     })
 }
 
-function comform_delete_data(id){
+function comform_delete_data(){
     Swal.fire({
         title: 'Bạn muốn xóa ?',
         text: "Mọi thông tin trong này sẽ bị mất, bạn có chắc muốn xóa nó ?",
@@ -169,7 +165,7 @@ function comform_delete_data(id){
                 $.ajax({
                     url:'/admin_supplier/delete_data',
                     method:'delete',
-                    data: {id: id, _csrf: $('#_csrf').val()},
+                    data: {id: $('#edit_data #edit_id').val(), _csrf: $('#_csrf').val()},
                     success: function(data){
                         if(data.status == 1){
                             get_data();

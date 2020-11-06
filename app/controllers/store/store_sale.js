@@ -161,6 +161,7 @@ class Store_sale extends Controller{
 			let list_service = [];
 			let list_product = [];
 			let payment = 0;
+			let payment_back = 0;
 			for(let i = 0, list_item_length = list_item.length; i < list_item_length; i++){
 				let check_product_service = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:list_item[i].id}).populate({
 					path: 'stocks_in_store',
@@ -240,13 +241,15 @@ class Store_sale extends Controller{
 				}
 			}
 			payment = payment - money_discount;
-
+			
 			//check payment
 			if(req.body.customer_pay_card > payment){
 				return Store_sale.sendError(res, `Lỗi thanh toán số tiền chuyển khoản lớn hơn số tiền trả`, "Kiểm tra lại số tiền đã nhập");
 			}
 			if(req.body.customer_pay_card + req.body.customer_pay_cash < payment){
 				return Store_sale.sendError(res, `Lỗi thanh toán chưa đủ số tiền`, "Kiểm tra lại số tiền đã nhập");
+			}else{
+				payment_back = req.body.customer_pay_card + req.body.customer_pay_cash - payment
 			}
 			
 			//count discount used
@@ -262,6 +265,7 @@ class Store_sale extends Controller{
 				type : "sale",
 				company: req.session.store.company,
 				store: req.session.store._id,
+				payment_back: payment_back,
 				list_sale: list_sale,
 				payment: payment > 0 ? payment : 0,
 				employees: req.body.employees,
@@ -273,25 +277,26 @@ class Store_sale extends Controller{
 			})
 			await invoice_sale.save()
 			//invoice store stocks
-			let invoice_stock = Invoice_product_store({
-				serial: serial_stock,
-				type: "sale",
-				company: req.session.store.company, 
-				store: req.session.store._id, 
-				list_products: list_product,
-				who_created: req.session.store.name,
-				invoice: invoice_sale._id,
-			})
-			
-			await invoice_stock.save()
-			for (let i = 0; i < list_product.length; i++){
-				let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.store.company, store_id:req.session.store._id, product: list_product[i].product},{$inc:{product_of_sale:Number(list_product[i].quantity)*-1, quantity:Number(list_product[i].quantity)*-1}},{new: true})
-				store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_stock._id);
-				invoice_stock.list_products[i].current_quantity = store_stocks.quantity
-				store_stocks.save();
+			if(list_product != false){
+				let invoice_stock = Invoice_product_store({
+					serial: serial_stock,
+					type: "sale",
+					company: req.session.store.company, 
+					store: req.session.store._id, 
+					list_products: list_product,
+					who_created: req.session.store.name,
+					invoice: invoice_sale._id,
+				})
+				
+				await invoice_stock.save()
+				for (let i = 0; i < list_product.length; i++){
+					let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.store.company, store_id:req.session.store._id, product: list_product[i].product},{$inc:{product_of_sale:Number(list_product[i].quantity)*-1, quantity:Number(list_product[i].quantity)*-1}},{new: true})
+					store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_stock._id);
+					invoice_stock.list_products[i].current_quantity = store_stocks.product_of_sale
+					store_stocks.save();
+				}
+				await invoice_stock.save()
 			}
-			await invoice_stock.save()
-
 			// create bill
 			if(req.body.customer_pay_card && payment > 0){//card
 				let serial_card_book = await Common.get_serial_store(req.session.store._id, 'HDTT')
@@ -362,7 +367,7 @@ class Store_sale extends Controller{
 				await invoice_service.save()
 				list_service[t].serial = serial_card_book
 			}
-			let bill = await Common.print_bill()
+			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount,payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)
             Store_sale.sendData(res, bill);
 		}catch(err){
 			console.log(err.message)

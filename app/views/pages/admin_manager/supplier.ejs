@@ -127,7 +127,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	</div>
 	<!-- End Modal create store -->
 	<!-- Modal create store -->
-	<div class="modal fade" id="edit_data" tabindex="-1" role="dialog" aria-labelledby="create_store" data-backdrop="static">
+	<div class="modal fade" id="edit_data" tabindex="-1" role="dialog" aria-labelledby="create_store">
 	  <div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 		  <div class="modal-header">
@@ -165,6 +165,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+			<button type="button" class="btn btn-danger" onclick="comform_delete_data();"
+							data-dismiss="modal"><i class="far fa-trash-alt"></i> Xóa</button>
 			<button type="button" class="btn btn-primary" onclick="update_data();" data-dismiss="modal">Sửa</button>
 		  </div>
 		</div>

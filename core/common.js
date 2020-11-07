@@ -41,9 +41,18 @@ class Common {
 	}
 	static get_serial_service(id){
 		return new Promise(async (resolve, reject)=>{
+			let r = await Common.getRandomString(7);
 			let company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_DV:1}},{new: true});
-			resolve('MDV_'+ company.serial_DV)
+			resolve(r +'_'+ company.serial_DV)
 		})
+	}
+	static getRandomString(length) {
+		let randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+		let result = '';
+		for ( let i = 0; i < length; i++ ) {
+			result += randomChars.charAt(Math.floor(Math.random() * randomChars.length));
+		}
+		return result;
 	}
 	static get_serial_store(id, chartCode){
 		return new Promise(async (resolve, reject)=>{
@@ -118,10 +127,11 @@ class Common {
 								<td style="text-align:center;"><span style="font-size:16px;"><strong>${store.name}</strong></span></td>
 							</tr>
 							<tr>
-								<td style="text-align:center;"></td>
+								<td style="text-align:center; font-size:14px;">Địa chỉ: ${store.address}</td>
 							</tr>
 							<tr>
-								<td style="text-align:center;">ĐT: ${store.phone}</td>
+								<td style="text-align:center; font-size:14px;">Số điện thoại: ${store.phone}</td>
+								
 							</tr>
 						</tbody>
 					</table>
@@ -164,7 +174,6 @@ class Common {
 							</tr>
 				`
 				items.forEach(item =>{
-					console.log(item)
 					bill+=	`<tr style="line-height: 12px;">
 								<td colspan="3" style="padding-top:3px"><span style="font-size:12px">${item.name}</span></td>
 							</tr>
@@ -210,9 +219,29 @@ class Common {
 							<tr>
 								<td colspan="2" style="font-size:11px; font-style:italic; text-align:left"><em>${convert_vnd_sting.doc(payment)}</em></td>
 							</tr>
-					</tbody></table>
-
-					<table style="margin-top:20px; width:100%">
+					</tbody></table>`
+				if(service != false){
+					bill+= `<table style="margin-top:20px; width:100%">
+						<tbody>
+						<tr>
+								<td style="font-size:11px; font-weight:bold; text-align:left;">Tên dịch vụ</td>
+								<td style="font-size:11px; font-weight:bold; text-align:right;">Mã dịch vụ</td>
+						</tr>
+					`
+					service.forEach(item =>{
+						bill+=`<tr>
+									<td style="font-size:11px; text-align:left;">${item.name}</td>
+									<td style="font-size:11px; text-align:right;">${item.serial}</td>
+							  </tr>
+						`
+					})
+					bill+= `
+						</tbody>
+					</table>
+					`
+					
+				}
+				bill+=	`<table style="margin-top:20px; width:100%">
 						<tbody>
 							<tr>
 								<td style="font-size:11px; font-style:italic; text-align:center">Cảm ơn và hẹn gặp lại!</td>

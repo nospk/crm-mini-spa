@@ -356,16 +356,16 @@ class Store_sale extends Controller{
 			}
 			// invoice service for customer
 			for(let t = 0; t < list_service.length;t++){
-				let serial_card_book = await Common.get_serial_service(req.session.store.company)
+				let serial_service = await Common.get_serial_service(req.session.store.company)
 				let invoice_service = Invoice_service({
 					company: req.session.store.company,
 					customer: check_customer != false ? check_customer._id : undefined,
-					serial:serial_card_book,
+					serial:serial_service,
 					service:list_service[t].service,
 					invoice: invoice_sale._id
 				})
 				await invoice_service.save()
-				list_service[t].serial = serial_card_book
+				list_service[t].serial = serial_service
 			}
 			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount,payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)
             Store_sale.sendData(res, bill);

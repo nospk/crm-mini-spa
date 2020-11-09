@@ -105,7 +105,7 @@ class Common {
 				<style type="text/css">
 					.printBox {
 						font-family: Arial, sans-serif;
-						font-size: 11px;
+						font-size: 12px;
 						width: 80mm;
 					}
 					table {
@@ -120,7 +120,7 @@ class Common {
 					@page { size: auto;  margin: 0mm; }
 				</style>
 				<div class="printBox">
-					<table style="width:100%;border-collapse:collapse;border-bottom:1px solid black;">
+					<table style="width:98%;border-collapse:collapse;border-bottom:1px solid black;">
 						<tbody>
 							<tr>
 								<td rowspan="3"><img src="http://localhost/nospk.png" style="width: 50px;"></td>
@@ -135,7 +135,7 @@ class Common {
 							</tr>
 						</tbody>
 					</table>
-					<div style="padding:10px 0 0; text-align:center"><strong style="font-size:12px">HÓA ĐƠN BÁN HÀNG</strong></div>
+					<div style="padding:10px 0 15px; text-align:center"><strong style="font-size:12px">HÓA ĐƠN BÁN HÀNG</strong></div>
 
 					<table style="width:100%">
 						<tbody>
@@ -221,7 +221,7 @@ class Common {
 							</tr>
 					</tbody></table>`
 				if(service != false){
-					bill+= `<table style="margin-top:20px; width:100%">
+					bill+= `<table border="0" cellpadding="2" cellspacing="0" style="border-collapse:collapse; margin-top:20px; width:98%">
 						<tbody>
 						<tr>
 								<td style="font-size:11px; font-weight:bold; text-align:left;">Tên dịch vụ</td>

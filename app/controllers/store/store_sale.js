@@ -367,6 +367,8 @@ class Store_sale extends Controller{
 				await invoice_service.save()
 				list_service[t].serial = serial_service
 			}
+			invoice_sale.list_service = list_service
+			await invoice_sale.save()
 			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount,payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)
             Store_sale.sendData(res, bill);
 		}catch(err){

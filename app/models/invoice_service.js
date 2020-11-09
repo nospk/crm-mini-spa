@@ -15,6 +15,9 @@ const Invoice_service_Schema = mongoose.Schema({
 	isUsed:{
 		type: Boolean, default:false 
 	},
+	status:{
+		type: String, // done, cancel, not_used
+	},
 	who_did:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Employees'
 	},

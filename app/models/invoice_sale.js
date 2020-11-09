@@ -18,6 +18,24 @@ const Invoice_sale_Schema = mongoose.Schema({
         price:{type:Number, required: true},
 		_id: false
     }],
+	list_sale_edit:[{
+        id: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'}, 
+        quantity: {type: Number, required: true},
+        price:{type:Number, required: true},
+		_id: false
+    }],
+	list_service:[{
+        service: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'}, 
+		name: {type: String, required: true},
+        serial: {type: String, required: true},
+		_id: false
+    }],
+	list_service_edit:[{
+        service: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'}, 
+		name: {type: String, required: true},
+        serial: {type: String, required: true},
+		_id: false
+    }],
     discount:{
         type: mongoose.Schema.Types.ObjectId, ref:'Discount'
     },
@@ -42,7 +60,14 @@ const Invoice_sale_Schema = mongoose.Schema({
 	},
 	note:{
 		type: String
-	}
+	},
+	isActive:{
+		type: Boolean, default:true 
+	},
+	isEdit:{
+		type: Boolean, default:false 
+	},
+	
 }, { timestamps: true });
 
 module.exports = mongoose.model('Invoice_sale', Invoice_sale_Schema);

@@ -32,6 +32,11 @@ const Product_Service_Schema = mongoose.Schema({
 		quantity: {type: Number, required:true},
 		_id: false
 	}],
+	price_book:[{
+		id: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'Price_book'},
+		price_sale: {type: Number, required:true},
+		_id: false
+	}],
 	isSale:{
 		type: Boolean, default:true
 	},

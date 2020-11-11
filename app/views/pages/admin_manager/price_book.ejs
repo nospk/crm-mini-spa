@@ -9,14 +9,54 @@ scratch. This page gets rid of all links and provides the needed markup only.
 	<%- include ('../../partials/head') %>
 	<title>Bảng giá</title>
 	<style>
+		.callout {
+			padding: 10px;
+			margin: 10px 0;
+			border: 1px solid #eee;
+			border-left-width: 5px;
+			border-radius: 3px;
+		}
+
+		.callout-primary {
+			border-left-color: #007BFF;
+		}
+
+		.input-group {
+			margin: 10px 0;
+		}
+
+		.select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
+			background-color: #007bff;
+			color: #ffffff !important;
+		}
+
+		span.select2.select2-container.select2-container--below.select2-container--bootstrap4.select2-container--focus {
+			max-width: 660px;
+			height: auto;
+		}
+
+		span.select2.select2-container.select2-container--bootstrap4.select2-container--below {
+			max-width: 660px;
+			height: auto;
+		}
+
+		ul.select2-selection__rendered span.select2-selection.select2-selection--multiple {
+			max-width: 660px;
+			height: auto;
+		}
+
+		span.select2-selection.select2-selection--multiple {
+			max-width: 660px;
+			height: auto;
+		}
 		.pointer {
 			cursor: pointer;
 		}
-		input {
-		  text-align: right; 
-		}
+
 	</style>
 	<link rel="stylesheet" href="/assets/plugins/toastr/toastr.min.css">
+	<!-- daterange picker -->
+	<link rel="stylesheet" href="/assets/plugins/daterangepicker/daterangepicker.css">
 	<!-- Select2 -->
 	<link rel="stylesheet" href="/assets/plugins/select2/css/select2.min.css">
 	<link rel="stylesheet" href="/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
@@ -44,7 +84,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								  </select>
 								  <div class="input-group-append">
 									<button type="button" class="btn btn-primary float-right" data-toggle="modal"
-									data-target="#create_new">Tạo mới</button>
+									data-target="#create_new_price_book">Tạo mới</button>
 								  </div>
 								</div>
 							</div>
@@ -85,12 +125,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<!-- /.content-wrapper -->
 
 		<!-- Modal new price-->
-		<div class="modal" id="new_group" tabindex="-1" role="dialog" aria-labelledby="new_group"
+		<div class="modal" id="create_new_price_book" tabindex="-1" role="dialog" aria-labelledby="create_new_price_book"
 			data-backdrop="static">
 			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">Tạo Nhóm mới</h5>
+						<h5 class="modal-title">Tạo Bảng Giá mới</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -101,14 +141,40 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<div class="input-group-prepend">
 									<span class="input-group-text">Tên </span>
 								</div>
-								<input type="text" class="form-control" id="new_name_group" placeholder="Tên Bảng giá"
+								<input type="text" class="form-control" id="name" placeholder="Tên Bảng giá"
 									aria-label="Name">
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Ngày có hiệu lực </span>
+								</div>
+								<input type="text" class="form-control date" id="date_from">
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Ngày hết hạn </span>
+								</div>
+									<input type="text" class="form-control date" id="date_to">
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Cửa hàng áp dụng</span>
+								</div>
+									<select class="select2bs4" multiple="multiple" id="select_store">
+									</select>
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Nhóm khách hàng</span>
+								</div>
+									<select class="select2bs4" multiple="multiple" id="select_group_customer">
+									</select>
 							</div>
 						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-						<button type="button" class="btn btn-primary" onclick="new_name_group();"
+						<button type="button" class="btn btn-primary" onclick="create_new();"
 							data-dismiss="modal">Tạo</button>
 					</div>
 				</div>
@@ -120,8 +186,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<script src="/dist/js/admin_manager/admin_price_book.js"></script>
 		<-- Toastr-->
 		<script src="/assets/plugins/toastr/toastr.min.js"></script>
+		<!-- InputMask -->
+		<script src="/assets/plugins/moment/moment.min.js"></script>
+		<script src="/assets/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+		<!-- date-range-picker -->
+		<script src="/assets/plugins/daterangepicker/daterangepicker.js"></script>
 		<!-- Select2 -->
 		<script src="/assets/plugins/select2/js/select2.full.min.js"></script>
+		<script>
+		  $(function () {
+
+			//Date range picker
+			$('.date').daterangepicker({
+				timePicker: true,
+				singleDatePicker: true,
+				showDropdowns: true,
+				timePicker24Hour: true,
+				locale: {
+					format: 'DD/MM/YYYY HH:mm'
+				}	
+			})
+		  })
+		</script>
 </body>
 
 </html>

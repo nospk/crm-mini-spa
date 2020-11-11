@@ -40,27 +40,19 @@ class Admin_price_book extends Controller{
 			Admin_price_book.sendError(res, err, err.message);
 		}
 	}
+	static async get_store_groupCustomer(req, res){
+		try{
+			let stores = await Store.find({company: req.session.user.company._id});
+			let groupCustomer = []
+			Admin_price_book.sendData(res, {stores, groupCustomer});
+		}catch(err){
+			console.log(err)
+			Admin_price_book.sendError(res, err, err.message);
+		}
+	}
 	static async edit_data(req, res){
 		try{
-			let data = await Product_service.findOne({company: req.session.user.company._id, _id: req.body.id}).populate({
-				path: 'stocks_in_store',
-				populate: { path: 'Stores' },
-				select: 'store_name quantity product_of_sale product_of_service product_of_undefined'
-			}).populate({
-				path: 'stocks_in_storage',
-				populate: { path: 'Storage_stocks' },
-				select: 'quantity'
-			}).populate({
-				path: 'combo.id',
-				populate: { path: 'Product_services' },
-			})
-			if(data.type == "product"){
-				let storage = await Storage_stocks.findOne({company: req.session.user.company._id, product: req.body.id}).populate({
-					path: 'last_history',
-					populate: { path: 'Invoice_product_storage' },
-				})
-				data = Object.assign(data._doc, {storage_history:storage._doc});
-			}
+			let data = ""
 			Admin_price_book.sendData(res, data);
 		}catch(err){
 			console.log(err)
@@ -69,69 +61,9 @@ class Admin_price_book extends Controller{
 	}
 	static async create_new(req, res){
 		try{
-			let check = await Product_service.findOne({company: req.session.user.company._id, number_code:req.body.number_code, isActive: true});
-			if(check){
-				Admin_price_book.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
-				return;
-			}
-			if(req.body.type == "product"){
-				let get_stores = await Store.find({company: req.session.user.company._id},{_id:1, name:1})
-				let data = Product_service({
-					name: req.body.name,
-					type: req.body.type,
-					cost_price: req.body.cost_price,
-					price: req.body.price,
-					quantity: 0,
-					description: req.body.description,
-					number_code: req.body.number_code,
-					brand: req.body.brand,
-					group: req.body.group,
-					company: req.session.user.company._id,
-				});
-				await data.save()
-				let storage_stocks = Storage_stocks({
-					product : data._id,
-					company: req.session.user.company._id,
-				})
-				await storage_stocks.save()
-				let stocks_in_store = []
-				for (let i = 0; i < get_stores.length; i++ ){
-					let store_stocks = Store_stocks({
-						product : data._id,
-						store_name: get_stores[i].name,
-						store_id: get_stores[i]._id,
-						company: req.session.user.company._id,
-					})
-					await store_stocks.save()
-					stocks_in_store.push(store_stocks._id)
-				}
-				data.stocks_in_storage = storage_stocks._id
-				data.stocks_in_store = stocks_in_store
-				await data.save()
-			}else if(req.body.type == "service"){
-				let data = Product_service({
-					name: req.body.name,
-					type: req.body.type,
-					cost_price: req.body.cost_price,
-					price: req.body.price,
-					description: req.body.description,
-					number_code: req.body.number_code,
-					company: req.session.user.company._id,
-				});
-				await data.save()
-			}else{
-				let data = Product_service({
-					name: req.body.name,
-					type: req.body.type,
-					combo: req.body.combo,
-					cost_price: 0,
-					price: req.body.price,
-					description: req.body.description,
-					number_code: req.body.number_code,
-					company: req.session.user.company._id,
-				});
-				await data.save()
-			}	
+			let {name, date_from, date_to, store, groupCustomer} = req.body
+			console.log(name, date_from, date_to, store, groupCustomer)
+				
 			Admin_price_book.sendMessage(res, "Đã tạo thành công");
 			
 		}catch(err){

@@ -1,6 +1,6 @@
 $( document ).ready(()=>{
     get_data();
-    
+    get_store_groupCustomer();
 })
 let page_now;
 const show_type = type =>{
@@ -23,36 +23,58 @@ function get_list_items(){
     })
     return data;
 }
+function get_store_groupCustomer(){
+	 $.ajax({
+        url:'/admin_price_book/get_store_groupCustomer',
+        method:'POST',
+        data: {_csrf: $('#_csrf').val()},
+        success: function(data){
+			console.log(data)
+            if(data.status == 1){
+                let html_store = "";
+				let html_groupCustomer = "";
+				data.data.stores.forEach(item =>{
+					html_store +=`<option value="${item._id}">${item.name}</option>`
+				})
+				$('#select_store').html(html_store)
+				data.data.groupCustomer.forEach(item =>{
+					html_groupCustomer +=`<option value="${item._id}">${item.name}</option>`
+				})
+				$('#select_group_customer').html(html_groupCustomer)
+				$('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
+}
 function create_new(){
-    let data;
-    if($('#create_new #type_product_service').val() != "combo"){
-        data = {    
-            name: $('#create_new #name').val().trim(),
-            type: $('#create_new #type_product_service').val(),
-            price: convert_number($('#create_new #price').val()),
-            cost_price: convert_number($('#create_new #cost_price').val()),
-            number_code: $('#create_new #number_code').val(),
-            description: $('#create_new #description').val(),
-            brand: $('#brand').val() == "" ? undefined : $('#brand').val(),
-            group: $('#group').val(),
-            _csrf: $('#_csrf').val()
-        }
-    }else{
-        data = {
-            name: $('#create_new #name').val().trim(),
-            type: $('#create_new #type_product_service').val(),
-            price: convert_number($('#create_new #price').val()),
-            cost_price: convert_number($('#create_new #cost_price').val()),
-            combo: get_list_items(),
-            number_code: $('#create_new #number_code').val(),
-            description: $('#create_new #description').val(),
-            brand: $('#brand').val() == "" ? undefined : $('#brand').val(),
-            group: $('#group').val(),
-            _csrf: $('#_csrf').val()
-        }
+
+    let data = {    
+        name: $('#name').val().trim(),
+        date_from: $('#date_from').val(),
+        date_to: $('#date_to').val(),
+		store: $('#select_store').val(),
+        groupCustomer: $('#select_group_customer').val(),
+        _csrf: $('#_csrf').val()
     }
+
     $.ajax({
-        url:'/admin_product_service/create',
+        url:'/admin_price_book/create',
         method:'POST',
         data: data,
         success: function(data){
@@ -148,7 +170,7 @@ function render_data(data, pageCount, currentPage){
                 <td>${item.name}</td>
 				<td>${show_type(item.type)}</td>
 				<td>${convert_vnd(item.cost_price)}</td>
-				<td><input type="currency" class="form-control" value="${convert_vnd(item.price)}" onchange="save_price_default(this)" id="price-${item._id}" placeholder="Nhập giá"
+				<td><input type="currency" class="form-control" style="text-align: right;"value="${convert_vnd(item.price)}" onchange="save_price_default(this)" id="price-${item._id}" placeholder="Nhập giá"
 								aria-label="Price"></td>
                 </tr>`
     })
@@ -234,89 +256,3 @@ function get_data(paging_num){
 }
 
 
-function new_name_group(){
-    if($('#new_name_group').val().trim() == ""){
-        Swal.fire({
-            title: "Thiếu thông tin",
-            text: "Vui lòng đặt tên",
-            icon: "error",
-            showConfirmButton: false,    
-            timer: 3000
-        }).then((result)=>{
-            // cho vào để ko báo lỗi uncaught
-        })
-        .catch(timer => {
-            // cho vào để ko báo lỗi uncaught
-        }); 
-    }else{
-        $.ajax({
-            url:'/admin_brand_group/new_group',
-            method:'POST',
-            data: {
-                name: $('#new_name_group').val().trim(),
-                _csrf: $('#_csrf').val()
-            },
-            success: function(data){
-                if(data.status == 1){
-                    Swal.fire({
-                        title: "Thao tác thành công",
-                        text: data.message,
-                        icon: "info",
-                        showConfirmButton: false,
-                        timer: 3000
-                    }).then((result)=>{
-                        get_brand_group()
-                    })
-                    .catch(timer => {
-                        get_brand_group()
-                    });    
-                }else{
-                    Swal.fire({
-                        title: data.error,
-                        text: data.message,
-                        icon: "error",
-                        showConfirmButton: false,    
-                        timer: 3000
-                    }).then((result)=>{
-                        // cho vào để ko báo lỗi uncaught
-                    })
-                    .catch(timer => {
-                        // cho vào để ko báo lỗi uncaught
-                    }); 
-                    
-                }
-            }
-        })
-    }
-}
-
-
-function get_brand_group(){
-    $.ajax({
-        url:'/admin_brand_group/get_data',
-        method:'POST',
-        data: {
-            _csrf: $('#_csrf').val()
-        },
-        success: function(data){
-            if (data.status == 1) {
-				let html_brand = "<option></option>"
-				let html_group = ""
-                data.data.forEach(item => {
-                    if(item.type=="brand"){
-                        html_brand += `<option value="${item._id}">${item.name}</option>`
-                    }else{
-                        html_group += `<option value="${item._id}">${item.name}</option>`
-                    }
-                })
-                $('#brand').html(html_brand)	
-				$('#edit_brand').html(html_brand)
-				$('#group').html(html_group)
-				$('#edit_group').html(html_group)
-				$('.select2bs4').select2({
-                    theme: 'bootstrap4'
-                })
-            }
-        }
-    })
-}

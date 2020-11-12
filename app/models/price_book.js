@@ -3,16 +3,19 @@ const Price_book_Schema = mongoose.Schema({
     company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
 	},
+	name:{
+		type: String, required: true
+	},
 	store:[{
-		id: mongoose.Schema.Types.ObjectId, 
+		type: mongoose.Schema.Types.ObjectId, 
 		_id: false		
 	}],
 	list_product_service:[{
-		id: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'},
+		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services',
 		_id: false
 	}],
 	group_customer:[{
-		id: mongoose.Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId,
 		_id: false
 	}],
 	date_from:{

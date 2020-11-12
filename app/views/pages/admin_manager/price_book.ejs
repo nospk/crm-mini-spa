@@ -74,12 +74,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				<div class="container-fluid">
 					<div class="callout callout-primary">
 						<div class="row">
-							<div class="col-12 mr-auto" style="margin-bottom: 10px">
+							<div class="col-12 mr-auto" style="margin-bottom: 5px">
 								<div class="input-group">
 								  <div class="input-group-prepend">
 									<span class="input-group-text">Danh sách bảng giá</span>
 								  </div>
-								  <select class="form-control" id="select_price_book">
+								  <select class="form-control" onchange="get_data('1')" id="select_price_book">
 									<option value="default">Bảng giá chung</option></select>
 								  </select>
 								  <div class="input-group-append">
@@ -88,8 +88,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								  </div>
 								</div>
 							</div>
-							<div class="col-12 mt-auto">
-								
+							<div class="col-12 mt-auto" id="show_select_item" style="display:none;">
+								<div class="input-group mb-3">
+									<div class="input-group-prepend">
+									  <span class="input-group-text">Thêm sản phẩm - dịch vụ</span>
+									</div>
+									<select class="form-control select2bs4" id="select_item">
+
+									</select>
+									<div class="input-group-append">
+									  <button class="btn btn-outline-secondary" type="button" onclick="add_item()">Chọn</button>
+									</div>
+								</div>
+								<div class="input-group mb-3">
+									<div class="input-group-prepend">
+									  <span class="input-group-text">Thêm theo nhóm sản phẩm - dịch vụ</span>
+									</div>
+									<select class="form-control select2bs4" id="select_item">
+
+									</select>
+									<div class="input-group-append">
+									  <button class="btn btn-outline-secondary" type="button" onclick="add_item()">Chọn</button>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

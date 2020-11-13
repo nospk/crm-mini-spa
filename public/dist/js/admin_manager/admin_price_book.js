@@ -306,7 +306,7 @@ function render_data(data, pageCount, currentPage){
 				<td><span type="currency">${convert_vnd(item.price)}</span></td>
 				<td><input type="currency" class="form-control" style="text-align: right;"value="${find_price_book(item.price_book)}" onchange="save_price(this)" id="price-${item._id}" placeholder="Nhập giá"
 								aria-label="Price"></td>
-				<td><button type="button" onclick="delete_item(this)" id="delete-${item._id}"class="btn btn-danger"><i class="fas fa-times"></i></button></td>
+				<td><span style="color:red; cursor: pointer;" id="delete-${item._id}" onclick="delete_item(this)"><i class="fas fa-times-circle"></i></span></td>
                 </tr>`
     })
     html+=`</tbody>

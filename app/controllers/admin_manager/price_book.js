@@ -11,7 +11,12 @@ class Admin_price_book extends Controller{
 	}
 	static async save_price(req, res){
         try{
-			let product_service = await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id:req.body.id},{$set:{price:req.body.price}});
+			if(req.body.price_book == "default"){
+				await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id:req.body.id},{$set:{price:req.body.price}});
+			
+			}else{
+				await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id:req.body.id, price_book:{$elemMatch:{id:req.body.price_book}}},{$set:{'price_book.$.price_sale':req.body.price}});
+			}
 			Admin_price_book.sendMessage(res, "Đã cập nhật thành công");
 		}catch(err){
 			console.log(err)
@@ -82,6 +87,23 @@ class Admin_price_book extends Controller{
 		}
 		
 	}
+	static async add_item(req, res){
+		try{
+			let check = await Product_service.findOne({company: req.session.user.company._id, _id: req.body.id})
+			if(check){
+				await Price_book.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.price_book},{$push:{list_product_service: req.body.id}})
+				check.price_book.push({id: req.body.price_book, price_sale: check.price})
+				await check.save()
+				Admin_price_book.sendMessage(res, "Đã tạo thành công");
+			}else{
+				Admin_price_book.sendError(res, "Không tìm thấy", "Vui lòng thử lại");
+			}
+		}catch(err){
+			console.log(err)
+			Admin_price_book.sendError(res, err, err.message);
+		}
+		
+	}
 	static async get_price_book(req, res){
 		try{
 			let price_book = await Price_book.find({company: req.session.user.company._id})
@@ -92,12 +114,21 @@ class Admin_price_book extends Controller{
 		}
 		
 	}
-	static async delete_data(req, res){
+	static async get_items(req, res){
 		try{
-			let check = await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.id}, {isActive: false, isSale: false});
-			if(check.type != "combo"){
-				await Product_service.findOneAndUpdate({company: req.session.user.company._id, type:"combo"}, {$pull: {combo: {id: check._id}}});
-			}
+			let check = await Price_book.findOne({company: req.session.user.company._id, _id: req.body.price_book})
+			let items = await Product_service.find({company: req.session.user.company._id, isActive: true, _id: {$nin: check.list_product_service}})
+			Admin_price_book.sendData(res, items);
+		}catch(err){
+			console.log(err)
+			Admin_price_book.sendError(res, err, err.message);
+		}
+		
+	}
+	static async delete_item(req, res){
+		try{
+			await Price_book.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.price_book},{$pull:{list_product_service: req.body.id}})
+			await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id:req.body.id},{$pull: {price_book:{id:req.body.price_book}}});
 			Admin_price_book.sendMessage(res, "Đã xóa thành công");
 		}catch(err){
 			console.log(err)

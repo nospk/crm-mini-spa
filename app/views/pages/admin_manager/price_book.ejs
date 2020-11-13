@@ -88,7 +88,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								  </div>
 								</div>
 							</div>
-							<div class="col-12 mt-auto" id="show_select_item" style="display:none;">
+						</div>
+						<div class="row" id="show_select_item" style="display:none;">
+							<div class="col-6 mr-auto" style="margin-bottom: 5px">
 								<div class="input-group mb-3">
 									<div class="input-group-prepend">
 									  <span class="input-group-text">Thêm sản phẩm - dịch vụ</span>
@@ -100,19 +102,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									  <button class="btn btn-outline-secondary" type="button" onclick="add_item()">Chọn</button>
 									</div>
 								</div>
+							</div>
+							<div class="col-6 mr-auto" style="margin-bottom: 5px">
 								<div class="input-group mb-3">
 									<div class="input-group-prepend">
-									  <span class="input-group-text">Thêm theo nhóm sản phẩm - dịch vụ</span>
+									  <span class="input-group-text">Thêm theo nhóm </span>
 									</div>
-									<select class="form-control select2bs4" id="select_item">
+									<select class="form-control select2bs4" id="select_group">
 
 									</select>
 									<div class="input-group-append">
-									  <button class="btn btn-outline-secondary" type="button" onclick="add_item()">Chọn</button>
+									  <button class="btn btn-outline-secondary" type="button" onclick="add_group()">Chọn</button>
 									</div>
 								</div>
 							</div>
 						</div>
+						
 					</div>
 				</div><!-- /.container-fluid -->
 			</section>

@@ -1,7 +1,6 @@
 $( document ).ready(()=>{
     get_data();
 	get_price_book();
-	get_items();
     get_store_groupCustomer();
 	$('#select_price_book').on('change', function() {
 	  if(this.value == "default"){
@@ -21,12 +20,12 @@ function get_items(){
 	 $.ajax({
         url:'/admin_price_book/get_items',
         method:'POST',
-        data: {_csrf: $('#_csrf').val()},
+        data: {price_book: $('#select_price_book').val(), _csrf: $('#_csrf').val()},
         success: function(data){
             if(data.status == 1){
                 let html = "";
 				data.data.forEach(item =>{
-					html_store +=`<option value="${item._id}">${item.name}</option>`
+					html +=`<option value="${item._id}">${item.name}</option>`
 				})
 				$('#select_item').html(html)
 				$('.select2bs4').select2({
@@ -50,20 +49,37 @@ function get_items(){
         }
     })
 }
-function get_list_items(){
-    let list_product = [];
-    $(".number-code").each(function () {                  
-        list_product.push($(this).text()); 
-    });
-    let data = [];
-    list_product.forEach((number_code)=>{
-        data.push({
-            quantity: convert_number($(`#quantity-${number_code}`).val()),
-            id: $(`#id-product-${number_code}`).val()
-        })
-    })
-    return data;
+function add_item(){
+	console.log($('#select_item').val())
+	if($('#select_item').val() != null){
+		$.ajax({
+			url:'/admin_price_book/add_item',
+			method:'POST',
+			data: {price_book:$('#select_price_book').val(), id: $('#select_item').val(), _csrf: $('#_csrf').val()},
+			success: function(data){
+				if(data.status == 1){
+					get_data()
+				}else{
+					Swal.fire({
+						title: data.error,
+						text: data.message,
+						icon: "error",
+						showConfirmButton: false,    
+						timer: 3000
+					}).then((result)=>{
+						// cho vào để ko báo lỗi uncaught
+					})
+					.catch(timer => {
+						// cho vào để ko báo lỗi uncaught
+					}); 
+					
+				}
+			}
+		})
+	}
+	
 }
+
 
 function get_store_groupCustomer(){
 	 $.ajax({
@@ -136,10 +152,10 @@ function create_new(){
                     showConfirmButton: false,
                     timer: 3000
                 }).then(()=>{
-					
+					get_price_book();
                 })
                 .catch(timer => {
-					
+					get_price_book();
                 });    
             }else{
                 Swal.fire({
@@ -193,7 +209,13 @@ function save_price(btn){
         }
     })
 }
-function render_data(data, pageCount, currentPage){
+function find_price_book(array){
+	let index = array.findIndex(item =>{
+		return item.id == $('#select_price_book').val()
+	})
+	return convert_vnd(array[index].price_sale)
+}
+function render_data_default(data, pageCount, currentPage){
 	let html = `        
 		                    <table class="table table-hover text-nowrap">
 		                        <thead>
@@ -214,6 +236,77 @@ function render_data(data, pageCount, currentPage){
 				<td>${convert_vnd(item.cost_price)}</td>
 				<td><input type="currency" class="form-control" style="text-align: right;"value="${convert_vnd(item.price)}" onchange="save_price(this)" id="price-${item._id}" placeholder="Nhập giá"
 								aria-label="Price"></td>
+                </tr>`
+    })
+    html+=`</tbody>
+                </table>
+            `;
+    $('#show_data').html(html);
+	const currencyInput = document.querySelectorAll('input[type="currency"]')
+    currencyInput.forEach(function(element) {
+        element.addEventListener('focus', onFocus)
+        element.addEventListener('blur', onBlur)
+    });
+    let pageination = ''
+
+    if (pageCount > 1) {
+        let i = Number(currentPage) > 5 ? (Number(currentPage) - 4) : 1
+        pageination += `<ul class="pagination pagination-sm m-0 float-right">`
+        if (currentPage == 1){
+            pageination += `<li class="page-item disabled"><a class="page-link" href="#"><<</a></li>`  
+        }else{
+            pageination += `<li class="page-item"><a class="page-link" onclick="get_data('1')"><<</a></li>`  
+        }
+        if (i != 1) {
+            pageination += `<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`
+        }
+        for (; i<= (Number(currentPage) + 4) && i <= pageCount; i++) {
+    
+            if (currentPage == i) {
+                pageination += `<li class="page-item active"><a class="page-link">${i}</a></li>`
+            } else {
+                    pageination += `<li class="page-item"><a class="page-link" onclick="get_data('${i}')">${i}</a></li>`
+            }
+            if (i == Number(currentPage) + 4 && i < pageCount) {
+                pageination += `<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`
+                break
+            }
+        }
+        if (currentPage == pageCount){
+            pageination += `<li class="page-item disabled"><a class="page-link"">>></a></li>`
+        }else{
+            pageination += `<li class="page-item"><a class="page-link" onclick="get_data('${i-1}')">>></a></li>`
+        }
+            
+        pageination += `</ul>`
+    }   
+    $("#pagination").html(pageination)
+}
+function render_data(data, pageCount, currentPage){
+	let html = `        
+		                    <table class="table table-hover text-nowrap">
+		                        <thead>
+                                    <tr>
+									<th>Mã số</th>
+                                    <th>Tên</th>
+									<th>Loại</th>
+									<th>Giá vốn</th>
+                                    <th>Giá bán</th>
+									<th style="text-align:right">Giá khuyến mãi</th>
+									<th></th>
+                                    </tr>
+		                        </thead>
+		                        <tbody>`;
+	data.forEach(item =>{
+		html+=`<tr>
+				<td>${item.number_code}</td>
+                <td>${item.name}</td>
+				<td>${show_type(item.type)}</td>
+				<td>${convert_vnd(item.cost_price)}</td>
+				<td><span type="currency">${convert_vnd(item.price)}</span></td>
+				<td><input type="currency" class="form-control" style="text-align: right;"value="${find_price_book(item.price_book)}" onchange="save_price(this)" id="price-${item._id}" placeholder="Nhập giá"
+								aria-label="Price"></td>
+				<td><button type="button" onclick="delete_item(this)" id="delete-${item._id}"class="btn btn-danger"><i class="fas fa-times"></i></button></td>
                 </tr>`
     })
     html+=`</tbody>
@@ -294,6 +387,9 @@ function get_data(paging_num){
     if(!paging_num){
         paging_num = page_now
     }
+	if($('#select_price_book').val() != 'default'){
+		get_items();
+	}
     let data = {
         search:$('#select_price_book').val(),
         paging_num:paging_num,
@@ -306,7 +402,12 @@ function get_data(paging_num){
         success: function(data){
             if(data.status == 1){
                 page_now = data.data.currentPage
-                render_data(data.data.data, data.data.pageCount, data.data.currentPage);
+				if($('#select_price_book').val() == 'default'){
+					render_data_default(data.data.data, data.data.pageCount, data.data.currentPage);
+				}else{
+					render_data(data.data.data, data.data.pageCount, data.data.currentPage);
+				}
+                
             }else{
                 Swal.fire({
                     title: data.error,
@@ -325,5 +426,32 @@ function get_data(paging_num){
         }
     })
 }
-
+function delete_item(btn){
+	let input = $(btn).attr('id')
+	let id = input.slice(7)
+	$.ajax({
+			url:'/admin_price_book/delete_item',
+			method:'POST',
+			data: {price_book:$('#select_price_book').val(), id: id, _csrf: $('#_csrf').val()},
+			success: function(data){
+				if(data.status == 1){
+					get_data()
+				}else{
+					Swal.fire({
+						title: data.error,
+						text: data.message,
+						icon: "error",
+						showConfirmButton: false,    
+						timer: 3000
+					}).then((result)=>{
+						// cho vào để ko báo lỗi uncaught
+					})
+					.catch(timer => {
+						// cho vào để ko báo lỗi uncaught
+					}); 
+					
+				}
+			}
+		})
+}
 

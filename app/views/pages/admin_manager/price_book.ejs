@@ -83,8 +83,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<option value="default">Bảng giá chung</option></select>
 								  </select>
 								  <div class="input-group-append">
+									<button type="button" class="btn btn-info float-right" style="display: none;" id="edit-button" onclick="get_edit_data()">Sửa</button>
 									<button type="button" class="btn btn-primary float-right" data-toggle="modal"
-									data-target="#create_new_price_book">Tạo mới</button>
+									data-target="#price_book">Tạo mới</button>
 								  </div>
 								</div>
 							</div>
@@ -151,12 +152,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<!-- /.content-wrapper -->
 
 		<!-- Modal new price-->
-		<div class="modal" id="create_new_price_book" tabindex="-1" role="dialog" aria-labelledby="create_new_price_book"
+		<div class="modal" id="price_book" tabindex="-1" role="dialog"
 			data-backdrop="static">
 			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">Tạo Bảng Giá mới</h5>
+						<h5 class="modal-title">Bảng Giá</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -196,12 +197,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<select class="select2bs4" multiple="multiple" id="select_group_customer">
 									</select>
 							</div>
+							<input type="hidden" id="_id">
 						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-						<button type="button" class="btn btn-primary" onclick="create_new();"
+						<button type="button" class="btn btn-primary button-create" onclick="create_new();"
 							data-dismiss="modal">Tạo</button>
+						<button type="button" class="btn btn-primary button-edit" style="display: none;" onclick="edit_price_book();"
+							data-dismiss="modal">Sửa</button>
 					</div>
 				</div>
 			</div>

@@ -35,6 +35,7 @@ $(window).on("click", function () {
 });
 $( document ).ready(()=>{
 	get_service();
+	get_price_book();
 	get_employees();
 	$('#birthday').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
 	$('[data-mask]').inputmask()
@@ -90,7 +91,50 @@ $( document ).ready(()=>{
 		}
 
 	})
+	$('#select_price_book').on('change', function() {
+		get_service();
+		render_tablist(tab_number);
+		if($('#select_price_book').val() == "default"){
+			$('#number_code_discount').prop("disabled", false);
+		}else{
+			$('#discount_type').val("")
+			$('#discount_value').text("")
+			$('#number_code_discount').val("")
+			$('#discount_id').val("")
+			$('#number_code_discount').prop("disabled", true);
+		}
+	});
 })
+function get_price_book(){
+	$.ajax({
+        url:'/store_sale/get_price_book',
+        method:'POST',
+        data: {_csrf: $('#_csrf').val()},
+        success: function(data){
+            if(data.status == 1){
+				let html = `<option value="default">Bảng giá chung</option>`
+                data.data.forEach(item =>{
+					html +=`<option value="${item._id}">${item.name}</option>`
+				})
+				$('#select_price_book').html(html)
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
+}
 function clear_discount(){
 	$('#discount_type').val("")
 	$('#discount_value').text("")
@@ -114,7 +158,7 @@ function search_product() {
 						data.data.forEach(item => {
 							html += `<li class="show_search pointer" onclick="add_product('${item._id}')">
 										<span class="font-weight-bold">${item.name}</span><br>
-										<span class="number_code">Mã: ${item.number_code}</span><span class="float-right">Giá bán: ${convert_vnd(item.price)}</span><br>
+										<span class="number_code">Mã: ${item.number_code}</span><span class="float-right">Giá bán: ${convert_vnd(check_price_book(item))}</span><br>
 									`
 							if (item.type == "product") {
 								html += `<span>Số lượng: ${item.stocks_in_store[0].product_of_sale}</span>`
@@ -220,26 +264,23 @@ function add_product(id){
 					if(tab_list[tab_number] == undefined){
 						tab_list[tab_number] = {item:[product]}
 						tab_list[tab_number].item[0].sale_quantity = 1
-						tab_list[tab_number].item[0].sale_money = product.price
+						tab_list[tab_number].item[0].price_book = product.price_book
 					}else{
 						let check = tab_list[tab_number].item.findIndex(element => element.number_code == product.number_code);
 						if(check != -1){
 							if(product.type == "product"){ 
 								if(tab_list[tab_number].item[check].sale_quantity +1 <= product.stocks_in_store[0].product_of_sale){
 									tab_list[tab_number].item[check].sale_quantity++
-									tab_list[tab_number].item[check].sale_money = tab_list[tab_number].item[check].sale_quantity * tab_list[tab_number].item[check].price
 									tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale 
 								}else{
 									tab_list[tab_number].item[check].sale_quantity = product.stocks_in_store[0].product_of_sale
-									tab_list[tab_number].item[check].sale_money = tab_list[tab_number].item[check].sale_quantity * tab_list[tab_number].item[check].price
 									tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale
 								}
 							}else{
 								tab_list[tab_number].item[check].sale_quantity++
-								tab_list[tab_number].item[check].sale_money = tab_list[tab_number].item[check].sale_quantity * tab_list[tab_number].item[check].price
 							}
 						}else{
-							tab_list[tab_number].item.push(Object.assign(product, {sale_quantity: 1, sale_money:product.price}))
+							tab_list[tab_number].item.push(Object.assign(product, {sale_quantity: 1}))
 						}
 					}
 					render_tablist(tab_number)
@@ -269,7 +310,8 @@ function render_tablist(tab_number){
 	let money_discount = 0;
 	if(tab_list[tab_number] != undefined){
 		tab_list[tab_number].item.forEach((item, index) =>{
-			money+= item.sale_money
+			let check_price = check_price_book(item)
+			money+= check_price * item.sale_quantity
 			html += `<tr>
 						<td><span class="number-code">${item.number_code}</span></td>
 					`
@@ -283,19 +325,19 @@ function render_tablist(tab_number){
 			}else{
 				html+=`<td><span id="name-product-${item.number_code}">${item.name}</span><input type="hidden" id="id-product-${item.number_code}" value="${item._id}"></td>`
 			}		       		
-			html += `<td><span id="price-${item.number_code}">${convert_vnd(Number(item.price))}</span>
+			html += `<td><span id="price-${item.number_code}">${convert_vnd(check_price)}</span>
 					   `
 			if(item.type != "product"){
 				html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="999" value="${item.sale_quantity}"></td>`
 			}else{
 				html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="${item.stocks_in_store[0].product_of_sale}" value="${item.sale_quantity}"></td>`
 			}  
-				 html+= `<td><span class="total" id="total-${item.number_code}" >${convert_vnd(Number(item.sale_money))}</span></td>
+				 html+= `<td><span class="total" id="total-${item.number_code}" >${convert_vnd(check_price*item.sale_quantity)}</span></td>
 						<td><span style="color:red; cursor: pointer" onclick="delete_row_product(${tab_number},${index})"><i class="fas fa-times-circle"></i></span></td>
 					</tr>`
 			
 		})
-		if(combo == true){
+		if(combo == true || $('#select_price_book').val() != "default"){
 			$('#discount_type').val("")
 			$('#discount_value').text("")
 			$('#number_code_discount').val("")
@@ -358,14 +400,11 @@ function change_quantity(tab_number, index, btn){
 		if(tab_list[tab_number].item[index].type == "product"){ 
 			if(number <= tab_list[tab_number].item[index].stocks_in_store[0].product_of_sale){
 				tab_list[tab_number].item[index].sale_quantity = number
-				tab_list[tab_number].item[index].sale_money = tab_list[tab_number].item[index].sale_quantity * tab_list[tab_number].item[index].price
 			}else{
 				tab_list[tab_number].item[index].sale_quantity = tab_list[tab_number].item[index].stocks_in_store[0].product_of_sale
-				tab_list[tab_number].item[index].sale_money = tab_list[tab_number].item[index].sale_quantity * tab_list[tab_number].item[index].price
 			}			
 		}else{
 			tab_list[tab_number].item[index].sale_quantity = number
-			tab_list[tab_number].item[index].sale_money = tab_list[tab_number].item[index].sale_quantity * tab_list[tab_number].item[index].price
 		}	
     } 
 		
@@ -427,7 +466,7 @@ function get_service(){
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
-													<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
+													<p class="card-text"><small>${convert_vnd(check_price_book(item))}</small></p>
 												</div>
 											</div>
 								`
@@ -439,7 +478,7 @@ function get_service(){
 													<div class="card-body">
 														<h5 class="card-title">${item.name}</h5>
 														<p class="card-text">Mã: ${item.number_code}</p>
-														<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
+														<p class="card-text"><small>${convert_vnd(check_price_book(item))}</small></p>
 													</div>
 												</div>
 											</div>
@@ -450,7 +489,7 @@ function get_service(){
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
-												<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
+												<p class="card-text"><small>${convert_vnd(check_price_book(item))}</small></p>
 											</div>
 										</div>
 									</div>
@@ -463,7 +502,7 @@ function get_service(){
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
-												<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
+												<p class="card-text"><small>${convert_vnd(check_price_book(item))}</small></p>
 											</div>
 										</div>
 									</div>
@@ -477,7 +516,7 @@ function get_service(){
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
-													<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
+													<p class="card-text"><small>${convert_vnd(check_price_book(item))}</small></p>
 												</div>
 											</div>
 								`
@@ -486,7 +525,7 @@ function get_service(){
 										<div class="card-body">
 											<h5 class="card-title">${item.name}</h5>
 											<p class="card-text">Mã: ${item.number_code}</p>
-											<p class="card-text"><small>${convert_vnd(item.price)}</small></p>
+											<p class="card-text"><small>${convert_vnd(check_price_book(item))}</small></p>
 										</div>
 									</div>
 								`
@@ -521,6 +560,24 @@ function get_service(){
 				}
 			}
 		})
+}
+
+function check_price_book(item){
+	if($('#select_price_book').val() != 'default'){
+		if(!item.price_book){
+			return item.price
+		}
+		let index = item.price_book.findIndex(element =>{
+			return element.id == $('#select_price_book').val()
+		})
+		if(item.price_book[index]){
+			return item.price_book[index].price_sale
+		}else{
+			return item.price
+		}
+	}else{
+		return item.price
+	}
 }
 function clear_new_customer(){
 	$('#create_new_customer #name').val("")
@@ -708,6 +765,7 @@ function get_list_item(){
 function check_out(){
 	let data = {
 		employees: $('#select_employees').val(),
+		price_book: $('#select_price_book').val(),
 		customer_pay_card: convert_number($('#customer_pay_card').text()),
 		customer_pay_cash: convert_number($('#customer_pay_cash').text()),
 		discount_id: $('#discount_id').val(),
@@ -745,15 +803,16 @@ function check_out(){
 }
 
 function clear_data(tab_number){
-	tab_list.splice(tab_number,1)
-	$('#add_product').html("")
-	$('#bill_money').text("")
-	$('#money_discount').text("")
-	$('#total_sale').text("")
-	$('#customer_pay_card').text("")
-	$('#customer_pay_cash').text("")
-	$('#money_return').text("")
-	$('#note_bill').val("")
-	remove_customer()
-	clear_discount()
+	tab_list.splice(tab_number,1);
+	$('#add_product').html("");
+	$('#bill_money').text("");
+	$('#money_discount').text("");
+	$('#total_sale').text("");
+	$('#customer_pay_card').text("");
+	$('#customer_pay_cash').text("");
+	$('#money_return').text("");
+	$('#note_bill').val("");
+	remove_customer();
+	clear_discount();
+	get_service();
 }

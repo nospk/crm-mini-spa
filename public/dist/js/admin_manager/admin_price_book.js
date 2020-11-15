@@ -4,17 +4,76 @@ $( document ).ready(()=>{
     get_store_groupCustomer();
 	$('#select_price_book').on('change', function() {
 	  if(this.value == "default"){
-		  $('#show_select_item').hide()
+          $('#show_select_item').hide()
+          $('#edit-button').hide()
 	  }else{
-		  $('#show_select_item').show()
+          $('#show_select_item').show()
+          $('#edit-button').show()
 	  }
-	});
+    });
+    $("#price_book").on("hidden.bs.modal",function(){
+        $('.button-create').show()
+        $('.button-edit').hide()
+        $('#name').val("")
+        $('#_id').val("")
+        $('#date_from').val("")
+        $('#date_to').val("")
+        $('#select_store').val("")
+        $('#select_group_customer').val("")
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        })
+    });
 })
 let page_now;
 const show_type = type =>{
     if(type == "product")   return "Sản Phẩm"
     else if (type == "service") return "Dịch vụ"
     else return "Combo"
+}
+function check_times(time){
+    console.log(time, String(time<10?'0':'' + time))
+    return String(time<10?'0'+ time :'' + time)
+}
+function get_edit_data(){
+    $.ajax({
+        url:'/admin_price_book/get_edit_data',
+        method:'POST',
+        data: {price_book: $('#select_price_book').val(), _csrf: $('#_csrf').val()},
+        success: function(data){
+            if(data.status == 1){
+                let date_to = new Date(data.data.date_to)
+                let date_from = new Date(data.data.date_from)
+                console.log(date_to, date_from)
+                $('#name').val(data.data.name)
+                $('#date_from').val(`${date_from.getDate()}/${date_from.getMonth()+1}/${date_from.getFullYear()} ${check_times(date_from.getHours())}:${check_times(date_from.getMinutes())}`)
+                $('#date_to').val(`${date_to.getDate()}/${date_to.getMonth()+1}/${date_to.getFullYear()} ${check_times(date_to.getHours())}:${check_times(date_to.getMinutes())}`)
+                $('#select_store').val(data.data.store)
+                $('#select_group_customer').val(data.data.group_customer)
+                $('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
+                $('#_id').val(data.data._id)
+                $('#price_book').modal("toggle")
+                $('.button-create').hide()
+                $('.button-edit').show()
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
 }
 function get_items(){
 	 $.ajax({
@@ -50,7 +109,6 @@ function get_items(){
     })
 }
 function add_item(){
-	console.log($('#select_item').val())
 	if($('#select_item').val() != null){
 		$.ajax({
 			url:'/admin_price_book/add_item',
@@ -109,6 +167,63 @@ function get_store_groupCustomer(){
                     showConfirmButton: false,    
                     timer: 3000
                 }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
+}
+function edit_price_book(){
+	let date_from = $('#date_from').val()
+	date_from = date_from.split(" ");
+	let time_from = date_from[1]
+	date_from = date_from[0].split("/")
+	let new_date_from = `${date_from[1]}/${date_from[0]}/${date_from[2]} ${time_from}`
+	let date_to = $('#date_to').val()
+	date_to = date_to.split(" ");
+	let time_to = date_to[1]
+	date_to = date_to[0].split("/")
+	let new_date_to = `${date_to[1]}/${date_to[0]}/${date_to[2]} ${time_to}`
+    let data = {    
+        name: $('#name').val().trim(),
+        date_from: new_date_from,
+        date_to: new_date_to,
+		store: $('#select_store').val(),
+        groupCustomer: $('#select_group_customer').val(),
+        id: $('#_id').val(),
+        _csrf: $('#_csrf').val()
+    }
+
+    $.ajax({
+        url:'/admin_price_book/edit_price_book',
+        method:'POST',
+        data: data,
+        success: function(data){
+            if(data.status == 1){
+                Swal.fire({
+                    title: "Thao tác thành công",
+                    text: data.message,
+                    icon: "info",
+                    showConfirmButton: false,
+                    timer: 3000
+                }).then(()=>{
+                    
+                })
+                .catch(timer => {
+
+                });    
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then(()=>{
                     // cho vào để ko báo lỗi uncaught
                 })
                 .catch(timer => {

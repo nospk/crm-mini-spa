@@ -9,6 +9,8 @@ module.exports = function (app) {
 	app.post("/admin_price_book/get_store_groupCustomer", price_book.loggedInadmin, price_book.get_store_groupCustomer)
     app.post("/admin_price_book/save_price", price_book.loggedInadmin, price_book.save_price)
 	app.post("/admin_price_book/get_price_book", price_book.loggedInadmin, price_book.get_price_book)
+	app.post("/admin_price_book/get_edit_data", price_book.loggedInadmin, price_book.get_edit_data)
+	app.post("/admin_price_book/edit_price_book", price_book.loggedInadmin, price_book.edit_price_book)
 	app.post("/admin_price_book/get_items", price_book.loggedInadmin, price_book.get_items)
 	app.post("/admin_price_book/add_item", price_book.loggedInadmin, price_book.add_item)
 	app.post("/admin_price_book/delete_item", price_book.loggedInadmin, price_book.delete_item)

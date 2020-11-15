@@ -101,11 +101,11 @@ class Common {
 	
 	static print_bill(items, service, customer, store, discount, payment, money_discount, cash, card, payment_back, invoice){
 		return new Promise(async (resolve, reject)=>{
-			let bill = `<html><head><style type="text/css">body {-webkit-print-color-adjust: exact; font-family: Arial; }</style></head><body onload="self.print(); self.close();"><div>
+			let bill = `<html><head><meta charset="UTF-8"><style type="text/css">body {-webkit-print-color-adjust: exact; font-family: Arial, sans-serif;}</style></head><body onload="self.print(); self.close();"><div>
 				<style type="text/css">
 					.printBox {
-						font-family: Arial, sans-serif;
-						font-size: 12px;
+						font: Arial, sans-serif;
+						font-size: 13px;
 						width: 80mm;
 					}
 					table {
@@ -162,6 +162,9 @@ class Common {
 							<tr>
 								<td style="font-size:11px">Tích điểm: ${customer ? (customer.point - customer.point_used) : ""}</td>
 							</tr>
+							<tr>
+								<td style="font-size:11px">Mã giảm giá: ${discount ? discount.number_code : ""}</td>
+							</tr>
 						</tbody>
 					</table>
 
@@ -174,14 +177,26 @@ class Common {
 							</tr>
 				`
 				items.forEach(item =>{
-					bill+=	`<tr style="line-height: 12px;">
+					if(item.price_sale){
+						bill+=	`<tr style="line-height: 12px;">
+								<td colspan="3" style="padding-top:3px"><span style="font-size:12px">${item.name}</span></td>
+							</tr>
+							<tr style="line-height: 12px;">
+								<td style="border-bottom:1px solid black"><span style="font-size:11px"><del>${String(item.price).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</del> ${String(item.price_sale).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
+								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${item.sell_quantity}</span></td>
+								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${String(item.price_sale * item.sell_quantity).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
+							</tr>`
+					}else{
+						bill+=	`<tr style="line-height: 12px;">
 								<td colspan="3" style="padding-top:3px"><span style="font-size:12px">${item.name}</span></td>
 							</tr>
 							<tr style="line-height: 12px;">
 								<td style="border-bottom:1px solid black"><span style="font-size:11px">${String(item.price).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
 								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${item.sell_quantity}</span></td>
 								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${String(item.price * item.sell_quantity).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
-							</tr>`	
+							</tr>`
+					}
+						
 				})
 				
 				bill+=`		</tbody>
@@ -230,8 +245,8 @@ class Common {
 					`
 					service.forEach(item =>{
 						bill+=`<tr>
-									<td style="font-size:11px; text-align:left;">${item.name}</td>
-									<td style="font-size:11px; text-align:right;">${item.serial}</td>
+									<td style="font-size:12px; text-align:left;">${item.name}</td>
+									<td style="font-size:12px; text-align:right;">${item.serial}</td>
 							  </tr>
 						`
 					})

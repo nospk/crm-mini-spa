@@ -58,10 +58,31 @@ class Admin_price_book extends Controller{
 			Admin_price_book.sendError(res, err, err.message);
 		}
 	}
+	static async get_edit_data(req, res){
+		try{
+			let price_book = await Price_book.findOne({company: req.session.user.company._id, _id: req.body.price_book})
+			Admin_price_book.sendData(res, price_book);
+		}catch(err){
+			console.log(err)
+			Admin_price_book.sendError(res, err, err.message);
+		}
+	}
 	static async edit_price_book(req, res){
 		try{
-			let data = ""
-			Admin_price_book.sendData(res, data);
+			let {name, date_from, date_to, store, groupCustomer} = req.body
+			let check = await Price_book.findOne({company:req.session.user.company._id, _id: req.body.id})
+			console.log(new Date(date_from))
+			if(check){
+				check.name = name
+				check.store = store ? store : []
+				check.group_customer = groupCustomer ? groupCustomer : []
+				check.date_from = new Date(date_from)
+				check.date_to =  new Date(date_to)
+				await check.save()
+			}else{
+				Admin_price_book.sendError(res, "Lỗi không tìm thấy bảng giá","Vui lòng thử lại");
+			}
+			Admin_price_book.sendMessage(res, "Thay đổi thông tin thành công");
 		}catch(err){
 			console.log(err)
 			Admin_price_book.sendError(res, err, err.message);

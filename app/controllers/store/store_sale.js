@@ -11,6 +11,20 @@ const Invoice_sale = require('../../models/invoice_sale');
 const Invoice_product_store = require('../../models/invoice_product_store');
 const Invoice_service = require('../../models/invoice_service');
 const Cash_book = require('../../models/cash_book');
+const Price_book = require('../../models/price_book');
+const check_price_book = (item, price_book) => {
+	if(!item.price_book){
+		return item.price
+	}
+	let index = item.price_book.findIndex(element =>{
+		return element.id == price_book
+	})
+	if(item.price_book[index]){
+		return item.price_book[index].price_sale
+	}else{
+		return item.price
+	}
+}
 class Store_sale extends Controller{
     static show(req, res){
         Store_sale.setLocalValue(req,res);
@@ -138,8 +152,28 @@ class Store_sale extends Controller{
 		}
 		
 	}
+	static async get_price_book(req, res){
+		try{
+			let date_now = new Date();
+			let price_book = await Price_book.find({company: req.session.store.company, date_from:{$lt: date_now}, date_to:{$gt: date_now}, $or:[{store:[]},{store:req.session.store._id}]})
+			Store_sale.sendData(res, price_book);
+		}catch(err){
+			console.log(err)
+			Store_sale.sendError(res, err, err.message);
+		}
+		
+	}
 	static async check_out(req, res){
 		try{
+			//check price_book 
+			if(req.body.price_book != 'default'){
+				let date_now = new Date();
+				let price_book = await Price_book.findOne({company: req.session.store.company, _id:req.body.price_book, date_from:{$lt: date_now}, date_to:{$gt: date_now}, $or:[{store:[]},{store:req.session.store._id}]})
+				if(!price_book){
+					return Store_sale.sendError(res, "Đã hết thời gian khuyến mãi", "Vui lòng chọn lại bảng giá khác");
+				}
+					
+			}
 			//check employees
 			let check_employees = await Employees.findOne({company :req.session.store.company, _id: req.body.employees})
 			if(!check_employees) return Store_sale.sendError(res, "Không tìm thấy nhân viên", "Vui lòng kiểm tra lại thông tin");
@@ -178,11 +212,14 @@ class Store_sale extends Controller{
 				if(list_item[i].type == 'product' && list_item[i].sell_quantity > list_item[i].stocks_in_store[0].product_of_sale){
 					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 				}else{
-					payment += list_item[i].price * list_item[i].sell_quantity
+					let check_price = req.body.price_book != 'default'? check_price_book(list_item[i], req.body.price_book) : list_item[i].price
+					list_item[i].price_sale = check_price != list_item[i].price ? check_price : undefined
+					payment += check_price * list_item[i].sell_quantity
 					list_sale.push({
 						id: list_item[i].id, 
 						quantity: list_item[i].sell_quantity, 
-						price: list_item[i].price
+						price: list_item[i].price,
+						price_sale: check_price != list_item[i].price ? check_price : undefined,
 					})
 				}
 				if(list_item[i].type == 'service'){

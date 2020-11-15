@@ -16,12 +16,14 @@ const Invoice_sale_Schema = mongoose.Schema({
         id: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'}, 
         quantity: {type: Number, required: true},
         price:{type:Number, required: true},
+        price_sale: {type:Number},
 		_id: false
     }],
 	list_sale_edit:[{
         id: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'}, 
         quantity: {type: Number, required: true},
         price:{type:Number, required: true},
+        price_sale: {type:Number},
 		_id: false
     }],
 	list_service:[{

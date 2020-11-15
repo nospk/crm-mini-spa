@@ -215,7 +215,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<select class="form-control" id="select_employees">
 									</select>
 								</div>
-								<div class="input-group" id="find_customer">
+								<div class="input-group" id="find_customer" style="padding-bottom:5px;">
 									<div class="input-group-prepend">
 									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Khách hàng</span>
 									</div>
@@ -224,7 +224,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									  <button class="btn btn-info" type="button" style="width:38px" data-toggle="modal" data-target="#create_new_customer"><i class="fas fa-plus"></i></button>
 									</div>
 								</div>
-								<div class="input-group" id="show_customer" style="display:none">
+								<div class="input-group" id="show_customer" style="display:none; padding-bottom:5px;">
 									<div class="input-group-prepend">
 									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Khách hàng</span>
 									</div>
@@ -233,6 +233,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<div class="input-group-append">
 									  <button class="btn btn-danger" type="button" style="width:38px" onclick="remove_customer()" ><i class="fas fa-times"></i></button>
 									</div>
+								</div>
+								<div class="input-group">
+									<div class="input-group-prepend">
+									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Bảng giá</span>
+									</div>
+									<select class="form-control" id="select_price_book">
+									</select>
 								</div>
 								<div style="display:block; z-index:10; position: absolute; left: 7.5px; right: 7.5px;">
 									<ul style="max-height: 60vh;margin:0px; overflow: auto; list-style-type:none; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index:10010; background-color: #ffff; padding: 0;"

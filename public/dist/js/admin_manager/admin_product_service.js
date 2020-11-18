@@ -28,16 +28,19 @@ $( document ).ready(()=>{
             $('#brand_show').show()
             $('.combo-off').show()
             $('.combo-on').hide()
+			$('#times_show').hide()
             $('#cost_price').prop("disabled", false);
 		}else if($('#type_product_service').val() == "service"){
             $('.combo-off').show()
             $('.combo-on').hide()
             $('#brand_show').hide()
+			$('#times_show').show()
             $('#cost_price').prop("disabled", false);
 		}else{
             get_product_service()
             $('.combo-off').hide()
             $('.combo-on').show()
+			$('#times_show').hide()
             $('#cost_price').prop("disabled", true);
         }
 	})
@@ -184,6 +187,7 @@ function create_new(){
             number_code: $('#create_new #number_code').val(),
             description: $('#create_new #description').val(),
             brand: $('#brand').val() == "" ? undefined : $('#brand').val(),
+			times: $('#type_product_service').val() == "service" ? $('#create_new #times_choose').val() : undefined,
             group: $('#group').val(),
             _csrf: $('#_csrf').val()
         }
@@ -401,6 +405,8 @@ function edit_data(id){
                     $('#edit_data #edit_cost_price').prop("disabled", false);
                     $('#edit_data #edit-stock').css("display", "none");
 					$('#edit_data #edit-history').css("display", "none");
+					$('#edit_data #edit_times_show').show();
+					$('#edit_data #edit_times_choose').val(data.data.times);
                     $('.combo-off').show()
                     $('.combo-on').hide()
                     $('#edit_brand_show').hide();
@@ -409,6 +415,7 @@ function edit_data(id){
                     $('#edit_data #edit-stock').css("display", "block");
 					$('#edit_data #edit-history').css("display", "block");
                     $('#edit_brand_show').show();
+					$('#edit_data #edit_times_show').hide();
                     $('.combo-off').show()
                     $('.combo-on').hide()
                     let html = `<div class="info-box">
@@ -467,6 +474,7 @@ function edit_data(id){
                 }else{
                     $('#edit_data #edit_cost_price').prop("disabled", true);
                     $('#edit_data #edit-stock').css("display", "none");
+					$('#edit_data #edit_times_show').hide();
 					$('#edit_data #edit-history').css("display", "none");
                     $('#edit_brand_show').hide();
                     get_product_service();
@@ -504,6 +512,7 @@ function update_data(){
             description: $('#edit_data #edit_description').val(),
             isSale: $('#edit_data #isSale').val(),
             brand: $('#edit_data #edit_brand').val() == "" ? undefined: $('#edit_data #edit_brand').val(),
+			times: $('#edit_type_product_service').val() == "service" ? $('#edit_data #edit_times_choose').val() : undefined,
             group: $('#edit_data #edit_group').val(),
             id: $('#edit_data #edit_id').val(),
             _csrf: $('#_csrf').val()
@@ -536,10 +545,10 @@ function update_data(){
                     showConfirmButton: false,
                     timer: 3000
                 }).then((result)=>{
-					get_data()
+					//get_data()
                 })
                 .catch(timer => {
-					get_data()
+					//get_data()
                 });    
             }else{
                 Swal.fire({

@@ -237,7 +237,7 @@ class Store_sale extends Controller{
 					list_item[i].combo.forEach(async item =>{
 						if(item.id.type == 'service'){
 							for(let k = 0, length = list_item[i].sell_quantity *item.quantity; k < length; k++){
-								list_service.push({service: mongoose.Types.ObjectId(item.id._id), name: list_item[i].name})
+								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: list_item[i].times, name: list_item[i].name})
 							}
 						}else{
 							let check_product = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:item.id._id}).populate({
@@ -398,6 +398,7 @@ class Store_sale extends Controller{
 					company: req.session.store.company,
 					customer: check_customer != false ? check_customer._id : undefined,
 					serial:serial_service,
+					times:list_service[t].times,
 					service:list_service[t].service,
 					invoice: invoice_sale._id
 				})

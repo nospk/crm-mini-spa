@@ -12,8 +12,8 @@ const Invoice_service_Schema = mongoose.Schema({
 	service:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'
 	},
-	isUsed:{
-		type: Boolean, default:false 
+	isActive:{
+		type: Boolean, default:true 
 	},
 	status:{
 		type: String, // done, cancel, not_used
@@ -23,7 +23,13 @@ const Invoice_service_Schema = mongoose.Schema({
 	},
 	invoice:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Invoice_sale'
-	}
+	},
+	times:{
+        type: Number
+    },
+    times_used:{
+        type: Number, default: 0
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Invoice_service', Invoice_service_Schema);

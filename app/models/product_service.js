@@ -56,6 +56,9 @@ const Product_Service_Schema = mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId, ref: 'Store_stocks',
 		_id: false
 	}],
+	times:{
+        type: Number
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product_services', Product_Service_Schema);

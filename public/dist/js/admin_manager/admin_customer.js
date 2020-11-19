@@ -182,6 +182,7 @@ function edit_data(id){
                                         <thead>
                                             <tr>
                                             <th>Ngày</th>
+											<th>Số Hóa đơn</th>
                                             <th>Mua hàng</th>
                                             <th>Nhân viên bán</th>
                                             <th>Số tiền</th>
@@ -192,9 +193,11 @@ function edit_data(id){
                 
                 history_sale.forEach((item, index)=>{
                     html_history_sale+=`<tr>
-                            <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td><td>`
+                            <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
+							<td>${item.serial}</td>
+							<td>`
                             history_sale[index].list_sale.forEach(sale=>{
-                            html_history_sale += `<p>${sale.id.name} (${sale.id.number_code}): ${sale.quantity}</p>`
+                            html_history_sale += `<p style="margin-bottom:0px;">${sale.id.name} (${sale.id.number_code}): ${sale.quantity}</p>`
                         })        
                     html_history_sale +=    `</td><td>${item.employees.name}</td>
                             <td>${convert_vnd(item.payment)}</td>
@@ -210,6 +213,8 @@ function edit_data(id){
                                         <tr>
                                         <th>Dịch vụ</th>
                                         <th>Mã</th>
+										<th>Số lần</th>
+										<th>Đã dùng</th>
                                         </tr>
                                     </thead>
                                     <tbody>`;
@@ -217,6 +222,8 @@ function edit_data(id){
                     html_service+=`<tr>
                             <td>${item.service.name}</td>
                             <td>${item.serial}</td>
+							<td>${item.times}</td>
+							<td>${item.times_used}</td>
                             </tr>`
                 })
                 html_service+=`</tbody>

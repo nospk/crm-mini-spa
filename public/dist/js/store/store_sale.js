@@ -196,6 +196,7 @@ function add_customer(customer){
 	$('#select_customer').val(customer[1]);
 	$('#find_customer').css('display', 'none');
 	$('#show_customer').css('display', 'flex');
+	get_customer(customer[1]);
 }
 function remove_customer(){
 	$('#customer').text("");
@@ -801,7 +802,76 @@ function check_out(){
 		}
 	})
 }
-
+function get_customer(id){
+	$.ajax({
+		url:'/store_sale/get_customer',
+		method:'post',
+        data: {id: id, _csrf: $('#_csrf').val()},
+        success: function(data){
+			if(data.status == 1){
+                let customer = data.data.customer;
+                let history_sale = data.data.history_sale;
+                let service = data.data.service;
+				$('#edit_customer #edit_name').val(customer.name);
+				$('#edit_customer #edit_birthday').val(customer.birthday);
+				$('#edit_customer #edit_note').val(customer.note),
+                $('#edit_customer #edit_phone').val(customer.phone);
+                $('#edit_customer #edit_gener').val(customer.gener);
+				$('#edit_customer #edit_address').val(customer.address);
+				$('#edit_customer #edit_id').val(customer._id);
+                $('#edit_customer').modal('show');
+                let html_history_sale = `<table class="table table-sm  table-hover text-nowrap" style="display: block; overflow-x: auto;">
+                                        <thead>
+                                            <tr>
+                                            <th width="20%">Ngày</th>
+											<th width="15%">Số Hóa đơn</th>
+                                            <th width="40%">Mua hàng</th>
+                                            <th width="20%">Nhân viên bán</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>`;
+                
+                history_sale.forEach((item, index)=>{
+                    html_history_sale+=`<tr>
+                            <td width="20%">${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
+							<td width="15%">${item.serial}</td>
+							<td width="40%">`
+                            history_sale[index].list_sale.forEach(sale=>{
+                            html_history_sale += `<p style="margin-bottom:0px;">${sale.id.name} (${sale.id.number_code}): ${sale.quantity}</p>`
+                        })        
+                    html_history_sale +=    `</td><td width="20%">${item.employees.name}</td>
+                            </tr>`
+                })
+                html_history_sale+=`</tbody>
+                            </table>
+                        `;
+                $('#edit-history-payment-tab').html(html_history_sale);
+                let html_service= `<table class="table table-sm  table-hover text-nowrap">
+                                    <thead>
+                                        <tr>
+                                        <th>Dịch vụ</th>
+                                        <th>Mã</th>
+										<th>Số lần</th>
+										<th>Đã dùng</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+                service.forEach((item)=>{
+                    html_service+=`<tr>
+                            <td>${item.service.name}</td>
+                            <td>${item.serial}</td>
+							<td>${item.times}</td>
+							<td>${item.times_used}</td>
+                            </tr>`
+                })
+                html_service+=`</tbody>
+                            </table>
+                        `;
+                $('#edit-service-tab').html(html_service);
+            }
+		}
+	})
+}
 function clear_data(tab_number){
 	tab_list.splice(tab_number,1);
 	$('#add_product').html("");

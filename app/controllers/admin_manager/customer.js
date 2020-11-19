@@ -73,7 +73,7 @@ class Admin_customer extends Controller{
 				populate: { path: 'Discount'},
 				select:'number_code'
 			});
-			let service = await Invoice_service.find({company: req.session.user.company._id, customer:req.body.id, isUsed: false}).populate({
+			let service = await Invoice_service.find({company: req.session.user.company._id, customer:req.body.id, isActive: true}).populate({
 				path: 'service',
 				populate: { path: 'Product_services'},
 				select:'name number_code'

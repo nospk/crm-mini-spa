@@ -128,6 +128,33 @@ class Store_sale extends Controller{
 			Store_sale.sendError(res, err, err.message);
 		}
 	}
+	static async get_customer(req, res){
+		try{
+			let customer = await Customer.findOne({company: req.session.store.company, _id: req.body.id});
+			let history_sale = await Invoice_sale.find({company: req.session.store.company, customer:req.body.id}).sort({createdAt: -1}).limit(20).populate({
+				path: 'list_sale.id',
+				populate: { path: 'Product_services'},
+				select:'name number_code'
+			}).populate({
+				path: 'employees',
+				populate: { path: 'Employees'},
+				select:'name'
+			}).populate({
+				path: 'discount',
+				populate: { path: 'Discount'},
+				select:'number_code'
+			});
+			let service = await Invoice_service.find({company: req.session.store.company, customer:req.body.id, isActive: true}).populate({
+				path: 'service',
+				populate: { path: 'Product_services'},
+				select:'name number_code'
+			})
+			Store_sale.sendData(res, {customer, history_sale, service});
+		}catch(err){
+			console.log(err.message)
+			Store_sale.sendError(res, err, err.message);
+		}
+	}
 	static async create_customer(req, res){
 		try{
 			let check = await Customer.findOne({company: req.session.store.company, phone:req.body.phone});
@@ -224,7 +251,7 @@ class Store_sale extends Controller{
 				}
 				if(list_item[i].type == 'service'){
 					for(let k = 0, length = list_item[i].sell_quantity; k < length; k++){
-						list_service.push({service: mongoose.Types.ObjectId(list_item[i].id), name: list_item[i].name})
+						list_service.push({service: mongoose.Types.ObjectId(list_item[i].id), times: list_item[i].times, name: list_item[i].name})
 					}
 				}
 				if(list_item[i].type == 'product'){
@@ -237,7 +264,7 @@ class Store_sale extends Controller{
 					list_item[i].combo.forEach(async item =>{
 						if(item.id.type == 'service'){
 							for(let k = 0, length = list_item[i].sell_quantity *item.quantity; k < length; k++){
-								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: list_item[i].times, name: list_item[i].name})
+								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: item.id.times, name: item.id.name})
 							}
 						}else{
 							let check_product = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:item.id._id}).populate({
@@ -405,6 +432,7 @@ class Store_sale extends Controller{
 				await invoice_service.save()
 				list_service[t].serial = serial_service
 			}
+			console.log(list_service)
 			invoice_sale.list_service = list_service
 			await invoice_sale.save()
 			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount,payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)

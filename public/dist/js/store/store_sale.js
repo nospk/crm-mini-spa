@@ -5,6 +5,7 @@ let show_product = $('#search_product');
 let show_customer = $('#search_customer');
 let tab_list = [];
 let tab_number = 0;
+let employees;
 //on keyup, start the countdown
 show_product.on('keyup', function () {
 	clearTimeout(typingTimer_product);
@@ -819,7 +820,6 @@ function get_customer(id){
                 $('#edit_customer #edit_gener').val(customer.gener);
 				$('#edit_customer #edit_address').val(customer.address);
 				$('#edit_customer #edit_id').val(customer._id);
-                $('#edit_customer').modal('show');
                 let html_history_sale = `<table class="table table-sm  table-hover text-nowrap" style="display: block; overflow-x: auto;">
                                         <thead>
                                             <tr>
@@ -853,6 +853,7 @@ function get_customer(id){
                                         <th>Mã</th>
 										<th>Số lần</th>
 										<th>Đã dùng</th>
+										<th></th>
                                         </tr>
                                     </thead>
                                     <tbody>`;
@@ -862,6 +863,7 @@ function get_customer(id){
                             <td>${item.serial}</td>
 							<td>${item.times}</td>
 							<td>${item.times_used}</td>
+							<td><button type="button" class="btn btn-warning" onclick="use_service('${item._id}','${item.service.name}','${customer._id}')">Sử dụng</button></td>
                             </tr>`
                 })
                 html_service+=`</tbody>
@@ -871,6 +873,43 @@ function get_customer(id){
             }
 		}
 	})
+}
+function use_service(service,service_name, customer){
+	Swal.fire({
+        title: `Bạn xác nhận sử dụng đúng dịch vụ: [${service_name}] ?`,
+        text: "Sau khi sử dụng sẽ không hoàn lại được ?",
+	    input: 'select',
+	    inputOptions: {
+			'SRB': 'Serbia',
+			'UKR': 'Ukraine',
+			'HRV': 'Croatia'
+	    },
+	    inputPlaceholder: 'Chọn nhân viên thực hiện',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+		cancelButtonText: 'Không',
+        confirmButtonText: 'Sử dụng',
+		inputValidator: function (value) {
+			console.log(value)
+			return new Promise(function (resolve, reject) {
+			  if (value != '') {
+				resolve()
+			  } else {
+				resolve('Bạn chưa chọn nhân viên thực hiện dịch vụ')
+			  }
+			})
+		  }
+	}).then(function (result) {
+        $.ajax({
+			url:'/store_sale/use_service',
+            method:'post',
+            data: {employees: result, service: service, customer:customer, _csrf: $('#_csrf').val()},
+            success: function(data){
+				get_customer(customer)
+                }
+        })
+    });
 }
 function clear_data(tab_number){
 	tab_list.splice(tab_number,1);

@@ -56,6 +56,9 @@ const Product_Service_Schema = mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId, ref: 'Store_stocks',
 		_id: false
 	}],
+	times_service:{
+		type: Number, required: true
+	},
 	times:{
         type: Number
     }

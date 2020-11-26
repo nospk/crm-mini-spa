@@ -166,7 +166,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									type="button"><i class="fas fa-plus"></i></button>
 							</div>
 						</div>
-						<div class="input-group" id="times_show" style="display:none;">
+						<div class="input-group times_show" style="display:none;">
 							<div class="input-group-prepend">
 								<div class="input-group-text">Số lần dịch vụ</div>
 							</div>
@@ -183,6 +183,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<option value="10">10</option>
 								<option value="99999">Không giới hạn</option>
 							</select>
+						</div>
+						<div class="input-group times_show" style="display:none;">
+							<div class="input-group-prepend">
+								<div class="input-group-text">Số phút làm dịch vụ</div>
+							</div>
+							<input type="number" step="1" class="form-control" id="times_service">
 						</div>
 						<div class="input-group combo-off" id="brand_show">
 							<div class="input-group-prepend">
@@ -332,7 +338,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											data-target="#new_brand" type="button"><i class="fas fa-plus"></i></button>
 									</div>
 								</div>
-								<div class="input-group" id="edit_times_show" style="display:none;">
+								<div class="input-group edit_times_show" style="display:none;">
 									<div class="input-group-prepend">
 										<div class="input-group-text">Số lần dịch vụ</div>
 									</div>
@@ -349,6 +355,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<option value="10">10</option>
 										<option value="99999">Không giới hạn</option>
 									</select>
+								</div>
+								<div class="input-group edit_times_show" style="display:none;">
+									<div class="input-group-prepend">
+										<div class="input-group-text">Số phút làm dịch vụ</div>
+									</div>
+									<input type="number" step="1" class="form-control" id="edit_times_service">
 								</div>
 								<div class="input-group combo-on" style="display: none;">
 									<div class="input-group-prepend">

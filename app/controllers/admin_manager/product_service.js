@@ -123,6 +123,7 @@ class Admin_product_service extends Controller{
 					cost_price: req.body.cost_price,
 					price: req.body.price,
 					times: req.body.times,
+					times_service: req.body.times_service,
 					description: req.body.description,
 					number_code: req.body.number_code,
 					company: req.session.user.company._id,
@@ -172,6 +173,7 @@ class Admin_product_service extends Controller{
 					}
 					if(find.type == "service"){
 						find.times = req.body.times;
+						find.times_service = req.body.times_service;
 					}
 					
 					await find.save();

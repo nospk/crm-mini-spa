@@ -190,6 +190,19 @@ class Store_sale extends Controller{
 		}
 		
 	}
+	static async use_service(req,res){
+		try{
+			let check = await Invoice_service.findOneAndUpdate({company:req.session.store.company, _id: req.body.service, customer: req.body.customer, isActive: true},{ $inc: { times_used: 1} },{new: true});
+			if(check.times_used == check.times){
+				check.isActive = false;
+			}
+			await check.save()
+			Store_sale.sendMessage(res, "Đã thực hiện thành công");
+		}catch(err){
+			console.log(err)
+			Store_sale.sendError(res, err, err.message);
+		}
+	}
 	static async check_out(req, res){
 		try{
 			//check price_book 
@@ -432,7 +445,6 @@ class Store_sale extends Controller{
 				await invoice_service.save()
 				list_service[t].serial = serial_service
 			}
-			console.log(list_service)
 			invoice_sale.list_service = list_service
 			await invoice_sale.save()
 			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount,payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)

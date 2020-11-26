@@ -15,15 +15,12 @@ const Invoice_service_Schema = mongoose.Schema({
 	isActive:{
 		type: Boolean, default:true 
 	},
-	status:{
-		type: String, // done, cancel, not_used
-	},
-	who_did:{
-		type: mongoose.Schema.Types.ObjectId, ref:'Employees'
-	},
 	invoice:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Invoice_sale'
 	},
+	log_service:[{
+		type: mongoose.Schema.Types.ObjectId, ref:'Log_Service'
+	}],
 	times:{
         type: Number
     },

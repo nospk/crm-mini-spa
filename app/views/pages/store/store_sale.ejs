@@ -184,7 +184,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<i class="fas fa-bars"></i>
 								  </button>
 								  <div class="dropdown-menu dropdown-menu-right">
-									<button class="dropdown-item" type="button"><i class="fas fa-file-invoice-dollar"></i> Báo cáo</button>
+									<button class="dropdown-item" data-toggle="modal" data-target="#report" type="button"><i class="fas fa-file-invoice-dollar"></i> Báo cáo</button>
 									<button class="dropdown-item" onclick="location.href='/logout'" type="button"><i class="fas fa-sign-out-alt"></i> Thoát</button>
 								  </div>
 								</div>
@@ -410,6 +410,46 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		  </div>
 		</div>
 		<!-- End Modal pay cash -->
+		<!-- Modal report -->
+		<div class="modal fade" id="report" tabindex="-1" role="dialog" aria-labelledby="report" data-backdrop="static">
+		  <div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title">Báo cáo bán hàng</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</button>
+			  </div>
+			  <div class="modal-body">
+				<ul class="nav nav-tabs" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active" data-toggle="pill"
+							href="#report-day" role="tab" data-toggle="tab"
+							aria-selected="true">Báo cáo ngày</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-toggle="pill" href="#report-month" role="tab"
+							data-toggle="tab" aria-selected="false">Báo cáo tháng</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane fade active show" id="report-day" role="tabpanel"
+										aria-labelledby="edit-information">
+
+					</div>
+					<div class="tab-pane fade" id="report-month" role="tabpanel" aria-labelledby="report-month">
+
+					</div>
+				</div>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+				<button type="button" class="btn btn-primary" onclick="pay_cash();" data-dismiss="modal">Nhập</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		<!-- End Modal report -->
 		<!-- Modal Show Customer -->
 		<div class="modal fade" id="edit_customer" tabindex="-1" role="dialog" aria-labelledby="edit_customer">
 		  <div class="modal-dialog modal-lg" role="document">

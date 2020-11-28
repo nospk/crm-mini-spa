@@ -57,7 +57,7 @@ const Product_Service_Schema = mongoose.Schema({
 		_id: false
 	}],
 	times_service:{
-		type: Number, required: true
+		type: Number
 	},
 	times:{
         type: Number

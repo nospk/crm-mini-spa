@@ -5,7 +5,7 @@ let show_product = $('#search_product');
 let show_customer = $('#search_customer');
 let tab_list = [];
 let tab_number = 0;
-let employees;
+let employees = {};
 //on keyup, start the countdown
 show_product.on('keyup', function () {
 	clearTimeout(typingTimer_product);
@@ -104,6 +104,16 @@ $( document ).ready(()=>{
 			$('#discount_id').val("")
 			$('#number_code_discount').prop("disabled", true);
 		}
+	});
+	$('#report').on('shown.bs.modal', function () {
+		 $.ajax({
+			url:'/store_sale/report',
+            method:'post',
+            data: {_csrf: $('#_csrf').val()},
+            success: function(data){
+				
+            }
+        })
 	});
 })
 function get_price_book(){
@@ -424,7 +434,8 @@ function get_employees(){
         success: function(data){
             if(data.status == 1){
 				let html_employees = '';
-                data.data.forEach(item => {
+                data.data.forEach((item,index) => {
+					employees = Object.assign(employees, {[item._id]:`${item.name}`})
                     html_employees += `<option value="${item._id}">${item.name}</option>`
                 })
 				$('#select_employees').html(html_employees)
@@ -863,7 +874,7 @@ function get_customer(id){
                             <td>${item.serial}</td>
 							<td>${item.times}</td>
 							<td>${item.times_used}</td>
-							<td><button type="button" class="btn btn-warning" onclick="use_service('${item._id}','${item.service.name}','${customer._id}')">Sử dụng</button></td>
+							<td><button type="button" class="btn btn-warning" onclick="use_service('${item._id}','${item.service.name}','${item.service._id}','${customer._id}')">Sử dụng</button></td>
                             </tr>`
                 })
                 html_service+=`</tbody>
@@ -874,16 +885,12 @@ function get_customer(id){
 		}
 	})
 }
-function use_service(service,service_name, customer){
+function use_service(invoice,service_name, service, customer){
 	Swal.fire({
         title: `Bạn xác nhận sử dụng đúng dịch vụ: [${service_name}] ?`,
         text: "Sau khi sử dụng sẽ không hoàn lại được ?",
 	    input: 'select',
-	    inputOptions: {
-			'SRB': 'Serbia',
-			'UKR': 'Ukraine',
-			'HRV': 'Croatia'
-	    },
+	    inputOptions: employees,
 	    inputPlaceholder: 'Chọn nhân viên thực hiện',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -891,7 +898,6 @@ function use_service(service,service_name, customer){
 		cancelButtonText: 'Không',
         confirmButtonText: 'Sử dụng',
 		inputValidator: function (value) {
-			console.log(value)
 			return new Promise(function (resolve, reject) {
 			  if (value != '') {
 				resolve()
@@ -904,7 +910,7 @@ function use_service(service,service_name, customer){
         $.ajax({
 			url:'/store_sale/use_service',
             method:'post',
-            data: {employees: result, service: service, customer:customer, _csrf: $('#_csrf').val()},
+            data: {employees: result.value, invoice: invoice, service: service, customer:customer, _csrf: $('#_csrf').val()},
             success: function(data){
 				get_customer(customer)
                 }

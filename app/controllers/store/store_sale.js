@@ -12,6 +12,7 @@ const Invoice_product_store = require('../../models/invoice_product_store');
 const Invoice_service = require('../../models/invoice_service');
 const Cash_book = require('../../models/cash_book');
 const Price_book = require('../../models/price_book');
+const Log_service = require('../../models/log_service');
 const check_price_book = (item, price_book) => {
 	if(!item.price_book){
 		return item.price
@@ -192,12 +193,65 @@ class Store_sale extends Controller{
 	}
 	static async use_service(req,res){
 		try{
-			let check = await Invoice_service.findOneAndUpdate({company:req.session.store.company, _id: req.body.service, customer: req.body.customer, isActive: true},{ $inc: { times_used: 1} },{new: true});
-			if(check.times_used == check.times){
-				check.isActive = false;
+			let service =  await Product_service.findOne({company :req.session.store.company, _id: req.body.service})
+			let log = Log_service({
+				company:req.session.store.company,
+				customer:req.body.customer,
+				service:req.body.service,
+				times_service: service.times_service,
+				store:req.session.store._id,
+				employees: req.body.employees
+			})
+			let invoice = await Invoice_service.findOneAndUpdate({company:req.session.store.company, _id: req.body.invoice, customer: req.body.customer, isActive: true},{ $inc: { times_used: 1} },{new: true});
+			if(invoice.times_used == invoice.times){
+				invoice.isActive = false;
 			}
-			await check.save()
+			await log.save()
+			invoice.log_service.unshift(log._id)
+			await invoice.save()
 			Store_sale.sendMessage(res, "Đã thực hiện thành công");
+		}catch(err){
+			console.log(err)
+			Store_sale.sendError(res, err, err.message);
+		}
+	}
+	static async report(req, res){
+		try{
+			let now = new Date();
+			let start_day = new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0);
+			let end_day = new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,59,59);
+			let report_day = await Invoice_sale.aggregate([
+				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company),store: mongoose.Types.ObjectId(req.session.store._id), createdAt: {$gte: start_day, $lt: end_day}}},
+				{ $group : {
+					_id: null,
+					totalAmount: { $sum: "$payment" },
+					count: { $sum: 1 } // for no. of documents count
+					}
+				}
+			])
+			let employees = await Employees.aggregate([
+				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},
+				{ $lookup:
+					 {
+					   from: "invoice_sale",
+					   let: { "pid" : "$_id"},
+					   pipeline: [
+							{ addFields: { "employees": { "$toObjectId": "$employees" }}},
+							{ $match:
+								 { $expr:
+									{ $and:
+									   [
+										 { $eq: [ "$employees",  "$$pid" ] },
+									   ]
+									}
+								 }
+							  }
+						],
+						as: "sale_in_day"
+						}
+				 }
+			])
+			Store_sale.sendData(res, {report_day, employees});
 		}catch(err){
 			console.log(err)
 			Store_sale.sendError(res, err, err.message);
@@ -257,7 +311,8 @@ class Store_sale extends Controller{
 					payment += check_price * list_item[i].sell_quantity
 					list_sale.push({
 						id: list_item[i].id, 
-						quantity: list_item[i].sell_quantity, 
+						quantity: list_item[i].sell_quantity,
+						type: list_item[i].type,
 						price: list_item[i].price,
 						price_sale: check_price != list_item[i].price ? check_price : undefined,
 					})
@@ -296,7 +351,10 @@ class Store_sale extends Controller{
 					})
 				}
 			}
-
+			//check if have service but not customer
+			if(list_service != false && req.body.customer == false){
+				return Store_sale.sendError(res, "Để lưu dịch vụ cần phải có thông tin khách hàng", "Vui chọn khách hàng hoặc tạo khách hàng mới");
+			}
 			//check discount
 			let money_discount = 0;
 			let check_discount

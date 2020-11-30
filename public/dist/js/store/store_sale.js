@@ -119,7 +119,7 @@ $( document ).ready(()=>{
 				}
 				let html_report_day_employees = "";
 				data.data.employees.forEach(item => {
-					html_report_day_employees += `<li class="list-group-item">${item.name}: <span class="float-right">${convert_vnd(item.money_sale)}</span></li>`
+					html_report_day_employees += `<li class="list-group-item">${item.name} <span class="float-right">${convert_vnd(item.money_sale)}</span></li>`
 				})
 				$('#report_day_employees').html(html_report_day_employees)
             }

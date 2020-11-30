@@ -433,9 +433,56 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					</li>
 				</ul>
 				<div class="tab-content">
-					<div class="tab-pane fade active show" id="report-day" role="tabpanel"
-										aria-labelledby="edit-information">
+					<div class="tab-pane fade active show" id="report-day" role="tabpanel">
+						<div class="row" >
+						  <div class="col-lg-3 col-6" style="padding-right:1px">
+							<!-- small box -->
+							<div class="small-box bg-info">
+							  <div class="inner">
+								<h3 id="total_orders"></h3>
 
+								<p>Tổng số đơn hàng</p>
+							  </div>
+							</div>
+						  </div>
+						  <!-- ./col -->
+						  <div class="col-lg-3 col-6" style="padding:0px 1px 0px 1px">
+							<!-- small box -->
+							<div class="small-box bg-success">
+							  <div class="inner">
+								<h3 id="total_money_sales"></h3>
+
+								<p>Tổng số tiền bán hàng</p>
+							  </div>
+							</div>
+						  </div>
+						  <!-- ./col -->
+						  <div class="col-lg-3 col-6" style="padding:0px 1px 0px 1px">
+							<!-- small box -->
+							<div class="small-box bg-warning">
+							  <div class="inner">
+								<h3 id="money_sales_cash"></h3>
+
+								<p>Tiền mặt</p>
+							  </div>
+							</div>
+						  </div>
+						  <div class="col-lg-3 col-6" style="padding-left:1px">
+							<!-- small box -->
+							<div class="small-box bg-warning">
+							  <div class="inner">
+								<h3 id="money_sales_card"></h3>
+								<p>Ngân hàng</p>
+							  </div>
+							</div>
+						  </div>
+						</div>
+						<h5 class="font-weight-bold">Nhân viên bán</h5>
+						<div class="card">
+						  <ul class="list-group list-group-flush" id="report_day_employees">
+
+						  </ul>
+						</div>
 					</div>
 					<div class="tab-pane fade" id="report-month" role="tabpanel" aria-labelledby="report-month">
 
@@ -444,7 +491,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			  </div>
 			  <div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-				<button type="button" class="btn btn-primary" onclick="pay_cash();" data-dismiss="modal">Nhập</button>
 			  </div>
 			</div>
 		  </div>

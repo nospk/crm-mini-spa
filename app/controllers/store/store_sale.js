@@ -233,25 +233,38 @@ class Store_sale extends Controller{
 				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},
 				{ $lookup:
 					 {
-					   from: "invoice_sale",
-					   let: { "pid" : "$_id"},
+					   from: Invoice_sale.collection.name,
+					   let: { "pid" : "$_id", "start_day":start_day,"end_day":end_day},
 					   pipeline: [
-							{ addFields: { "employees": { "$toObjectId": "$employees" }}},
 							{ $match:
 								 { $expr:
 									{ $and:
 									   [
 										 { $eq: [ "$employees",  "$$pid" ] },
+										 { $gte:[ "$createdAt", "$$start_day"]},
+										 { $lt: [ "$createdAt", "$$end_day"]},
 									   ]
 									}
-								 }
+								 }	
 							  }
 						],
 						as: "sale_in_day"
 						}
-				 }
+				},
+				{ $unwind:"$sale_in_day"},
+				{ $group : {_id:"$_id", name:{ "$first":"$name"}, money_sale:{$sum:"$sale_in_day.payment"}}}
 			])
-			Store_sale.sendData(res, {report_day, employees});
+			let cash_book = await Cash_book.find({company: mongoose.Types.ObjectId(req.session.store.company),store: mongoose.Types.ObjectId(req.session.store._id), type: "income", createdAt: {$gte: start_day, $lt: end_day}})
+			let money_sales_card = 0;
+			let money_sales_cash = 0;
+			cash_book.forEach(item=>{
+				if(item.type_payment == "card"){
+					money_sales_card = money_sales_card+item.money
+				}else{
+					money_sales_cash = money_sales_cash+item.money
+				}
+			})
+			Store_sale.sendData(res, {report_day, employees, money_sales_card, money_sales_cash});
 		}catch(err){
 			console.log(err)
 			Store_sale.sendError(res, err, err.message);

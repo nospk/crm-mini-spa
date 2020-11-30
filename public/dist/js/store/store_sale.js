@@ -111,7 +111,17 @@ $( document ).ready(()=>{
             method:'post',
             data: {_csrf: $('#_csrf').val()},
             success: function(data){
-				
+				if(data.status == 1){
+					$('#total_orders').html(data.data.report_day[0].count)
+					$('#total_money_sales').html(convert_vnd(data.data.report_day[0].totalAmount))
+					$('#money_sales_cash').html(convert_vnd(data.data.money_sales_cash))
+					$('#money_sales_card').html(convert_vnd(data.data.money_sales_card))
+				}
+				let html_report_day_employees = "";
+				data.data.employees.forEach(item => {
+					html_report_day_employees += `<li class="list-group-item">${item.name}: <span class="float-right">${convert_vnd(item.money_sale)}</span></li>`
+				})
+				$('#report_day_employees').html(html_report_day_employees)
             }
         })
 	});

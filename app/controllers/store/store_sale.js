@@ -220,6 +220,8 @@ class Store_sale extends Controller{
 			let now = new Date();
 			let start_day = new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0);
 			let end_day = new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,59,59);
+			let start_month = new Date(now.getFullYear(),now.getMonth(),1,0,0,0);
+			let end_month = new Date(now.getFullYear(),now.getMonth()+1,1,0,0,0);
 			let report_day = await Invoice_sale.aggregate([
 				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company),store: mongoose.Types.ObjectId(req.session.store._id), createdAt: {$gte: start_day, $lt: end_day}}},
 				{ $group : {
@@ -228,6 +230,65 @@ class Store_sale extends Controller{
 					count: { $sum: 1 } // for no. of documents count
 					}
 				}
+			])
+			let service_day = await await Log_service.aggregate([
+				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company),store: mongoose.Types.ObjectId(req.session.store._id), createdAt: {$gte: start_day, $lt: end_day}}},
+				{ $group : {
+					_id: null,
+					count: { $sum: 1 } // for no. of documents count
+					}
+				}
+			])
+			let report_service_month = await Employees.aggregate([
+				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},
+				{ $lookup:
+					 {
+					   from: Log_service.collection.name,
+					   let: { "pid" : "$_id", "start_month":start_month,"end_month":end_month},
+					   pipeline: [
+							{ $match:
+								 { $expr:
+									{ $and:
+									   [
+										 { $eq: [ "$employees",  "$$pid" ] },
+										 { $gte:[ "$createdAt", "$$start_month"]},
+										 { $lt: [ "$createdAt", "$$end_month"]},
+									   ]
+									}
+								 }	
+							  }
+						],
+						as: "service_in_month"
+					 }
+				},
+				
+				{ $unwind:"$service_in_month"},
+				{ $group : {_id:"$_id", name:{ "$first":"$name"}, minutes_service:{$sum:"$service_in_month.times_service"}, service:{ $push:"$service_in_month"}}}
+			])
+			let report_sale_month = await Employees.aggregate([
+				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},
+				{ $lookup:
+					 {
+					   from: Invoice_sale.collection.name,
+					   let: { "pid" : "$_id", "start_month":start_month,"end_month":end_month},
+					   pipeline: [
+							{ $match:
+								 { $expr:
+									{ $and:
+									   [
+										 { $eq: [ "$employees",  "$$pid" ] },
+										 { $gte:[ "$createdAt", "$$start_month"]},
+										 { $lt: [ "$createdAt", "$$end_month"]},
+									   ]
+									}
+								 }	
+							  }
+						],
+						as: "sale_in_month"
+					 }
+				},
+				{ $unwind:"$sale_in_month"},
+				{ $group : {_id:"$_id", name:{ "$first":"$name"}, money_sale:{$sum:"$sale_in_month.payment"}}}
 			])
 			let employees = await Employees.aggregate([
 				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},
@@ -264,7 +325,7 @@ class Store_sale extends Controller{
 					money_sales_cash = money_sales_cash+item.money
 				}
 			})
-			Store_sale.sendData(res, {report_day, employees, money_sales_card, money_sales_cash});
+			Store_sale.sendData(res, {report_day, service_day, report_sale_month, report_service_month, employees, money_sales_card, money_sales_cash});
 		}catch(err){
 			console.log(err)
 			Store_sale.sendError(res, err, err.message);

@@ -434,8 +434,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane fade active show" id="report-day" role="tabpanel">
-						<div class="row" >
-						  <div class="col-lg-3 col-6" style="padding-right:1px">
+						<div class="row" style="margin-top: 15px" >
+						  <div class="col-lg-3 col-12">
 							<!-- small box -->
 							<div class="small-box bg-info">
 							  <div class="inner">
@@ -445,19 +445,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							  </div>
 							</div>
 						  </div>
+						  <div class="col-lg-3 col-12">
+							<!-- small box -->
+							<div class="small-box bg-info">
+							  <div class="inner">
+								<h3 id="total_services"></h3>
+
+								<p>Số dịch vụ trong ngày</p>
+							  </div>
+							</div>
+						  </div>
 						  <!-- ./col -->
-						  <div class="col-lg-3 col-6" style="padding:0px 1px 0px 1px">
+						  <div class="col-lg-6 col-12">
 							<!-- small box -->
 							<div class="small-box bg-success">
 							  <div class="inner">
-								<h3 id="total_money_sales"></h3>
+								<h3 style="font-size:25.6px" id="total_money_sales"></h3>
 
 								<p>Tổng số tiền bán hàng</p>
 							  </div>
 							</div>
 						  </div>
 						  <!-- ./col -->
-						  <div class="col-lg-3 col-6" style="padding:0px 1px 0px 1px">
+						  <div class="col-lg-6 col-12">
 							<!-- small box -->
 							<div class="small-box bg-warning">
 							  <div class="inner">
@@ -467,7 +477,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							  </div>
 							</div>
 						  </div>
-						  <div class="col-lg-3 col-6" style="padding-left:1px">
+						  <div class="col-lg-6 col-12">
 							<!-- small box -->
 							<div class="small-box bg-warning">
 							  <div class="inner">
@@ -477,7 +487,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							</div>
 						  </div>
 						</div>
-						<h5 class="font-weight-bold">Nhân viên bán</h5>
 						<div class="card">
 						  <ul class="list-group list-group-flush" id="report_day_employees">
 
@@ -485,7 +494,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						</div>
 					</div>
 					<div class="tab-pane fade" id="report-month" role="tabpanel" aria-labelledby="report-month">
+						<div style="margin-top: 15px">
+							<h5 >Bán hàng</h5>
+							<div class="card">
+							  <ul class="list-group list-group-flush" id="report_sale_month">
 
+							  </ul>
+							</div>
+						</div>
+						<div style="margin-top: 15px">
+							<h5>Dịch vụ</h5>
+							<div class="card">
+							  <ul class="list-group list-group-flush" id="report_service_month">
+
+							  </ul>
+							</div>
+						</div>
 					</div>
 				</div>
 			  </div>

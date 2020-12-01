@@ -112,16 +112,30 @@ $( document ).ready(()=>{
             data: {_csrf: $('#_csrf').val()},
             success: function(data){
 				if(data.status == 1){
-					$('#total_orders').html(data.data.report_day[0].count)
-					$('#total_money_sales').html(convert_vnd(data.data.report_day[0].totalAmount))
-					$('#money_sales_cash').html(convert_vnd(data.data.money_sales_cash))
-					$('#money_sales_card').html(convert_vnd(data.data.money_sales_card))
+					$('#total_orders').html(data.data.report_day[0] ? data.data.report_day[0].count : 0)
+					$('#total_services').html(data.data.service_day[0] ? data.data.service_day[0].count : 0)
+					$('#total_money_sales').html(convert_vnd(data.data.report_day[0] ? data.data.report_day[0].totalAmount : 0))
+					$('#money_sales_cash').html(convert_vnd(data.data.money_sales_cash || 0))
+					$('#money_sales_card').html(convert_vnd(data.data.money_sales_card || 0))
 				}
 				let html_report_day_employees = "";
 				data.data.employees.forEach(item => {
 					html_report_day_employees += `<li class="list-group-item">${item.name} <span class="float-right">${convert_vnd(item.money_sale)}</span></li>`
 				})
 				$('#report_day_employees').html(html_report_day_employees)
+				let html_report_sale_month = "";
+				data.data.report_sale_month.forEach(item => {
+					html_report_sale_month += `<li class="list-group-item">${item.name} <span class="float-right">${convert_vnd(item.money_sale)}</span></li>`
+				})
+				$('#report_sale_month').html(html_report_sale_month)
+				let html_report_service_month = "";
+				data.data.report_service_month.forEach(item => {
+					html_report_service_month += `<li class="list-group-item">${item.name}</span>
+											<br>Số lần dịch vụ<span class="float-right">${item.service.length}</span>
+											<br>Số phút dịch vụ <span class="float-right">${item.minutes_service}</span>
+					</li>`
+				})
+				$('#report_service_month').html(html_report_service_month)
             }
         })
 	});

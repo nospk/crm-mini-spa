@@ -69,7 +69,7 @@ class Store_sale extends Controller{
 	static async get_employees(req, res){
         try{
 			let match = {
-				$and: [ {company :req.session.store.company, isActive: true} ] 
+				$and: [ {company :req.session.store.company, store: req.session.store._id, isActive: true} ] 
 			}
 			let employees = await Employees.find(match).sort({createdAt: -1})
 			Store_sale.sendData(res, employees);
@@ -203,7 +203,7 @@ class Store_sale extends Controller{
 				employees: req.body.employees
 			})
 			let invoice = await Invoice_service.findOneAndUpdate({company:req.session.store.company, _id: req.body.invoice, customer: req.body.customer, isActive: true},{ $inc: { times_used: 1} },{new: true});
-			if(invoice.times_used == invoice.times){
+			if(invoice.times_used >= invoice.times){
 				invoice.isActive = false;
 			}
 			await log.save()
@@ -223,7 +223,7 @@ class Store_sale extends Controller{
 			let start_month = new Date(now.getFullYear(),now.getMonth(),1,0,0,0);
 			let end_month = new Date(now.getFullYear(),now.getMonth()+1,1,0,0,0);
 			let report_day = await Invoice_sale.aggregate([
-				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company),store: mongoose.Types.ObjectId(req.session.store._id), createdAt: {$gte: start_day, $lt: end_day}}},
+				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company), isActive:true,store: mongoose.Types.ObjectId(req.session.store._id), createdAt: {$gte: start_day, $lt: end_day}}},
 				{ $group : {
 					_id: null,
 					totalAmount: { $sum: "$payment" },
@@ -232,7 +232,7 @@ class Store_sale extends Controller{
 				}
 			])
 			let service_day = await await Log_service.aggregate([
-				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company),store: mongoose.Types.ObjectId(req.session.store._id), createdAt: {$gte: start_day, $lt: end_day}}},
+				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company), isActive:true,store: mongoose.Types.ObjectId(req.session.store._id), createdAt: {$gte: start_day, $lt: end_day}}},
 				{ $group : {
 					_id: null,
 					count: { $sum: 1 } // for no. of documents count
@@ -251,6 +251,7 @@ class Store_sale extends Controller{
 									{ $and:
 									   [
 										 { $eq: [ "$employees",  "$$pid" ] },
+										 { $eq: [ "$isActive",  true ] },
 										 { $gte:[ "$createdAt", "$$start_month"]},
 										 { $lt: [ "$createdAt", "$$end_month"]},
 									   ]
@@ -277,6 +278,7 @@ class Store_sale extends Controller{
 									{ $and:
 									   [
 										 { $eq: [ "$employees",  "$$pid" ] },
+										 { $eq: [ "$isActive",  true ] },
 										 { $gte:[ "$createdAt", "$$start_month"]},
 										 { $lt: [ "$createdAt", "$$end_month"]},
 									   ]
@@ -302,6 +304,7 @@ class Store_sale extends Controller{
 									{ $and:
 									   [
 										 { $eq: [ "$employees",  "$$pid" ] },
+										 { $eq: [ "$isActive",  true ] },
 										 { $gte:[ "$createdAt", "$$start_day"]},
 										 { $lt: [ "$createdAt", "$$end_day"]},
 									   ]
@@ -315,7 +318,7 @@ class Store_sale extends Controller{
 				{ $unwind:"$sale_in_day"},
 				{ $group : {_id:"$_id", name:{ "$first":"$name"}, money_sale:{$sum:"$sale_in_day.payment"}}}
 			])
-			let cash_book = await Cash_book.find({company: mongoose.Types.ObjectId(req.session.store.company),store: mongoose.Types.ObjectId(req.session.store._id), type: "income", createdAt: {$gte: start_day, $lt: end_day}})
+			let cash_book = await Cash_book.find({company: mongoose.Types.ObjectId(req.session.store.company), isActive:true,store: mongoose.Types.ObjectId(req.session.store._id), type: "income", createdAt: {$gte: start_day, $lt: end_day}})
 			let money_sales_card = 0;
 			let money_sales_cash = 0;
 			cash_book.forEach(item=>{

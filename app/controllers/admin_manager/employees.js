@@ -1,6 +1,7 @@
 const Controller = require('../../../core/controller');
 const Employees = require('../../models/employees');
 const mongoose = require('mongoose');
+const Store = require('../../models/store');
 class Admin_employees extends Controller{
     static show(req, res){
         Admin_employees.setLocalValue(req,res);
@@ -15,6 +16,8 @@ class Admin_employees extends Controller{
 			}else{
 				let new_employees = Employees({
 					name: req.body.name,
+					gener: req.body.gener,
+					store: req.body.store != false ? req.body.store : undefined,
 					birthday: req.body.birthday,
 					address: req.body.address,
 					number_code: req.body.number_code,
@@ -29,6 +32,15 @@ class Admin_employees extends Controller{
 			Admin_employees.sendError(res, err, err.message);
 		}
 		
+	}
+	static async get_store(req, res){
+		try{
+			let stores = await Store.find({company: req.session.user.company._id});
+			Admin_employees.sendData(res, stores);
+		}catch(err){
+			console.log(err)
+			Admin_employees.sendError(res, err, err.message);
+		}
 	}
 	static async get_data(req, res){
 		try{
@@ -73,6 +85,8 @@ class Admin_employees extends Controller{
 				}else{
 					find.name = req.body.name;
 					find.birthday = req.body.birthday;
+					find.gener = req.body.gener;
+					find.store = req.body.store != false ? req.body.store : undefined;
 					find.address = req.body.address;
 					find.identity_number = req.body.identity_number;
 					find.number_code = req.body.number_code;

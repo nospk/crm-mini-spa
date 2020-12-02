@@ -42,6 +42,9 @@ const Cash_book_Schema = mongoose.Schema({
 	store:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Stores' 
 	},
+	isActive:{
+		type: Boolean, default:true 
+	}
 }, { timestamps: true });
 
 module.exports = mongoose.model('Cash_book', Cash_book_Schema);

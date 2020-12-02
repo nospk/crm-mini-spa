@@ -120,17 +120,17 @@ $( document ).ready(()=>{
 				}
 				let html_report_day_employees = "";
 				data.data.employees.forEach(item => {
-					html_report_day_employees += `<li class="list-group-item">${item.name} <span class="float-right">${convert_vnd(item.money_sale)}</span></li>`
+					html_report_day_employees += `<li class="list-group-item"><span class="font-weight-bold">${item.name}</span> <span class="float-right">${convert_vnd(item.money_sale)}</span></li>`
 				})
 				$('#report_day_employees').html(html_report_day_employees)
 				let html_report_sale_month = "";
 				data.data.report_sale_month.forEach(item => {
-					html_report_sale_month += `<li class="list-group-item">${item.name} <span class="float-right">${convert_vnd(item.money_sale)}</span></li>`
+					html_report_sale_month += `<li class="list-group-item"><span class="font-weight-bold">${item.name}</span> <span class="float-right">${convert_vnd(item.money_sale)}</span></li>`
 				})
 				$('#report_sale_month').html(html_report_sale_month)
 				let html_report_service_month = "";
 				data.data.report_service_month.forEach(item => {
-					html_report_service_month += `<li class="list-group-item">${item.name}</span>
+					html_report_service_month += `<li class="list-group-item"><span class="font-weight-bold">${item.name}</span>
 											<br>Số lần dịch vụ<span class="float-right">${item.service.length}</span>
 											<br>Số phút dịch vụ <span class="float-right">${item.minutes_service}</span>
 					</li>`
@@ -931,14 +931,16 @@ function use_service(invoice,service_name, service, customer){
 			})
 		  }
 	}).then(function (result) {
-        $.ajax({
-			url:'/store_sale/use_service',
-            method:'post',
-            data: {employees: result.value, invoice: invoice, service: service, customer:customer, _csrf: $('#_csrf').val()},
-            success: function(data){
-				get_customer(customer)
-                }
-        })
+		if(result.value){
+			$.ajax({
+				url:'/store_sale/use_service',
+				method:'post',
+				data: {employees: result.value, invoice: invoice, service: service, customer:customer, _csrf: $('#_csrf').val()},
+				success: function(data){
+					get_customer(customer)
+					}
+			})
+		}
     });
 }
 function clear_data(tab_number){

@@ -16,8 +16,11 @@ const Log_service_Schema = mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId, ref:'Stores' 
 	},
 	employees:{
-		type: mongoose.Schema.Types.ObjectId, ref:'Employees'
+		type: mongoose.Schema.Types.ObjectId, ref:'Employees', required: true
 	},
+	isActive:{
+		type: Boolean, default:true 
+	}
 }, { timestamps: true });
 
 module.exports = mongoose.model('Log_service', Log_service_Schema);

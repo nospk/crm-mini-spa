@@ -1,11 +1,44 @@
 $( document ).ready(()=>{
 	get_data();
+	get_store();
 })
 let page_now;
-
+function get_store(){
+	 $.ajax({
+        url:'/admin_employees/get_store',
+        method:'POST',
+        data: {_csrf: $('#_csrf').val()},
+        success: function(data){
+            if(data.status == 1){
+                let html_store = "<option value=''></option>";
+				data.data.forEach(item =>{
+					html_store +=`<option value="${item._id}">${item.name}</option>`
+				})
+				$('#edit_select_store').html(html_store)
+				$('#select_store').html(html_store)
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
+}
 function create_new(){
     let data = {
         name: $('#create_new #name').val().trim(),
+		gener: $('#create_new #gener').val(),
+		store: $('#create_new #select_store').val(),
         birthday: $('#create_new #birthday').val().trim(),
         address: $('#create_new #address').val().trim(),
         number_code: $('#create_new #number_code').val().trim(),
@@ -183,8 +216,10 @@ function edit_data(id){
         success: function(data){
 			if(data.status == 1){
 				$('#edit_data #edit_name').val(data.data.name);
+				$('#edit_data #edit_gener').val(data.data.gener);
+				$('#edit_data #edit_select_store').val(data.data.store);
 				$('#edit_data #edit_birthday').val(data.data.birthday);
-				$('#edit_data #edit_identity_number').val(data.data.identity_number),
+				$('#edit_data #edit_identity_number').val(data.data.identity_number);
 				$('#edit_data #edit_number_code').val(data.data.number_code);
 				$('#edit_data #edit_address').val(data.data.address);
 				$('#edit_data #edit_id').val(data.data._id);
@@ -197,6 +232,8 @@ function update_data(){
 	let data = {
         name: $('#edit_data #edit_name').val().trim(),
         birthday: $('#edit_data #edit_birthday').val().trim(),
+		gener: $('#edit_data #edit_gener').val(),
+		store: $('#edit_data #edit_select_store').val(),
         address: $('#edit_data #edit_address').val().trim(),
         number_code: $('#edit_data #edit_number_code').val().trim(),
         identity_number: $('#edit_data #edit_identity_number').val().trim(),

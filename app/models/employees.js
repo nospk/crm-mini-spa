@@ -12,11 +12,17 @@ const EmployeesSchema = mongoose.Schema({
     address:{
         type: String
     },
+	gener:{
+		type: String
+	},
     identity_number:{
         type: String
     },
 	company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
+	},
+	store:{
+		type: mongoose.Schema.Types.ObjectId, ref:'Stores' 
 	},
 	isActive:{
 		type: Boolean, default:true

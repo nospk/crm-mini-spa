@@ -2,7 +2,6 @@
 let page_now;
 let active_type = "cash"
 $( document ).ready(()=>{
-    get_data('1','cash');
 	getStoreSupplierCustomerEmployees();
 	$("#select_type_receiver").change(()=>{
 		if($("#select_type_receiver").val() == "employees"){
@@ -47,6 +46,7 @@ $( document ).ready(()=>{
 	const currencyInput = document.querySelector('input[type="currency"]')
 	currencyInput.addEventListener('focus', onFocus)
 	currencyInput.addEventListener('blur', onBlur)
+	setTimeout(function (){get_data('1','cash')}, 100); 
 })
 
 function get_data(paging_num, type){
@@ -58,9 +58,14 @@ function get_data(paging_num, type){
     }else{
         active_type = type
     }
+	let time = $('#reservation').val().split("-");
+	let start_time = time[0]
+	let end_time = time[1]
     let data = {
 		search_find_selection: $("#search_find_selection").val(),
         search_find_store: $("#search_find_store").val(),
+		start_time: start_time,
+		end_time: end_time,
         type_payment: type,
         paging_num:paging_num,
         _csrf: $('#_csrf').val()
@@ -73,6 +78,10 @@ function get_data(paging_num, type){
             if(data.status == 1){
                 page_now = data.data.currentPage
                 render_data(data.data.data, data.data.pageCount, data.data.currentPage, type);
+				$('#begin_fund').html(convert_vnd(data.data.begin_fund[0] ? data.data.begin_fund[0].totalincome - data.data.begin_fund[0].totaloutcome : 0))
+				$('#total_income').html(convert_vnd(data.data.current_fund[0] ? data.data.current_fund[0].totalincome : 0))
+				$('#total_outcome').html(convert_vnd(data.data.current_fund[0] ? data.data.current_fund[0].totaloutcome : 0))
+				$('#after_fund').html(convert_vnd(convert_number($('#begin_fund').text())+convert_number($('#total_income').text())-convert_number($('#total_outcome').text())))
                 if(type=="cash"){
                     $('#showDataCash').show()
                     $('#showDataCard').hide()

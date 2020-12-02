@@ -219,7 +219,7 @@ class Store_sale extends Controller{
 		try{
 			let now = new Date();
 			let start_day = new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0);
-			let end_day = new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,59,59);
+			let end_day = new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,0);
 			let start_month = new Date(now.getFullYear(),now.getMonth(),1,0,0,0);
 			let end_month = new Date(now.getFullYear(),now.getMonth()+1,1,0,0,0);
 			let report_day = await Invoice_sale.aggregate([

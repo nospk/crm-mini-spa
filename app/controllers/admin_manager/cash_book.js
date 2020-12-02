@@ -16,16 +16,30 @@ class Admin_cash_book extends Controller{
 	static async get_data(req, res){
         try{
 			let {search_find_store, search_find_selection, type_payment}=req.body
+			let start_time = req.body.start_time.split("/")
+			let end_time = req.body.end_time.split("/")
 			let match = {
-				$and: [ {company :req.session.user.company._id} ] 
+				$and: [ {company :req.session.user.company._id, createdAt: {$gte: new Date(start_time[2],start_time[1]-1,start_time[0],0,0,0), $lt: new Date(start_time[2],start_time[1]-1,start_time[0]+1,0,0,0)}}] 
+			}
+			let match_current_fund = {
+				$and: [ {company :mongoose.Types.ObjectId(req.session.user.company._id), createdAt: {$gte: new Date(start_time[2],start_time[1]-1,start_time[0],0,0,0), $lt: new Date(start_time[2],start_time[1]-1,start_time[0]+1,0,0,0)}}] 
+			}
+			let match_begin_fund = {
+				$and: [{company: mongoose.Types.ObjectId(req.session.user.company._id), createdAt: {$gte: new Date(start_time[2],0,1,0,0,0), $lt: new Date(start_time[2],start_time[1]-1,end_time[0]-1,23,59,59)}}]
 			}
 			if(search_find_selection == "company"){
 				match.$and.push({isForCompany: true})
+				match_current_fund.$and.push({isForCompany: true})
+				match_begin_fund.$and.push({isForCompany: true})
 			}else{
 				match.$and.push({store: search_find_store})
+				match_current_fund.$and.push({store: mongoose.Types.ObjectId(search_find_store)})
+				match_begin_fund.$and.push({store: mongoose.Types.ObjectId(search_find_store)})
 			}
 			if(type_payment != "both"){
 				match.$and.push({ type_payment: type_payment})
+				match_current_fund.$and.push({ type_payment: type_payment})
+				match_begin_fund.$and.push({ type_payment: type_payment})
 			}
 			//set default variables
 			let pageSize = 10
@@ -40,7 +54,41 @@ class Admin_cash_book extends Controller{
 				populate: { path: 'Stores' },
 				select: 'name'
 			});
-			Admin_cash_book.sendData(res, {data, pageCount, currentPage, company});
+			let current_fund = await Cash_book.aggregate([
+				{ $match: match_current_fund},
+				{ $group : {
+					_id: null,
+					totalincome: { $sum: { "$cond": [
+							{ "$eq": [ "$type", "income" ] },
+							"$money",
+							0
+						]}},
+					totaloutcome: { $sum: { "$cond": [
+							{ "$eq": [ "$type", "outcome" ] },
+							"$money",
+							0
+						]}},
+					}
+				} 
+			])
+			let begin_fund = await Cash_book.aggregate([
+				{ $match: match_begin_fund},
+				{ $group : {
+					_id: null,
+					totalincome: { $sum: { "$cond": [
+							{ "$eq": [ "$type", "income" ] },
+							"$money",
+							0
+						]}},
+					totaloutcome: { $sum: { "$cond": [
+							{ "$eq": [ "$type", "outcome" ] },
+							"$money",
+							0
+						]}},
+					}
+				} 
+			])
+			Admin_cash_book.sendData(res, {data, pageCount, currentPage, company, begin_fund, current_fund});
 		}catch(err){
 			console.log(err)
 			Admin_cash_book.sendError(res, err, err.message);

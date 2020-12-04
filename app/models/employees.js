@@ -18,6 +18,12 @@ const EmployeesSchema = mongoose.Schema({
     identity_number:{
         type: String
     },
+	number_service:{
+        type: Number
+    },
+	number_sales:{
+        type: Number
+    },
 	company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 
 	},

@@ -131,7 +131,7 @@ $( document ).ready(()=>{
 				let html_report_service_month = "";
 				data.data.report_service_month.forEach(item => {
 					html_report_service_month += `<li class="list-group-item"><span class="font-weight-bold">${item.name}</span>
-											<br>Số lần dịch vụ<span class="float-right">${item.service.length}</span>
+											<br>Số lần dịch vụ<span class="float-right">${item.service}</span>
 											<br>Số phút dịch vụ <span class="float-right">${item.minutes_service}</span>
 					</li>`
 				})
@@ -938,7 +938,7 @@ function use_service(invoice,service_name, service, customer){
 				data: {employees: result.value, invoice: invoice, service: service, customer:customer, _csrf: $('#_csrf').val()},
 				success: function(data){
 					get_customer(customer)
-					}
+				}
 			})
 		}
     });

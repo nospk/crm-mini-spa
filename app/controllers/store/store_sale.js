@@ -264,7 +264,7 @@ class Store_sale extends Controller{
 				},
 				
 				{ $unwind:"$service_in_month"},
-				{ $group : {_id:"$_id", name:{ "$first":"$name"}, minutes_service:{$sum:"$service_in_month.times_service"}, service:{ $push:"$service_in_month"}}}
+				{ $group : {_id:"$_id", name:{ "$first":"$name"}, minutes_service:{$sum:"$service_in_month.times_service"}, service:{ $sum:1}}}
 			])
 			let report_sale_month = await Employees.aggregate([
 				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},

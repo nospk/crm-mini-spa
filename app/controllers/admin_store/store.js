@@ -21,7 +21,7 @@ class Admin_store extends Controller{
 	}
 	static async create_store(req, res){
 		try{
-			if(!Common.notEmpty(req.body.name) ||!Common.notEmpty(req.body.address) || !Common.notEmpty(req.body.username) || !Common.notEmpty(req.body.password)){
+			if(!Common.notEmpty(req.body.name) ||!Common.notEmpty(req.body.address) || !Common.notEmpty(req.body.username) || !Common.notEmpty(req.body.password) || !Common.notEmpty(req.body.password_manager)){
 				Admin_store.sendError(res, "Lỗi thiếu thông tin", "Vui lòng nhập đầy đủ các thông tin");
 				return;
 			}
@@ -30,7 +30,6 @@ class Admin_store extends Controller{
 				Admin_store.sendError(res, "Đã có tên tài khoản", "Vui lòng chọn tên tài khoản khác");
 				return;
 			}
-			let active_code = bcrypt.hashSync(Math.floor((Math.random() * 99999999) * 54), null, null);
 			let store = Store({
 				name: req.body.name,
 				address: req.body.address,
@@ -38,7 +37,7 @@ class Admin_store extends Controller{
 				company: req.session.user.company._id,
 				username: req.body.username+req.session.user.company.name_account,
 				password: Common.generateHash(req.body.password),
-				active_code: active_code
+				password_manager: Common.generateHash(req.body.password_manager),
 			});
 			await store.save()
 			//if had products, will be create store_stocks

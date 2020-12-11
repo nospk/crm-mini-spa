@@ -78,12 +78,10 @@ module.exports = function (passport) {
                         var newUser = new User();
 		
                         // set the user's local credentials
-                        var active_code = bcrypt.hashSync(Math.floor((Math.random() * 99999999) * 54), null, null);
                         newUser.password = newUser.generateHash(password);
 						newUser.name = req.body.username
                         newUser.username = req.body.username+req.body.name_extension;
                         newUser.isActive = true; //inactive for email actiavators
-                        newUser.active_hash = active_code;
 						newUser.company = company._id;
 						newUser.role_id = 0;
                         // save the user
@@ -155,13 +153,13 @@ module.exports = function (passport) {
 				let store = await Store.findOne({ 'username': username })
 				// if no store is found, return the message
                 if (!store)
-                    return done(null, false, req.flash('error', 'Sorry Your Account Not Exits ,Please Create Account.')); // req.flash is the way to set flashdata using connect-flash
+                    return done(null, false, req.flash('error', 'Tài khoản của bạn không tồn tại.')); // req.flash is the way to set flashdata using connect-flash
 
                 // if the store is found but the password is wrong
                 if (!store.validPassword(password))
-                    return done(null, false, req.flash('error', 'Email and Password Does Not Match.')); // create the loginMessage and save it to session as flashdata
+                    return done(null, false, req.flash('error', 'Tài khoản hoặc Mật khẩu không đúng.')); // create the loginMessage and save it to session as flashdata
                 if (store.isActive === false)
-                    return done(null, false, req.flash('error', 'Your Account Not Activated ,Please Check Your Email')); // create the loginMessage and save it to session as flashdata
+                    return done(null, false, req.flash('error', 'Tài khoản của bạn đã bị khóa hoặc chưa được kích hoạt.')); // create the loginMessage and save it to session as flashdata
 
                 // all is well, return successful store
                 req.session.store = store;

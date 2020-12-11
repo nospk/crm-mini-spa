@@ -28,12 +28,21 @@ class Admin_store_edit extends Controller{
 		}
 		
 	}
-	static async change_password(req,res){
+	static async change_password_store(req,res){
 		try{
-			let store = await Store.findOneAndUpdate({company: req.session.user.company._id, _id: req.session.store_id})
-			let active_code = bcrypt.hashSync(Math.floor((Math.random() * 99999999) * 54), null, null);
+			let store = await Store.findOne({company: req.session.user.company._id, _id: req.session.store_id})
             store.password = Common.generateHash(req.body.password);
-            store.active_hash = active_code;
+			await store.save();
+			Admin_store_edit.sendMessage(res, "Đã cập nhật thành công");
+		}catch(err){
+			console.log(err.message)
+			Admin_store_edit.sendError(res, err, err.message);
+		}
+	}
+	static async change_password_manager(req,res){
+		try{
+			let store = await Store.findOne({company: req.session.user.company._id, _id: req.session.store_id})
+            store.password_manager = Common.generateHash(req.body.password);
 			await store.save();
 			Admin_store_edit.sendMessage(res, "Đã cập nhật thành công");
 		}catch(err){

@@ -80,13 +80,54 @@ function update_store(){
             }
     })
 }
-function change_password(){
+function change_password_manager(){
     let data = {
-		password:  $('#password').val(),
+		password:  $('#password_manager').val(),
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_store_edit/change_password',
+        url:'/admin_store_edit/change_password_manager',
+        method:'POST',
+        data: data,
+        success: function(data){
+                if(data.status == 1){
+                    Swal.fire({
+                        title: "Thao tác thành công",
+                        text: data.message,
+                        icon: "info",
+                        showConfirmButton: false,
+                        timer: 3000
+                    }).then((result)=>{
+                        location.reload();
+                    })
+                    .catch(timer => {
+                        location.reload();
+                    });    
+                }else{
+                    Swal.fire({
+                        title: data.error,
+                        text: data.message,
+                        icon: "error",
+                        showConfirmButton: false,    
+                        timer: 3000
+                    }).then((result)=>{
+                        // cho vào để ko báo lỗi uncaught
+                    })
+                    .catch(timer => {
+                        // cho vào để ko báo lỗi uncaught
+                    }); 
+                    
+                }
+            }
+    })
+}
+function change_password_store(){
+    let data = {
+		password:  $('#password_store').val(),
+        _csrf: $('#_csrf').val()
+    }
+    $.ajax({
+        url:'/admin_store_edit/change_password_store',
         method:'POST',
         data: data,
         success: function(data){

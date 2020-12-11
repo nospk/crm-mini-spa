@@ -838,6 +838,34 @@ function check_out(){
 		}
 	})
 }
+function check_password_manager(){
+	$.ajax({
+		url:'/store_sale/check_password_manager',
+		method:'POST',
+		contentType: "application/json; charset=utf-8",
+		data: JSON.stringify({_csrf: $('#_csrf').val(), password: $('#password_manager').val()}),
+		success: function(data){
+			if(data.status == 1){
+				console.log('1');
+			}else{
+				Swal.fire({
+					toast: true,
+				    position: 'top-end',
+				    showConfirmButton: false,
+                    title: data.error,
+                    icon: "error",  
+                    timer: 3000
+                }).then(()=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+				
+			}
+		}
+	})
+}
 function get_customer(id){
 	$.ajax({
 		url:'/store_sale/get_customer',
@@ -956,4 +984,10 @@ function clear_data(tab_number){
 	remove_customer();
 	clear_discount();
 	get_service();
+}
+function slideLeft(){
+	document.getElementById('tab-menu-horizontal').scrollLeft -= 70;
+}
+function slideRight(){
+	document.getElementById('tab-menu-horizontal').scrollLeft += 70;
 }

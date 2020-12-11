@@ -10,6 +10,7 @@ module.exports = function (app) {
 	app.post("/store_sale/get_price_book", store.loggedIn, store.get_price_book)
 	app.post("/store_sale/get_customer", store.loggedIn, store.get_customer)
 	app.post("/store_sale/use_service", store.loggedIn, store.use_service)
+	app.post("/store_sale/check_password_manager", store.loggedIn, store.check_password_manager)
 	app.post("/store_sale/report", store.loggedIn, store.report)
 	app.post("/store_sale/get_by_id", store.loggedIn, store.get_by_id)
 	app.post("/store_sale/get_service", store.loggedIn, store.get_service)

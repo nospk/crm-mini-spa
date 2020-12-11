@@ -52,7 +52,8 @@ function create_store(){
 			address: $('#create_store #address').val().trim(),
 			phone: $('#create_store #phone').val().trim(),
 			username: $('#create_store #username').val().trim(),
-			password: $('#create_store #password').val().trim(),
+			password: $('#create_store #password_store').val().trim(),
+			password_manager: $('#create_store #password_manager').val().trim(),
 			_csrf: $('#_csrf').val()
 		}
 		$.ajax({

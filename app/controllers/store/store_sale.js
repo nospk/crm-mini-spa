@@ -215,6 +215,19 @@ class Store_sale extends Controller{
 			Store_sale.sendError(res, err, err.message);
 		}
 	}
+	static async check_password_manager(req,res){
+		try{
+			let store = await Store.findOne({company: req.session.store.company, _id: req.session.store._id})
+			if (!store.validPassword_manager(req.body.password)){
+				Store_sale.sendError(res, "Không đúng mật khẩu quản lý", "Nhập lại mật khẩu quản lý");
+			}else{
+				Store_sale.sendData(res, req.body.password);
+			}
+		}catch(err){
+			console.log(err)
+			Store_sale.sendError(res, err, err.message);
+		}
+	}
 	static async report(req, res){
 		try{
 			let now = new Date();

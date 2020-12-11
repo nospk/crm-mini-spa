@@ -7,6 +7,9 @@ const StoreSchema = mongoose.Schema({
     address:{
         type: String
     },
+	password_manager:{
+		type: String
+	},
     user_manager:{
         mananger_id: mongoose.Schema.Types.ObjectId
     },
@@ -23,9 +26,6 @@ const StoreSchema = mongoose.Schema({
         type: String
     },
 	username: {
-        type: String
-    },
-    active_hash: {
         type: String
     },
 	active_hash_times: {
@@ -51,6 +51,9 @@ const StoreSchema = mongoose.Schema({
 
 StoreSchema.methods.validPassword = function(password) {
  return bcrypt.compareSync(password, this.password);
+};
+StoreSchema.methods.validPassword_manager = function(password) {
+ return bcrypt.compareSync(password, this.password_manager);
 };
 
 module.exports = mongoose.model('Stores', StoreSchema);

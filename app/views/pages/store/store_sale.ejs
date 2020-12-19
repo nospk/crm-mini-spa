@@ -141,6 +141,37 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				 column-count: 4;
 			}
 		}
+		.menu-bill {
+		  background-color:#17a2b8; 
+		  display: block;height:50px;
+		  align-items: center;
+		  justify-content: center;
+		  display: flex;
+		  min-width:70px;
+		  position: relative;
+		}
+		.menu-bill:hover {
+		  background-color:#148c9f; 
+		}
+		.menu-bill-active {
+		  background-color:#ffffff; 
+		  display: block;height:50px;
+		  align-items: center;
+		  justify-content: center;
+		  display: flex;
+		  min-width:70px;
+		  position: relative;
+		}
+		.menu-bill:after, .menu-bill-active:after {
+		  content: " ";
+		  position: absolute;
+		  border-left: 1px #6c757d solid;
+		  top: 10%;
+		  right: 0;
+		  height: 80%;
+		  margin-top: auto;
+		  margin-bottom: auto;
+		}
 	</style>
 </head>
 
@@ -182,27 +213,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											</ul>
 											<div style="padding:0px;margin:0px;overflow: hidden;">
 												<ul id="tab-menu-horizontal"style="display:flex;list-style:none;padding:0px;margin:0px;position: relative; overflow: hidden;">
-												  <li class="pointer" style="background-color:#ffffff; display: block;height:50px;align-items: center;justify-content: center;display: flex;min-width:70px;">
+												  <li class="pointer menu-bill-active">
 													<a>HD 1</a>
 													<span style="margin-left:5px;"><i class="fas fa-times"></i></span>
 												  </li>
-												  <li class="pointer" style="background-color:#17a2b8 ; display: block;height:50px;align-items: center;justify-content: center;display: flex; min-width:70px;">
+												  <li class="pointer menu-bill">
 													<a>HD 2</a>
 													<span style="margin-left:5px;"><i class="fas fa-times"></i></span>
 												  </li>
-												  <li class="pointer" style="background-color:#17a2b8 ; display: block;height:50px;align-items: center;justify-content: center;display: flex; min-width:70px;">
+												  <li class="pointer menu-bill">
 													<a>HD 3</a>
 													<span style="margin-left:5px;"><i class="fas fa-times"></i></span>
 												  </li>
-												  <li class="pointer" style="background-color:#17a2b8 ; display: block;height:50px;align-items: center;justify-content: center;display: flex; min-width:70px;">
+												  <li class="pointer menu-bill">
 													<a>HD 4</a>
 													<span style="margin-left:5px;"><i class="fas fa-times"></i></span>
 												  </li>
-												  <li class="pointer" style="background-color:#17a2b8 ; display: block;height:50px;align-items: center;justify-content: center;display: flex; min-width:70px;">
+												  <li class="pointer menu-bill">
 													<a>HD 5</a>
 													<span style="margin-left:5px;"><i class="fas fa-times"></i></span>
 												  </li>
-												  <li class="pointer" style="background-color:#17a2b8 ; display: block;height:50px;align-items: center;justify-content: center;display: flex; min-width:70px;">
+												  <li class="pointer menu-bill">
 													<a>HD 6</a>
 													<span style="margin-left:5px;"><i class="fas fa-times"></i></span>
 												  </li>

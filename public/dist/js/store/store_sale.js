@@ -4,7 +4,11 @@ let doneTypingInterval = 500;  //time in ms, 1 second for example
 let show_product = $('#search_product');
 let show_customer = $('#search_customer');
 let tab_list = [];
-let tab_number = 0;
+tab_list[1]= {
+	item: [],
+}
+let tab_number = 1;
+let tab_max_current = 1;
 let employees = {};
 //on keyup, start the countdown
 show_product.on('keyup', function () {
@@ -970,6 +974,26 @@ function use_service(invoice,service_name, service, customer){
 			})
 		}
     });
+}
+function remove_tab_menu(btw){
+	let number_tab = $(btw).parent().text().trim()
+	number_tab = number_tab.split(" ")[1]
+	console.log(number_tab)
+}
+function add_tab_menu(){
+	if(tab_list.length <= 10){
+		tab_max_current++;
+		$("#tab-menu-horizontal .menu-bill").removeClass("active");
+		tab_number = tab_max_current;
+		let html = `<li class="pointer menu-bill active">
+						<a>HD ${tab_max_current}</a>
+						<span style="margin-left:5px;" onclick="remove_tab_menu(this);"><i class="fas fa-times"></i></span>
+					</li>`
+		$('#tab-menu-horizontal').append(html)
+		document.getElementById('tab-menu-horizontal').scrollLeft += 1000;
+	}
+	
+	
 }
 function clear_data(tab_number){
 	tab_list.splice(tab_number,1);

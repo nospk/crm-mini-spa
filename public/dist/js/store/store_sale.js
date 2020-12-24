@@ -887,7 +887,7 @@ function get_customer(id){
                 $('#edit_customer #edit_gener').val(customer.gener);
 				$('#edit_customer #edit_address').val(customer.address);
 				$('#edit_customer #edit_id').val(customer._id);
-                let html_history_sale = `<table class="table table-sm  table-hover text-nowrap" style="display: block; overflow-x: auto;">
+                let html_history_sale = `<table class="table table-sm  table-hover" style="display: block; overflow-x: auto;">
                                         <thead>
                                             <tr>
                                             <th width="20%">Ngày</th>
@@ -913,7 +913,7 @@ function get_customer(id){
                             </table>
                         `;
                 $('#edit-history-payment-tab').html(html_history_sale);
-                let html_service= `<table class="table table-sm  table-hover text-nowrap">
+                let html_service= `<table class="table table-sm  table-hover">
                                     <thead>
                                         <tr>
                                         <th>Dịch vụ</th>

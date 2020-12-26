@@ -3,11 +3,8 @@ let typingTimer_search;
 let doneTypingInterval = 500;  //time in ms, 1 second for example
 let show_product = $('#search_product');
 let show_customer = $('#search_customer');
-let tab_list = [];
-tab_list[1]= {
-	item: [],
-}
-let tab_number = 1;
+let tab_list = [{HD:1, item:[]}];
+let tab_number = 0;
 let tab_max_current = 1;
 let employees = {};
 //on keyup, start the countdown
@@ -975,28 +972,78 @@ function use_service(invoice,service_name, service, customer){
 		}
     });
 }
+
+/*
+	tab_list is array, if delete will sort order
+	tab_number is interface user
+	index_tab is interface array
+	find by element HD in array tab_list
+*/
+
 function remove_tab_menu(btw){
-	let number_tab = $(btw).parent().text().trim()
-	number_tab = number_tab.split(" ")[1]
-	console.log(number_tab)
-}
-function add_tab_menu(){
-	if(tab_list.length <= 10){
-		tab_max_current++;
-		$("#tab-menu-horizontal .menu-bill").removeClass("active");
-		tab_number = tab_max_current;
+	let tab = $(btw).parent().text().trim()
+	let number_tab = tab.split(" ")[1]
+	let index_tab = tab_list.findIndex(item => item.HD == number_tab);
+	tab_list.splice(index_tab,1);
+	$(btw).parent().remove();
+	$("#tab-menu-horizontal .menu-bill").removeClass("active");
+	$("#tab-menu-horizontal .menu-bill").first().addClass("active");
+	tab_max_current = Math.max.apply(Math, tab_list.map(function(item) { return item.HD; }))
+	document.getElementById('tab-menu-horizontal').scrollLeft -= 1000;
+	if(tab_list.length == 0){
+		tab_number = 0;
+		tab_max_current = 1;
 		let html = `<li class="pointer menu-bill active">
 						<a>HD ${tab_max_current}</a>
 						<span style="margin-left:5px;" onclick="remove_tab_menu(this);"><i class="fas fa-times"></i></span>
 					</li>`
+		tab_list.push({
+			HD:tab_max_current,
+			item: [],
+		})
 		$('#tab-menu-horizontal').append(html)
+	}
+	tab_number = 0;
+	render_tablist(tab_number);
+}
+
+function active_tab_menu(btw){
+	let tab = $(btw).text().trim()
+	let number_tab = tab.split(" ")[1]
+	let index_tab = tab_list.findIndex(item => item.HD == number_tab);
+	$("#tab-menu-horizontal .menu-bill").removeClass("active");
+	$(btw).parent().addClass("active");
+	tab_number = index_tab
+	render_tablist(index_tab)
+}
+function add_tab_menu(){
+	if(tab_list.length <= 9){
+		tab_max_current++;
+		$("#tab-menu-horizontal .menu-bill").removeClass("active");
+		tab_number = tab_max_current-1;
+		let html = `<li class="pointer menu-bill active">
+						<a onclick="active_tab_menu(this);">HD ${tab_max_current}</a>
+						<span style="margin-left:5px;" onclick="remove_tab_menu(this);"><i class="fas fa-times"></i></span>
+					</li>`
+		tab_list.push({
+			HD: tab_max_current,
+			item: [],
+		})
+		render_tablist(tab_number);
+		$('#tab-menu-horizontal').append(html);
 		document.getElementById('tab-menu-horizontal').scrollLeft += 1000;
 	}
 	
 	
 }
-function clear_data(tab_number){
-	tab_list.splice(tab_number,1);
+function clear_data(index_tab){
+	let number_tab = tab_list[index_tab].HD
+	tab_list.splice(index_tab,1);
+	$(`a:contains('HD ${number_tab}')`).parent().remove();
+	$("#tab-menu-horizontal .menu-bill").first().addClass("active");
+	tab_number = 0;
+	tab_max_current = Math.max.apply(Math, tab_list.map(function(item) { return item.HD; }))
+	document.getElementById('tab-menu-horizontal').scrollLeft -= 1000;
 	$('#add_product').html("");
 	$('#bill_money').text("");
 	$('#money_discount').text("");

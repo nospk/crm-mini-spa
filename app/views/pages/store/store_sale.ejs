@@ -187,7 +187,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										</div>
 									</div>
 									<div class="col-6" style="height:50px;position: relative;">
-										<!-- <div style="width: 100%;display:flex;height:50px;">
+										<div style="width: 100%;display:flex;height:50px;">
 											<ul style="list-style:none;padding:0px;margin:0px;top:10px; height: 50px;background-color:#0d6572;">
 												<li class="pointer" style="width:15px;">
 													<a style="position: absolute; color:#ffff; height:50px; align-items: center;justify-content: center;display: flex;width: 15px;" onclick="slideLeft();">
@@ -198,7 +198,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											<div style="padding:0px;margin:0px;overflow: hidden;">
 												<ul id="tab-menu-horizontal"style="display:flex;list-style:none;padding:0px;margin:0px;position: relative; overflow: hidden;">
 												  <li class="pointer menu-bill active">
-													<a>HD 1</a>
+													<a onclick="active_tab_menu(this);">HD 1</a>
 													<span style="margin-left:5px;" onclick="remove_tab_menu(this);"><i class="fas fa-times"></i></span>
 												  </li>
 												</ul>
@@ -217,7 +217,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 													</a>
 												</li>
 											</ul>
-										</div> -->
+										</div>
 									</div>
 								</div>
 
@@ -665,12 +665,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				</button>
 			  </div>
 			  <div class="modal-body">
-				<div class="input-group">
-					<div class="input-group-prepend">
-						<div class="input-group-text bg-info">Mật khẩu</div>
+				<form>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<div class="input-group-text bg-info">Mật khẩu</div>
+						</div>
+						<input type="password" autocomplete class="form-control" id="password_manager" placeholder="Nhập mật khẩu" aria-label="Cash">
 					</div>
-					<input type="password" class="form-control" id="password_manager" placeholder="Nhập mật khẩu" aria-label="Cash">
-				</div>
+				</form>
 				<br>
 			  </div>
 			  <div class="modal-footer">

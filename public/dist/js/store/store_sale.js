@@ -3,7 +3,7 @@ let typingTimer_search;
 let doneTypingInterval = 500;  //time in ms, 1 second for example
 let show_product = $('#search_product');
 let show_customer = $('#search_customer');
-let tab_list = [{HD:1, item:[]}];
+let tab_list = [{HD:1, item:[], employee: "", customer:""}];
 let tab_number = 0;
 let tab_max_current = 1;
 let employees = {};
@@ -92,6 +92,9 @@ $( document ).ready(()=>{
 			clear_discount()
 		}
 
+	})
+	$('#select_employees').on('change', function (){
+		tab_list[tab_number].employee = $('#select_employees').val()
 	})
 	$('#select_price_book').on('change', function() {
 		get_service();
@@ -227,6 +230,7 @@ function search_product() {
 
 }
 function add_customer(customer){
+	tab_list[tab_number].customer = customer
 	customer = customer.split(':')
 	$('#customer').text(customer[0]);
 	$('#select_customer').val(customer[1]);
@@ -374,6 +378,9 @@ function render_tablist(tab_number){
 					</tr>`
 			
 		})
+		if(tab_list[tab_number].employee != ""){
+			$('#select_employees').val(tab_list[tab_number].employee)
+		}
 		if(combo == true || $('#select_price_book').val() != "default"){
 			$('#discount_type').val("")
 			$('#discount_value').text("")
@@ -981,11 +988,11 @@ function use_service(invoice,service_name, service, customer){
 */
 
 function remove_tab_menu(btw){
-	let tab = $(btw).parent().text().trim()
-	let number_tab = tab.split(" ")[1]
-	let index_tab = tab_list.findIndex(item => item.HD == number_tab);
-	tab_list.splice(index_tab,1);
-	$(btw).parent().remove();
+	let tab = $(btw).parent().text().trim() // get string tab <a>
+	let number_tab = tab.split(" ")[1] // get number tab
+	let index_tab = tab_list.findIndex(item => item.HD == number_tab); // find number tab in tab_list
+	tab_list.splice(index_tab,1);// remove in tab_list
+	$(btw).parent().remove();// remove 
 	$("#tab-menu-horizontal .menu-bill").removeClass("active");
 	$("#tab-menu-horizontal .menu-bill").first().addClass("active");
 	tab_max_current = Math.max.apply(Math, tab_list.map(function(item) { return item.HD; }))
@@ -993,13 +1000,15 @@ function remove_tab_menu(btw){
 	if(tab_list.length == 0){
 		tab_number = 0;
 		tab_max_current = 1;
-		let html = `<li class="pointer menu-bill active">
-						<a>HD ${tab_max_current}</a>
+		let html = `<li class="menu-bill active">
+						<a class="item pointer" onclick="active_tab_menu(this);">HD ${tab_max_current}</a>
 						<span style="margin-left:5px;" onclick="remove_tab_menu(this);"><i class="fas fa-times"></i></span>
 					</li>`
 		tab_list.push({
 			HD:tab_max_current,
 			item: [],
+			employee: "",
+			customer: ""
 		})
 		$('#tab-menu-horizontal').append(html)
 	}
@@ -1021,13 +1030,15 @@ function add_tab_menu(){
 		tab_max_current++;
 		$("#tab-menu-horizontal .menu-bill").removeClass("active");
 		tab_number = tab_max_current-1;
-		let html = `<li class="pointer menu-bill active">
-						<a onclick="active_tab_menu(this);">HD ${tab_max_current}</a>
+		let html = `<li class="menu-bill active">
+						<a class="item pointer" onclick="active_tab_menu(this);">HD ${tab_max_current}</a>
 						<span style="margin-left:5px;" onclick="remove_tab_menu(this);"><i class="fas fa-times"></i></span>
 					</li>`
 		tab_list.push({
 			HD: tab_max_current,
 			item: [],
+			employee: "",
+			customer: ""
 		})
 		render_tablist(tab_number);
 		$('#tab-menu-horizontal').append(html);
@@ -1044,17 +1055,7 @@ function clear_data(index_tab){
 	tab_number = 0;
 	tab_max_current = Math.max.apply(Math, tab_list.map(function(item) { return item.HD; }))
 	document.getElementById('tab-menu-horizontal').scrollLeft -= 1000;
-	$('#add_product').html("");
-	$('#bill_money').text("");
-	$('#money_discount').text("");
-	$('#total_sale').text("");
-	$('#customer_pay_card').text("");
-	$('#customer_pay_cash').text("");
-	$('#money_return').text("");
-	$('#note_bill').val("");
-	remove_customer();
-	clear_discount();
-	get_service();
+	render_tablist(tab_number)
 }
 function slideLeft(){
 	document.getElementById('tab-menu-horizontal').scrollLeft -= 70;

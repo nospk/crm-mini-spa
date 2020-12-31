@@ -53,7 +53,7 @@ function create_new(){
 }
 function render_data(data, pageCount, currentPage){
 	let html = `        
-		                    <table class="table table-hover text-nowrap">
+		                    <table class="table table-hover">
 		                        <thead>
                                     <tr>
                                     <th>Tên</th>
@@ -178,7 +178,7 @@ function edit_data(id){
 				$('#edit_data #edit_address').val(customer.address);
 				$('#edit_data #edit_id').val(customer._id);
                 $('#edit_data').modal('show');
-                let html_history_sale = `<table class="table table-sm  table-hover text-nowrap">
+                let html_history_sale = `<table class="table table-sm  table-hover">
                                         <thead>
                                             <tr>
                                             <th>Ngày</th>
@@ -208,7 +208,7 @@ function edit_data(id){
                             </table>
                         `;
                 $('#edit-history-payment-tab').html(html_history_sale);
-                let html_service= `<table class="table table-sm  table-hover text-nowrap">
+                let html_service= `<table class="table table-sm  table-hover">
                                     <thead>
                                         <tr>
                                         <th>Dịch vụ</th>

@@ -113,6 +113,9 @@ $( document ).ready(()=>{
 		get_service();
 		render_tablist(tab_number);
 	});
+	$('#note_bill').on('change', function() {
+		tab_list[tab_number].note_bill = $('#note_bill').val()
+	});
 	$('#report').on('shown.bs.modal', function () {
 		 $.ajax({
 			url:'/store_sale/report',
@@ -394,6 +397,7 @@ function render_tablist(tab_number){
 		$('#number_code_discount').val(tab_list[tab_number].number_code_discount)
 		$('#discount_value').text(tab_list[tab_number].discount_value)
 		$('#add_product').html(html)
+		$('#note_bill').val(tab_list[tab_number].note_bill)
 		tab_list[tab_number].total_sale = money
 	}
 	if(money != 0){

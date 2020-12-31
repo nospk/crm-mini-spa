@@ -84,7 +84,6 @@ class Store_sale extends Controller{
 			if(find.type == "product" && find.stocks_in_store[0].product_of_sale == 0){
 				return Store_sale.sendError(res, "Sản phẩm hết hàng", "Vui lòng chọn sản phẩm khác hoặc thêm sản phẩm"); 
 			}
-			console.log(find)
 			Store_sale.sendData(res, find);
 		}catch(err){
 			console.log(err)

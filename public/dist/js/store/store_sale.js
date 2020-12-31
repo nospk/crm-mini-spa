@@ -3,7 +3,24 @@ let typingTimer_search;
 let doneTypingInterval = 500;  //time in ms, 1 second for example
 let show_product = $('#search_product');
 let show_customer = $('#search_customer');
-let tab_list = [{HD:1, item:[], employee: "", customer:""}];
+let tab_list = [{
+		HD:1, 
+		item:[], 
+		employee: "", 
+		customer:"", 
+		bill_money: "", 
+		discount_type:"",
+		money_discount: "", 
+		discount_id:"",
+		number_code_discount:"",
+		discount_value:"",
+		total_sale:"", 
+		customer_pay_card:"", 
+		customer_pay_cash:"", 
+		money_return:"",
+		note_bill: "",
+		price_book: "default"
+	}];
 let tab_number = 0;
 let tab_max_current = 1;
 let employees = {};
@@ -50,7 +67,6 @@ $( document ).ready(()=>{
         this.value = this.value.toLocaleUpperCase();
     });
 	$('#number_code_discount').on('change', function(){
-		if (this.value != "") {
 			$.ajax({
 				url: '/store_sale/search_discount',
 				method: 'POST',
@@ -62,17 +78,17 @@ $( document ).ready(()=>{
 					if (data.status == 1) {
 						if (data.data) {
 							let discount = data.data
-							$('#discount_id').val(discount._id)
-							$('#discount_type').val(discount.type_discount)
+							tab_list[tab_number].discount_id = discount._id
+							tab_list[tab_number].discount_type = discount.type_discount
+							tab_list[tab_number].number_code_discount = discount.number_code
 							if(discount.type_discount == "percent"){
-								$('#discount_value').text(convert_percent(discount.value))
-								render_tablist(tab_number)
+								tab_list[tab_number].discount_value = convert_percent(discount.value)
 							}else{
-								$('#discount_value').text(convert_vnd(discount.value))
-								render_tablist(tab_number)
+								tab_list[tab_number].discount_value = convert_vnd(discount.value)	
 							}
 						}
 					} else {
+						tab_list[tab_number].number_code_discount = ""
 						Swal.fire({
 							title: data.error,
 							text: data.message,
@@ -80,18 +96,15 @@ $( document ).ready(()=>{
 							showConfirmButton: false,
 							timer: 3000
 						}).then((result) => {
-							clear_discount()
+
 						})
 						.catch(timer => {
-							clear_discount()
+
 						});
 					}
+					render_tablist(tab_number)
 				}
 			})
-		}else{
-			clear_discount()
-		}
-
 	})
 	$('#select_employees').on('change', function (){
 		tab_list[tab_number].employee = $('#select_employees').val()
@@ -99,15 +112,6 @@ $( document ).ready(()=>{
 	$('#select_price_book').on('change', function() {
 		get_service();
 		render_tablist(tab_number);
-		if($('#select_price_book').val() == "default"){
-			$('#number_code_discount').prop("disabled", false);
-		}else{
-			$('#discount_type').val("")
-			$('#discount_value').text("")
-			$('#number_code_discount').val("")
-			$('#discount_id').val("")
-			$('#number_code_discount').prop("disabled", true);
-		}
 	});
 	$('#report').on('shown.bs.modal', function () {
 		 $.ajax({
@@ -173,13 +177,6 @@ function get_price_book(){
             }
         }
     })
-}
-function clear_discount(){
-	$('#discount_type').val("")
-	$('#discount_value').text("")
-	$('#number_code_discount').val("")
-	$('#discount_id').val("")
-	render_tablist(tab_number)
 }
 function search_product() {
 	if ($('#search_product').val() != "") {
@@ -290,7 +287,6 @@ function search_customer() {
 	}
 
 }
-
 function add_product(id){
 	$.ajax({
 			url: '/store_sale/get_by_id',
@@ -348,7 +344,6 @@ function render_tablist(tab_number){
 	let html = '';
 	let money = 0;
 	let combo = false;
-	let money_discount = 0;
 	if(tab_list[tab_number] != undefined){
 		tab_list[tab_number].item.forEach((item, index) =>{
 			let check_price = check_price_book(item)
@@ -381,52 +376,69 @@ function render_tablist(tab_number){
 		if(tab_list[tab_number].employee != ""){
 			$('#select_employees').val(tab_list[tab_number].employee)
 		}
+		if($('#number_code_discount').val() == ""){
+			tab_list[tab_number].discount_type = "" 
+			tab_list[tab_number].discount_value = "" 
+			tab_list[tab_number].number_code_discount = "" 
+			tab_list[tab_number].discount_id = ""
+		}
 		if(combo == true || $('#select_price_book').val() != "default"){
-			$('#discount_type').val("")
-			$('#discount_value').text("")
-			$('#number_code_discount').val("")
-			$('#discount_id').val("")
+			tab_list[tab_number].discount_type = "" 
+			tab_list[tab_number].discount_value = "" 
+			tab_list[tab_number].number_code_discount = "" 
+			tab_list[tab_number].discount_id = ""
 			$('#number_code_discount').prop("disabled", true);
 		}else{
 			$('#number_code_discount').prop("disabled", false);
 		}
+		$('#number_code_discount').val(tab_list[tab_number].number_code_discount)
+		$('#discount_value').text(tab_list[tab_number].discount_value)
 		$('#add_product').html(html)
-		$('#total_sale').text(convert_vnd(money))
+		tab_list[tab_number].total_sale = money
 	}
 	if(money != 0){
-		if($("#discount_type").val() != ""){//if have discount code
-			if($("#discount_type").val() == "percent"){ // type percent
-				money_discount = Math.ceil(money * convert_number($('#discount_value').text()) /100)
-				$('#money_discount').text(convert_vnd(money_discount))
+		if(tab_list[tab_number].discount_type != ""){//if have discount code
+			if(tab_list[tab_number].discount_type == "percent"){ // type percent
+				tab_list[tab_number].money_discount = Math.ceil(money * convert_number(tab_list[tab_number].discount_value) /100)
 			}
-			if($("#discount_type").val() == "money"){// type money
-				money_discount = convert_number($('#discount_value').text())
-				$('#money_discount').text($('#discount_value').text())
+			if(tab_list[tab_number].discount_type == "money"){// type money
+				tab_list[tab_number].money_discount = tab_list[tab_number].discount_value
 			}
 		}else{
-			$('#money_discount').text("")
+			tab_list[tab_number].money_discount = 0
 		}
-		$('#total_sale').text(convert_vnd(money))
-		let bill_money = money - money_discount
+		let bill_money = money - tab_list[tab_number].money_discount
 		if(bill_money < 0){
-			$('#bill_money').text(convert_vnd(0))
+			tab_list[tab_number].bill_money = 0
 		}else{
-			$('#bill_money').text(convert_vnd(bill_money))
+			tab_list[tab_number].bill_money = bill_money
 		}
 			
 		$('#selection_pay').removeClass("d-none").addClass("d-flex");
-		if($('#customer_pay_cash').text() != "" || $('#customer_pay_card').text() != ""){
-			$('#money_return').text(convert_vnd(convert_number($('#customer_pay_cash').text()) + convert_number($('#customer_pay_card').text()) - convert_number($('#bill_money').text())))
+		if(tab_list[tab_number].customer_pay_cash != "" || tab_list[tab_number].customer_pay_card != ""){
+			tab_list[tab_number].money_return = tab_list[tab_number].customer_pay_cash + tab_list[tab_number].customer_pay_card - tab_list[tab_number].bill_money
 		}else{
-			$('#money_return').text("")
+			tab_list[tab_number].money_return = 0
 		}
+		$('#money_return').text(convert_vnd(tab_list[tab_number].money_return))
+		$('#money_discount').text(convert_vnd(tab_list[tab_number].money_discount))
+		$('#total_sale').text(convert_vnd(tab_list[tab_number].total_sale))
+		$('#bill_money').text(convert_vnd(tab_list[tab_number].bill_money))
+		$('#customer_pay_cash').text(convert_vnd(tab_list[tab_number].customer_pay_cash == "" ? 0 :tab_list[tab_number].customer_pay_cash))
+		$('#customer_pay_card').text(convert_vnd(tab_list[tab_number].customer_pay_card == "" ? 0 :tab_list[tab_number].customer_pay_card))
 	}else{
 		$('#total_sale').text("")
+		$('#money_discount').text("")
 		$('#customer_pay_cash').text("")
 		$('#customer_pay_card').text("")
 		$('#money_return').text("")
 		$('#bill_money').text("")
 		$('#selection_pay').removeClass("d-flex").addClass("d-none");
+	}
+	if(tab_list[tab_number].customer != ""){
+		add_customer(tab_list[tab_number].customer)
+	} else {
+		remove_customer()
 	}
 }
 
@@ -678,32 +690,28 @@ function create_new_customer(){
     })
 }
 function pay_cash(){
-	$('#customer_pay_cash').text($('#pay_cash').val())
-	$('#customer_pay_card').text("")
-	if($('#customer_pay_cash').text() != ""){
-		$('#money_return').text(convert_vnd(convert_number($('#customer_pay_cash').text()) - convert_number($('#bill_money').text())))
-	}else{
-		$('#money_return').text("")
-	}
+	tab_list[tab_number].customer_pay_cash = convert_number($('#pay_cash').val())
+	tab_list[tab_number].customer_pay_card = ""
+	render_tablist(tab_number)
 }
 function pay_both(){
-	$('#customer_pay_cash').text($('#both_pay_cash').val())
-	$('#customer_pay_card').text($('#both_pay_card').val())
-	$('#money_return').text(convert_vnd(convert_number($('#customer_pay_cash').text()) + convert_number($('#customer_pay_card').text()) - convert_number($('#bill_money').text())))
+	tab_list[tab_number].customer_pay_cash = convert_number($('#both_pay_cash').val())
+	tab_list[tab_number].customer_pay_card = convert_number($('#both_pay_card').val())
+	render_tablist(tab_number)
 }
 function change_payment_type(type){
 	if(type == "payment_cash"){
 		$('#type_cash').modal('show');
-		$('#pay_cash').val($('#bill_money').text())
+		$('#pay_cash').val(convert_vnd(tab_list[tab_number].bill_money))
 		$('#both_pay_cash').val("");
 		$('#both_pay_card').val("");
 	}else if(type == "payment_card"){
-		$('#customer_pay_card').text($('#bill_money').text())
-		$('#money_return').text(convert_vnd(0))
-		$('#customer_pay_cash').text("")
+		tab_list[tab_number].customer_pay_card = tab_list[tab_number].bill_money
+		tab_list[tab_number].customer_pay_cash = ""
 		$('#both_pay_cash').val("")
 		$('#both_pay_card').val("")
 		$('#pay_cash').val("")
+		render_tablist(tab_number)
 	}else{
 		$('#type_both').modal('show');
 		$('#pay_cash').val("")
@@ -792,16 +800,11 @@ function check_payment(){
 }
 
 function get_list_item(){
-    let get_list_item = [];
-    $(".number-code").each(function () {                  
-        get_list_item.push($(this).text()); 
-    });
     let data = [];
-    get_list_item.forEach((number_code)=>{
+    tab_list[tab_number].item.forEach((element)=>{
         data.push({
-            sell_quantity: convert_number($(`#quantity-${number_code}`).val()),
-            id: $(`#id-product-${number_code}`).val(),
-			//name: $(`#name-product-${number_code}`).text(),
+            sell_quantity: element.sale_quantity,
+            id: element._id,
         })
     })
     return data;
@@ -810,12 +813,12 @@ function get_list_item(){
 function check_out(){
 	let data = {
 		employees: $('#select_employees').val(),
-		price_book: $('#select_price_book').val(),
-		customer_pay_card: convert_number($('#customer_pay_card').text()),
-		customer_pay_cash: convert_number($('#customer_pay_cash').text()),
-		discount_id: $('#discount_id').val(),
-		customer: $('#select_customer').val(),
-		note: $('#note_bill').val(),
+		price_book: tab_list[tab_number].price_book,
+		customer_pay_card: tab_list[tab_number].customer_pay_card,
+		customer_pay_cash: tab_list[tab_number].customer_pay_cash,
+		discount_id: tab_list[tab_number].discount_id,
+		customer: tab_list[tab_number].customer.split(":")[1],
+		note: tab_list[tab_number].note_bill,
         list_item: get_list_item(),
         _csrf: $('#_csrf').val()
     }
@@ -1006,9 +1009,21 @@ function remove_tab_menu(btw){
 					</li>`
 		tab_list.push({
 			HD:tab_max_current,
-			item: [],
-			employee: "",
-			customer: ""
+			item:[], 
+			employee: "", 
+			customer:"", 
+			bill_money: "", 
+			discount_type:"",
+			money_discount: "", 
+			discount_id:"",
+			number_code_discount:"",
+			discount_value:"",
+			total_sale:"", 
+			customer_pay_card:"", 
+			customer_pay_cash:"", 
+			money_return:"",
+			note_bill: "",
+			price_book: "default",
 		})
 		$('#tab-menu-horizontal').append(html)
 	}
@@ -1036,9 +1051,21 @@ function add_tab_menu(){
 					</li>`
 		tab_list.push({
 			HD: tab_max_current,
-			item: [],
-			employee: "",
-			customer: ""
+			item:[], 
+			employee: "", 
+			customer:"", 
+			bill_money: "", 
+			discount_type:"",
+			money_discount: "", 
+			discount_id:"",
+			number_code_discount:"",
+			discount_value:"",
+			total_sale:"", 
+			customer_pay_card:"", 
+			customer_pay_cash:"", 
+			money_return:"",
+			note_bill: "",
+			price_book: "default"
 		})
 		render_tablist(tab_number);
 		$('#tab-menu-horizontal').append(html);
@@ -1049,12 +1076,7 @@ function add_tab_menu(){
 }
 function clear_data(index_tab){
 	let number_tab = tab_list[index_tab].HD
-	tab_list.splice(index_tab,1);
-	$(`a:contains('HD ${number_tab}')`).parent().remove();
-	$("#tab-menu-horizontal .menu-bill").first().addClass("active");
-	tab_number = 0;
-	tab_max_current = Math.max.apply(Math, tab_list.map(function(item) { return item.HD; }))
-	document.getElementById('tab-menu-horizontal').scrollLeft -= 1000;
+	remove_tab_menu($(`a:contains('HD ${number_tab}')`))
 	render_tablist(tab_number)
 }
 function slideLeft(){

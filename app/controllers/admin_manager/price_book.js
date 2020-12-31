@@ -110,11 +110,14 @@ class Admin_price_book extends Controller{
 	}
 	static async add_item(req, res){
 		try{
-			let check = await Product_service.findOne({company: req.session.user.company._id, _id: req.body.id})
-			if(check){
-				await Price_book.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.price_book},{$push:{list_product_service: req.body.id}})
-				check.price_book.push({id: req.body.price_book, price_sale: check.price})
-				await check.save()
+			let check_product = await Product_service.findOne({company: req.session.user.company._id, _id: req.body.id})
+			if(check_product){
+				let check_double = await Price_book.findOne({company: req.session.user.company._id, _id: req.body.price_book,list_product_service: req.body.id})
+				if(!check_double){
+					await Price_book.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.price_book},{$push:{list_product_service: req.body.id}})
+					check_product.price_book.push({id: req.body.price_book, price_sale: check_product.price})
+					await check_product.save()
+				}
 				Admin_price_book.sendMessage(res, "Đã tạo thành công");
 			}else{
 				Admin_price_book.sendError(res, "Không tìm thấy", "Vui lòng thử lại");

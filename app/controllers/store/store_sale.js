@@ -80,17 +80,11 @@ class Store_sale extends Controller{
 	}
 	static async get_by_id(req,res){
 		try{
-			let find = await Product_service.findOne({company :req.session.store.company, isSale: true, _id: req.body.id}).populate({
-				path: 'stocks_in_store',
-				match: { store_id: req.session.store._id },
-				select: 'product_of_sale',
-			}).populate({
-				path: 'combo.id',
-				populate: { path: 'Product_services' },
-			});
+			let find = await Product_service.findOne({company :req.session.store.company, isSale: true, _id: req.body.id})
 			if(find.type == "product" && find.stocks_in_store[0].product_of_sale == 0){
 				return Store_sale.sendError(res, "Sản phẩm hết hàng", "Vui lòng chọn sản phẩm khác hoặc thêm sản phẩm"); 
 			}
+			console.log(find)
 			Store_sale.sendData(res, find);
 		}catch(err){
 			console.log(err)

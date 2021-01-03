@@ -123,7 +123,7 @@ class Common {
 					<table style="width:98%;border-collapse:collapse;border-bottom:1px solid black;">
 						<tbody>
 							<tr>
-								<td rowspan="3"><img src="http://localhost/nospk.png" style="width: 50px;"></td>
+								<td rowspan="3"><img src="http://localhost/lanispa.png" style="width: 50px;"></td>
 								<td style="text-align:center;"><span style="font-size:16px;"><strong>${store.name}</strong></span></td>
 							</tr>
 							<tr>

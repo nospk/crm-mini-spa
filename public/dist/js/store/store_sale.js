@@ -821,7 +821,7 @@ function check_out(){
 		customer_pay_card: tab_list[tab_number].customer_pay_card,
 		customer_pay_cash: tab_list[tab_number].customer_pay_cash,
 		discount_id: tab_list[tab_number].discount_id,
-		customer: tab_list[tab_number].customer.split(":")[1],
+		customer: tab_list[tab_number].customer ? tab_list[tab_number].customer.split(":")[1] : "",
 		note: tab_list[tab_number].note_bill,
         list_item: get_list_item(),
         _csrf: $('#_csrf').val()

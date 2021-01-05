@@ -101,7 +101,7 @@ class Common {
 	
 	static print_bill(items, service, customer, store, discount, payment, money_discount, cash, card, payment_back, invoice){
 		return new Promise(async (resolve, reject)=>{
-			let bill = `<html><head><meta charset="UTF-8"><style type="text/css">body {-webkit-print-color-adjust: exact; font-family: Arial, sans-serif;}</style></head><body onload="self.print(); self.close();"><base href="http://app.nospk.dev"><div>
+			let bill = `<html><head><meta charset="UTF-8"><style type="text/css">body {-webkit-print-color-adjust: exact; font-family: Arial, sans-serif;}</style></head><body onload="self.print(); self.close();"><base href="https://app.nospk.dev"><div>
 				<style type="text/css">
 					.printBox {
 						font: Arial, sans-serif;

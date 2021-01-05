@@ -101,7 +101,7 @@ class Common {
 	
 	static print_bill(items, service, customer, store, discount, payment, money_discount, cash, card, payment_back, invoice){
 		return new Promise(async (resolve, reject)=>{
-			let bill = `<html><head><meta charset="UTF-8"><style type="text/css">body {-webkit-print-color-adjust: exact; font-family: Arial, sans-serif;}</style></head><body onload="self.print(); self.close();"><div>
+			let bill = `<html><head><meta charset="UTF-8"><style type="text/css">body {-webkit-print-color-adjust: exact; font-family: Arial, sans-serif;}</style></head><body onload="self.print(); self.close();"><base href="http://app.nospk.dev"><div>
 				<style type="text/css">
 					.printBox {
 						font: Arial, sans-serif;
@@ -123,7 +123,7 @@ class Common {
 					<table style="width:98%;border-collapse:collapse;border-bottom:1px solid black;">
 						<tbody>
 							<tr>
-								<td rowspan="3"><img src="http://localhost/lanispa.png" style="width: 50px;"></td>
+								<td rowspan="3"><img src="/lanispa.png" style="width: 50px;"></td>
 								<td style="text-align:center;"><span style="font-size:16px;"><strong>${store.name}</strong></span></td>
 							</tr>
 							<tr>

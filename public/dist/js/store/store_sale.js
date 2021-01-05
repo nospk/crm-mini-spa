@@ -110,7 +110,7 @@ $( document ).ready(()=>{
 		tab_list[tab_number].employee = $('#select_employees').val()
 	})
 	$('#select_price_book').on('change', function() {
-		get_service();
+		tab_list[tab_number].price_book = $('#select_price_book').val()
 		render_tablist(tab_number);
 	});
 	$('#note_bill').on('change', function() {
@@ -239,6 +239,7 @@ function add_customer(customer){
 	get_customer(customer[1]);
 }
 function remove_customer(){
+	tab_list[tab_number].customer = ""
 	$('#customer').text("");
 	$('#select_customer').val("");
 	$('#search_customer').val("");
@@ -343,7 +344,9 @@ function add_product(id){
 	
 }
 function render_tablist(tab_number){
-	$('#search_product').val("")
+	$('#search_product').val("");
+	$('#select_price_book').val(tab_list[tab_number].price_book);
+	get_service();
 	let html = '';
 	let money = 0;
 	let combo = false;
@@ -487,6 +490,7 @@ function get_employees(){
                     html_employees += `<option value="${item._id}">${item.name}</option>`
                 })
 				$('#select_employees').html(html_employees)
+				tab_list[tab_number].employee = $("#select_employees option:first").val()
             }else{
                 Swal.fire({
                     title: data.error,
@@ -523,7 +527,7 @@ function get_service(){
 						if(index == 0){ // if first item
 							html+= `<div class="carousel-item active">
 										<div class="card-columns">
-											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
+											<div class="card shadow-none green-card text-white pointer h-105" onclick="add_product('${item._id}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
@@ -535,7 +539,7 @@ function get_service(){
 							if(index == count){ // if first card in columns
 								html+= `<div class="carousel-item">
 											<div class="card-columns">
-												<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
+												<div class="card shadow-none green-card text-white pointer h-105" onclick="add_product('${item._id}')">
 													<div class="card-body">
 														<h5 class="card-title">${item.name}</h5>
 														<p class="card-text">Mã: ${item.number_code}</p>
@@ -546,7 +550,7 @@ function get_service(){
 										</div>
 									`
 							}else{
-								html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
+								html+= `<div class="card shadow-none green-card text-white pointer h-105" onclick="add_product('${item._id}')">
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
@@ -559,7 +563,7 @@ function get_service(){
 							}
 						}else if ((index+1) == count){ // if last card in columns
 							
-							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
+							html+= `<div class="card shadow-none green-card text-white pointer h-105" onclick="add_product('${item._id}')">
 											<div class="card-body">
 												<h5 class="card-title">${item.name}</h5>
 												<p class="card-text">Mã: ${item.number_code}</p>
@@ -573,7 +577,7 @@ function get_service(){
 							count += set_number;
 							html+= `<div class="carousel-item">
 										<div class="card-columns">
-											<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
+											<div class="card shadow-none green-card text-white pointer h-105" onclick="add_product('${item._id}')">
 												<div class="card-body">
 													<h5 class="card-title">${item.name}</h5>
 													<p class="card-text">Mã: ${item.number_code}</p>
@@ -582,7 +586,7 @@ function get_service(){
 											</div>
 								`
 						}else{
-							html+= `<div class="card shadow-none green-card text-white pointer" onclick="add_product('${item._id}')">
+							html+= `<div class="card shadow-none green-card text-white pointer h-105" onclick="add_product('${item._id}')">
 										<div class="card-body">
 											<h5 class="card-title">${item.name}</h5>
 											<p class="card-text">Mã: ${item.number_code}</p>
@@ -722,7 +726,7 @@ function change_payment_type(type){
 	}
 }
 function check_payment(){
-	if($(".total").length == 0){
+	if(tab_list[tab_number].item.length == 0){
 		Swal.fire({
 			title: "Lỗi chưa chọn sản phẩm - dịch vụ",
 			text: "Vui lòng chọn lại",
@@ -735,7 +739,7 @@ function check_payment(){
 		.catch(timer => {
 			// cho vào để ko báo lỗi uncaught
 		}); 
-	}else if($('#customer_pay_cash').text() == "" && $('#customer_pay_card').text() == ""){
+	}else if(tab_list[tab_number].customer_pay_card == 0 && tab_list[tab_number].customer_pay_cash == 0){
 		Swal.fire({
 			title: "Lỗi chưa nhập số tiền thanh toán của khách",
 			text: "Vui lòng nhập lại",
@@ -748,7 +752,7 @@ function check_payment(){
 		.catch(timer => {
 			// cho vào để ko báo lỗi uncaught
 		});
-	}else if($('#select_customer').val() == ""){
+	}else if(tab_list[tab_number].customer == ""){
 		Swal.fire({
 			title: "Bạn chưa nhập thông tin khách hàng",
 			text: "Xác nhận đồng ý thanh toán cho khách lẻ",
@@ -816,7 +820,7 @@ function get_list_item(){
 
 function check_out(){
 	let data = {
-		employees: $('#select_employees').val(),
+		employees: tab_list[tab_number].employee,
 		price_book: tab_list[tab_number].price_book,
 		customer_pay_card: tab_list[tab_number].customer_pay_card,
 		customer_pay_cash: tab_list[tab_number].customer_pay_cash,
@@ -1014,7 +1018,7 @@ function remove_tab_menu(btw){
 		tab_list.push({
 			HD:tab_max_current,
 			item:[], 
-			employee: "", 
+			employee: $("#select_employees option:first").val(), 
 			customer:"", 
 			bill_money: "", 
 			discount_type:"",
@@ -1056,7 +1060,7 @@ function add_tab_menu(){
 		tab_list.push({
 			HD: tab_max_current,
 			item:[], 
-			employee: "", 
+			employee: $("#select_employees option:first").val(), 
 			customer:"", 
 			bill_money: "", 
 			discount_type:"",

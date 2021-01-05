@@ -51,7 +51,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			--table-width: 100%;
 			/* Or any value, this will change dinamically */
 		}
-
+		
 		tbody {
 			display: block;
 			max-height: 60vh;
@@ -163,6 +163,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		.menu-bill.active {
 		  background-color:#ffffff; 
 		}
+		.h-105 {
+			height: 95px;
+		}
 	</style>
 </head>
 
@@ -177,7 +180,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<section class="content">
 			<div class="container-fluid">
 				<!-- Small boxes (Stat box) -->
-				<div class="card" style="min-height: 75vh;">
+				<div class="card" style="min-height: 70vh;">
 					<div class="card-header green-card"
 						style="height: 50px; padding: 0px; position: relative;">
 						<div class="row" style="height:50px;">
@@ -234,7 +237,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<span class="font-italic text-white" id="name_store" style="margin-left: 10px;top:10px; left: 5px;position: relative;">
 									<%-store_name%>
 								</span>
-								<div class="btn-group float-right text-white" style="position: relative; display:inline; padding:0;">
+								<div class="btn-group float-right text-white" style="position: relative; display:inline; padding:0; top:6px">
 								  <button type="button" style="color:#17a2b8;" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									<i class="fas fa-bars"></i>
 								  </button>
@@ -267,14 +270,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								</table>
 							</div>
 							<div class="col-md-4">
-								<div class="input-group" style="padding-bottom:5px;">
+								<div class="input-group">
 									<div class="input-group-prepend">
 									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Nhân Viên</span>
 									</div>
 									<select class="form-control" id="select_employees">
 									</select>
 								</div>
-								<div class="input-group" id="find_customer" style="padding-bottom:5px;">
+								<div class="input-group" id="find_customer">
 									<div class="input-group-prepend">
 									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Khách hàng</span>
 									</div>
@@ -283,7 +286,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									  <button class="btn btn-info" type="button" style="width:38px" data-toggle="modal" data-target="#create_new_customer"><i class="fas fa-plus"></i></button>
 									</div>
 								</div>
-								<div class="input-group" id="show_customer" style="display:none; padding-bottom:5px;">
+								<div class="input-group" id="show_customer" style="display:none;">
 									<div class="input-group-prepend">
 									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Khách hàng</span>
 									</div>
@@ -306,19 +309,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<select class="form-control" id="select_price_book">
 									</select>
 								</div>
-								<div class="input-group" style="padding-bottom:5px; padding-top:5px;">
+								<div class="input-group">
 									<div class="input-group-prepend">
 									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Mã giảm giá</span>
 									</div>
 									<input type="text" id="number_code_discount" autocomplete="off" class="form-control">
 								</div>
-								<label>Giảm giá</label> <span id="discount_value" class="float-right"></span>
+								<label style="margin-bottom:0px">Giảm giá</label> <span id="discount_value" class="float-right"></span>
 								<br>
 								<span>Tổng cộng</span> <span id="total_sale" class="float-right"></span>
 								<br>
 								<span>Tiền giảm</span> <span id="money_discount" class="float-right"></span>
 								<br>
-								<label>Số tiền phải thanh toán</label> <span id="bill_money" class="float-right"></span>
+								<label style="margin-bottom:0px">Số tiền phải thanh toán</label> <span id="bill_money" class="float-right"></span>
 								<br>
 								<label style="margin-bottom: 0px">Khách trả</label><br>
 								<span>Tiền mặt</span> <span id="customer_pay_cash" class="float-right"></span><br>
@@ -329,7 +332,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<button type="button" id="payment_card" style="width:33%;" onclick="change_payment_type('payment_card')"class="btn btn-outline-info">Thẻ</button>
 									<button type="button" id="payment_both" style="width:33%;" onclick="change_payment_type('payment_both')"class="btn btn-outline-info">Khác</button>
 								</div>
-								<label>Trả lại khách</label> <span class="float-right" id="money_return"></span>
+								<label >Trả lại khách</label> <span class="float-right" id="money_return"></span>
 								<br>
 								<textarea class="form-control form-control-sm" id="note_bill" style="resize:none;" placeholder="Ghi chú" rows="5"></textarea>	
 								<button type="button" style="height:40px" class="form-control btn btn-info float-left" onclick="check_payment()">Thanh toán</button>

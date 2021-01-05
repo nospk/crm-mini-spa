@@ -71,7 +71,6 @@ class Admin_price_book extends Controller{
 		try{
 			let {name, date_from, date_to, store, groupCustomer} = req.body
 			let check = await Price_book.findOne({company:req.session.user.company._id, _id: req.body.id})
-			console.log(new Date(date_from))
 			if(check){
 				check.name = name
 				check.store = store ? store : []

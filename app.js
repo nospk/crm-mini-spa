@@ -34,7 +34,7 @@ app.use(session({
 		httpOnly: true,
 		sameSite: 'none',
 		maxAge: 28800000
-	}
+	},
     resave: false,
     saveUninitialized: true,
     store: new LokiStore({}),

@@ -29,7 +29,12 @@ const options = {
 app.use(helmet())
 app.use(session({
     secret: 'this-is-a-secret-token-a-b-2-3-4',
-    cookie: { maxAge: 28800000 },
+	cookie: {
+		secure: true,
+		httpOnly: true,
+		sameSite: 'none',
+		maxAge: 28800000
+	}
     resave: false,
     saveUninitialized: true,
     store: new LokiStore({}),

@@ -30,9 +30,8 @@ app.use(helmet())
 app.use(session({
     secret: 'this-is-a-secret-token-a-b-2-3-4',
 	cookie: {
-		secure: true,
 		httpOnly: true,
-		sameSite: 'none',
+		sameSite: 'strict',
 		maxAge: 28800000
 	},
     resave: false,

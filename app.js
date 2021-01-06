@@ -31,7 +31,8 @@ app.use(session({
     secret: 'this-is-a-secret-token-a-b-2-3-4',
 	cookie: {
 		httpOnly: true,
-		sameSite: 'strict',
+		secure: true,
+		sameSite: 'lax',
 		maxAge: 28800000
 	},
     resave: false,

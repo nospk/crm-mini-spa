@@ -5,7 +5,8 @@ let show_product = $('#search_product');
 let show_customer = $('#search_customer');
 let tab_list = [{
 		HD:1, 
-		item:[], 
+		item:[],
+		time: "",
 		employee: "", 
 		customer:"", 
 		bill_money: "", 
@@ -56,6 +57,7 @@ $( document ).ready(()=>{
 	get_service();
 	get_price_book();
 	get_employees();
+	set_time();
 	$('#birthday').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
 	$('[data-mask]').inputmask()
     const currencyInputAll = document.querySelectorAll('input[type="currency"]')
@@ -180,6 +182,15 @@ function get_price_book(){
             }
         }
     })
+}
+function set_time(){
+	if (tab_list[tab_number].time == ""){
+		let now = new Date()
+		tab_list[tab_number].time = ('0'+ now.getDate()).slice(-2) + '/'+ ('0' + (now.getMonth()+1)).slice(-2) + '/' + now.getFullYear() + ' ' + ('0' + now.getHours()).slice(-2) + ":" + ('0' + now.getMinutes()).slice(-2)
+		$('#date_sale').val(('0'+ now.getDate()).slice(-2) + '/'+ ('0' + (now.getMonth()+1)).slice(-2) + '/' + now.getFullYear() + ' ' + ('0' + now.getHours()).slice(-2) + ":" + ('0' + now.getMinutes()).slice(-2))
+	}else{
+		$('#date_sale').val(tab_list[tab_number].time)
+	}
 }
 function search_product() {
 	if ($('#search_product').val() != "") {
@@ -344,6 +355,7 @@ function add_product(id){
 	
 }
 function render_tablist(tab_number){
+	set_time();
 	$('#search_product').val("");
 	$('#select_price_book').val(tab_list[tab_number].price_book);
 	get_service();
@@ -857,7 +869,7 @@ function check_out(){
 		}
 	})
 }
-function check_password_manager(){
+function unlock_manager(){
 	$.ajax({
 		url:'/store_sale/check_password_manager',
 		method:'POST',
@@ -865,7 +877,17 @@ function check_password_manager(){
 		data: JSON.stringify({_csrf: $('#_csrf').val(), password: $('#password_manager').val()}),
 		success: function(data){
 			if(data.status == 1){
-				console.log('1');
+				$('#button_unlock_manager').hide()
+				$('#button_lock_manager').show()
+				$('#date_sale').prop( "disabled", false );
+				Swal.fire({
+					toast: true,
+				    position: 'top-end',
+				    showConfirmButton: false,
+                    title: data.message,
+                    icon: "success",  
+                    timer: 3000
+                })
 			}else{
 				Swal.fire({
 					toast: true,
@@ -882,6 +904,34 @@ function check_password_manager(){
                 }); 
 				
 			}
+		}
+	})
+}
+function lock_manager(){
+	$.ajax({
+		url:'/store_sale/check_password_manager',
+		method:'POST',
+		contentType: "application/json; charset=utf-8",
+		data: JSON.stringify({_csrf: $('#_csrf').val(), password: ""}),
+		success: function(data){
+				$('#button_unlock_manager').show()
+				$('#button_lock_manager').hide()
+				$('#date_sale').prop( "disabled", true );
+				Swal.fire({
+					toast: true,
+				    position: 'top-end',
+				    showConfirmButton: false,
+                    title: "Quản lý đã bị khóa",
+                    icon: "success",  
+                    timer: 3000
+                }).then(()=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+				
+			
 		}
 	})
 }
@@ -1018,6 +1068,7 @@ function remove_tab_menu(btw){
 		tab_list.push({
 			HD:tab_max_current,
 			item:[], 
+			time: "",
 			employee: $("#select_employees option:first").val(), 
 			customer:"", 
 			bill_money: "", 
@@ -1060,6 +1111,7 @@ function add_tab_menu(){
 		tab_list.push({
 			HD: tab_max_current,
 			item:[], 
+			time: "",
 			employee: $("#select_employees option:first").val(), 
 			customer:"", 
 			bill_money: "", 

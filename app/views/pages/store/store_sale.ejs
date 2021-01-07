@@ -167,6 +167,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			height: 95px;
 		}
 	</style>
+	<!-- daterange picker -->
+	<link rel="stylesheet" href="/assets/plugins/daterangepicker/daterangepicker.css">
+	<!-- Select2 -->
+	<link rel="stylesheet" href="/assets/plugins/select2/css/select2.min.css">
+	<link rel="stylesheet" href="/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 </head>
 
 <body>
@@ -243,7 +248,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								  </button>
 								  <div class="dropdown-menu dropdown-menu-right">
 									<button class="dropdown-item" data-toggle="modal" data-target="#report" type="button"><i class="fas fa-calculator"></i> Báo cáo</button>
-									<button class="dropdown-item" data-toggle="modal" data-target="#check_password_manager" type="button"><i class="fas fa-file-invoice-dollar"></i> Sửa hóa đơn</button>
+									<button class="dropdown-item" data-toggle="modal" id="button_unlock_manager" data-target="#unlock_manager" type="button"><i class="fas fa-lock"></i></i> Mở Quản lý</button>
+									<button class="dropdown-item" id="button_lock_manager" style="display:none;" onclick="lock_manager()" type="button"><i class="fas fa-unlock"></i> Khóa Quản lý</button>
+									<button class="dropdown-item" id="button_edit_bill" style="display:none;" data-target="#" type="button"><i class="fas fa-file-invoice-dollar"></i> Sửa hóa đơn</button>
 									<button class="dropdown-item" onclick="location.href='/logout'" type="button"><i class="fas fa-sign-out-alt"></i> Thoát</button>
 								  </div>
 								</div>
@@ -270,6 +277,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								</table>
 							</div>
 							<div class="col-md-4">
+								<div class="input-group">
+									<div class="input-group-prepend">
+									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Ngày giờ</span>
+									</div>
+									<input type="text" class="form-control date" style="text-align:right;" disabled id="date_sale">
+								</div>
 								<div class="input-group">
 									<div class="input-group-prepend">
 									  <span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Nhân Viên</span>
@@ -663,7 +676,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<!-- End Modal Show Customer -->
 		
 		<!-- Modal password manager -->
-		<div class="modal fade" id="check_password_manager" tabindex="-1" role="dialog" aria-labelledby="check_password_manager" data-backdrop="static">
+		<div class="modal fade" id="unlock_manager" tabindex="-1" role="dialog" aria-labelledby="unlock_manager" data-backdrop="static">
 		  <div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
 			  <div class="modal-header">
@@ -685,7 +698,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			  </div>
 			  <div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-				<button type="button" class="btn btn-primary" onclick="check_password_manager();" data-dismiss="modal">Nhập</button>
+				<button type="button" class="btn btn-primary" onclick="unlock_manager();" data-dismiss="modal">Nhập</button>
 			  </div>
 			</div>
 		  </div>
@@ -707,9 +720,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<script src="/assets/dist/js/adminlte.min.js"></script>
 		<!-- Common -->
 		<script src="/dist/js/common.js"></script>
+		
 		<!-- InputMask -->
+		<script src="/assets/plugins/moment/moment.min.js"></script>
+		<script src="/assets/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+		<!-- date-range-picker -->
+		<script src="/assets/plugins/daterangepicker/daterangepicker.js"></script>
+		<!-- Select2 -->
+		<script src="/assets/plugins/select2/js/select2.full.min.js"></script>
+		<script>
+		  $(function () {
 
-		<script src="assets/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+			//Date range picker
+			$('.date').daterangepicker({
+				timePicker: true,
+				singleDatePicker: true,
+				showDropdowns: true,
+				timePicker24Hour: true,
+				locale: {
+					format: 'DD/MM/YYYY HH:mm'
+				}	
+			})
+		  })
+		</script>
 </body>
 
 </html>

@@ -29,6 +29,7 @@ const check_price_book = (item, price_book) => {
 class Store_sale extends Controller{
     static show(req, res){
         Store_sale.setLocalValue(req,res);
+		req.session.manager = "";
         res.render('./pages/store/store_sale');
     }
 	static async search_product(req, res){
@@ -212,9 +213,11 @@ class Store_sale extends Controller{
 		try{
 			let store = await Store.findOne({company: req.session.store.company, _id: req.session.store._id})
 			if (!store.validPassword_manager(req.body.password)){
+				req.session.manager = "";
 				Store_sale.sendError(res, "Không đúng mật khẩu quản lý", "Nhập lại mật khẩu quản lý");
 			}else{
-				Store_sale.sendData(res, req.body.password);
+				req.session.manager = req.body.password;
+				Store_sale.sendMessage(res, "Đăng nhập quản lý thành công");
 			}
 		}catch(err){
 			console.log(err)
@@ -586,9 +589,10 @@ class Store_sale extends Controller{
 				await invoice_service.save()
 				list_service[t].serial = serial_service
 			}
-			invoice_sale.list_service = list_service
-			await invoice_sale.save()
 			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount,payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)
+			invoice_sale.list_service = list_service
+			invoice_sale.bill_html = bill
+			await invoice_sale.save()
             Store_sale.sendData(res, bill);
 		}catch(err){
 			console.log(err.message)

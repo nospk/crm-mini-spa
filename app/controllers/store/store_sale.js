@@ -346,6 +346,8 @@ class Store_sale extends Controller{
 	static async check_out(req, res){
 		try{
 			//check price_book 
+			let time = new Date()
+			if (req.body.time) time = req.body.time
 			if(req.body.price_book != 'default'){
 				let date_now = new Date();
 				let price_book = await Price_book.findOne({company: req.session.store.company, _id:req.body.price_book, date_from:{$lt: date_now}, date_to:{$gt: date_now}, $or:[{store:[]},{store:req.session.store._id}]})
@@ -494,7 +496,8 @@ class Store_sale extends Controller{
 				discount: req.body.discount_id != "" ? req.body.discount_id : undefined,
 				note: req.body.note_bill,
 				who_created: req.session.store.name,
-				bill:[]
+				bill:[],
+				createdAt: time
 			})
 			await invoice_sale.save()
 			//invoice store stocks
@@ -507,6 +510,7 @@ class Store_sale extends Controller{
 					list_products: list_product,
 					who_created: req.session.store.name,
 					invoice: invoice_sale._id,
+					createdAt: time
 				})
 				
 				await invoice_stock.save()
@@ -533,7 +537,8 @@ class Store_sale extends Controller{
 					member_name: check_customer != false ? check_customer.name : "Khách lẻ",
 					member_id:check_customer != false ? check_customer._id : undefined,
 					accounting: true,
-					store: req.session.store._id
+					store: req.session.store._id,
+					createdAt: time
 				})
 				await card_book.save()
 				invoice_sale.bill.push(card_book._id)
@@ -564,7 +569,8 @@ class Store_sale extends Controller{
 					member_name: check_customer != false ? check_customer.name : "Khách lẻ",
 					member_id:check_customer != false ? check_customer._id : undefined,
 					accounting: true,
-					store: req.session.store._id
+					store: req.session.store._id,
+					createdAt: time
 				})
 				await cash_book.save()
 				invoice_sale.bill.push(cash_book._id)
@@ -584,7 +590,8 @@ class Store_sale extends Controller{
 					serial:serial_service,
 					times:list_service[t].times,
 					service:list_service[t].service,
-					invoice: invoice_sale._id
+					invoice: invoice_sale._id,
+					createdAt: time
 				})
 				await invoice_service.save()
 				list_service[t].serial = serial_service

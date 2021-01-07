@@ -7,6 +7,7 @@ let tab_list = [{
 		HD:1, 
 		item:[],
 		time: "",
+		time_edit: false,
 		employee: "", 
 		customer:"", 
 		bill_money: "", 
@@ -110,6 +111,10 @@ $( document ).ready(()=>{
 	})
 	$('#select_employees').on('change', function (){
 		tab_list[tab_number].employee = $('#select_employees').val()
+	})
+	$('#date_sale').on('change', function (){
+		tab_list[tab_number].time = $('#date_sale').val()
+		tab_list[tab_number].time_edit = true
 	})
 	$('#select_price_book').on('change', function() {
 		tab_list[tab_number].price_book = $('#select_price_book').val()
@@ -834,6 +839,7 @@ function check_out(){
 	let data = {
 		employees: tab_list[tab_number].employee,
 		price_book: tab_list[tab_number].price_book,
+		time: tab_list[tab_number].time_edit ? new Date(tab_list[tab_number].time) : undefined,
 		customer_pay_card: tab_list[tab_number].customer_pay_card,
 		customer_pay_cash: tab_list[tab_number].customer_pay_cash,
 		discount_id: tab_list[tab_number].discount_id,
@@ -1069,6 +1075,7 @@ function remove_tab_menu(btw){
 			HD:tab_max_current,
 			item:[], 
 			time: "",
+			time_edit: false,
 			employee: $("#select_employees option:first").val(), 
 			customer:"", 
 			bill_money: "", 
@@ -1112,6 +1119,7 @@ function add_tab_menu(){
 			HD: tab_max_current,
 			item:[], 
 			time: "",
+			time_edit: false,
 			employee: $("#select_employees option:first").val(), 
 			customer:"", 
 			bill_money: "", 

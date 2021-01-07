@@ -27,18 +27,30 @@ const options = {
 
 //helmet protect express
 app.use(helmet())
-app.use(session({
-    secret: 'this-is-a-secret-token-a-b-2-3-4',
-	cookie: {
-		httpOnly: true,
-		sameSite: 'lax',
-		maxAge: 28800000
-	},
-    resave: false,
-    saveUninitialized: true,
-    store: new LokiStore({}),
-}));
-
+if (process.env.NODE_ENV === 'production') {
+	app.use(session({
+		secret: 'this-is-a-secret-token-a-b-2-3-4',
+		cookie: {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'lax',
+			maxAge: 28800000
+		},
+		resave: false,
+		saveUninitialized: true,
+		store: new LokiStore({}),
+	}));
+} else {
+	app.use(session({
+		secret: 'this-is-a-secret-token-a-b-2-3-4',
+		cookie: {
+			maxAge: 28800000
+		},
+		resave: false,
+		saveUninitialized: true,
+		store: new LokiStore({}),
+	}));
+}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -64,9 +76,12 @@ app.set('view engine', 'ejs');
 mongoose.connect(process.env.DB_MONGO, options);
 //mongoose.connect(process.env.DB_LOCALHOST, options);  
 
-app.use(cookieParser())
-app.use(csrf({ cookie: true }));
-
+app.use(cookieParser());
+if (process.env.NODE_ENV === 'production') {
+	app.use(csrf({ cookie: {httpOnly: true, secure: true, sameSite: 'lax'}}));
+} else {
+	app.use(csrf({ cookie: true}));
+}
 app.use(function (req, res, next) {
     let token = req.csrfToken();
 	var allowedOrigins = ['https://app.nospk.dev'];

@@ -834,12 +834,16 @@ function get_list_item(){
     })
     return data;
 }
-
+function get_time_convert(date_time){
+	let date = date_time.split(" ")[0];
+	let time = date_time.split(" ")[1];
+	return new Date(date.split("/")[1] + ' ' + date.split("/")[0] + ' ' + date.split("/")[2] + ' ' + time)
+}
 function check_out(){
 	let data = {
 		employees: tab_list[tab_number].employee,
 		price_book: tab_list[tab_number].price_book,
-		time: tab_list[tab_number].time_edit ? new Date(tab_list[tab_number].time) : undefined,
+		time: tab_list[tab_number].time_edit ? get_time_convert(tab_list[tab_number].time) : undefined,
 		customer_pay_card: tab_list[tab_number].customer_pay_card,
 		customer_pay_cash: tab_list[tab_number].customer_pay_cash,
 		discount_id: tab_list[tab_number].discount_id,

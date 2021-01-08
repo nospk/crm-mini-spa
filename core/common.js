@@ -101,6 +101,10 @@ class Common {
 	
 	static print_bill(items, service, customer, store, discount, payment, money_discount, cash, card, payment_back, invoice){
 		return new Promise(async (resolve, reject)=>{
+			let convert_date = new Date(invoice.createdAt).toLocaleString("vi-VN")
+			let date = convert_date.split(",")[0];
+			let time = convert_date.split(",")[1];
+			convert_date = ('0' + date.split("/")[1]).slice(-2) + '/' + ('0' + date.split("/")[0]).slice(-2) + '/' + date.split("/")[2] + time
 			let bill = `<html><head><meta charset="UTF-8"><style type="text/css">body {-webkit-print-color-adjust: exact; font-family: Arial, sans-serif;}</style></head><body onload="self.print(); self.close();"><base href="https://app.nospk.dev"><div>
 				<style type="text/css">
 					.printBox {
@@ -143,7 +147,7 @@ class Common {
 								<td style="font-size:11px; text-align:center">Số : ${invoice.serial} </td>
 							</tr>
 							<tr>
-								<td style="font-size:11px; text-align:center"> ${new Date(invoice.createdAt).toLocaleString("vi-VN")} </td>
+								<td style="font-size:11px; text-align:center"> ${convert_date} </td>
 							</tr>
 						</tbody>
 					</table>

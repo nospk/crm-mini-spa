@@ -362,8 +362,10 @@ function add_product(id){
 function render_tablist(tab_number){
 	set_time();
 	$('#search_product').val("");
-	$('#select_price_book').val(tab_list[tab_number].price_book);
-	get_service();
+	if($('#select_price_book').val() != tab_list[tab_number].price_book){
+		$('#select_price_book').val(tab_list[tab_number].price_book);
+		get_service();
+	}
 	let html = '';
 	let money = 0;
 	let combo = false;

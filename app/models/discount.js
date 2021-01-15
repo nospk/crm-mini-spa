@@ -3,6 +3,9 @@ const DiscountSchema = mongoose.Schema({
 	name: {
         type: String, required: true
     },
+	query_name:{
+		type: String,required: true
+	},
     number_code:{
         type: String, required: true
     },

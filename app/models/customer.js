@@ -3,6 +3,9 @@ const CustomerSchema = mongoose.Schema({
 	name: {
         type: String, required: true
     },
+	query_name:{
+		type: String,required: true
+	},
 	birthday:{
 		type: String, required: true
 	},

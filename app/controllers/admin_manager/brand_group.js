@@ -12,6 +12,7 @@ class Admin_brand_group extends Controller{
 			}else{
 				let data = Brand_group({
 					name: req.body.name,
+					query_name: await Common.removeVietnameseTones(req.body.name),
 					type: 'brand',
                     company: req.session.user.company._id,
                     list_product:[]
@@ -33,6 +34,7 @@ class Admin_brand_group extends Controller{
 			}else{
 				let data = Brand_group({
 					name: req.body.name,
+					query_name: await Common.removeVietnameseTones(req.body.name),
 					type: 'group',
                     company: req.session.user.company._id,
                     list_product:[]

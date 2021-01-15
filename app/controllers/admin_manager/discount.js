@@ -27,6 +27,7 @@ class Admin_discount extends Controller{
 			}
 			let new_discount = Discount({
 				name: req.body.name,
+				query_name: await Common.removeVietnameseTones(req.body.name),
 				number_code: req.body.number_code,
 				type: req.body.type,
 				type_discount: req.body.type_discount,
@@ -50,7 +51,8 @@ class Admin_discount extends Controller{
 				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id), isDelete: false} ] 
 			}
 			if(search){
-				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
+				search = await Common.removeVietnameseTones(search) 
+				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'query_name': {$regex: search,$options:"i"}}]})
 			}
 			//set default variables
 			let pageSize = 10
@@ -97,6 +99,7 @@ class Admin_discount extends Controller{
 					return Admin_discount.sendError(res, "Chưa nhập giảm giá bao nhiêu", "Vui lòng nhập giảm giá");
 				}
 				find.name = req.body.name;
+				find.query_name = await Common.removeVietnameseTones(req.body.name);
 				find.number_code = req.body.number_code;
 				find.type = req.body.type;
 				find.type_discount = req.body.type_discount;

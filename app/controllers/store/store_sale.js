@@ -39,7 +39,8 @@ class Store_sale extends Controller{
 				$and: [ {company :req.session.store.company, isSale: true} ] 
 			}
 			if(search){
-				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
+				search = await Common.removeVietnameseTones(search);
+				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'query_name': {$regex: search,$options:"i"}}]})
 			}
 			let products = await Product_service.find(match).sort({createdAt: -1}).populate({
 				path: 'stocks_in_store',
@@ -98,7 +99,8 @@ class Store_sale extends Controller{
 				$and: [ {company :req.session.store.company} ] 
 			}
 			if(search){
-				match.$and.push({$or:[{'phone': {$regex: search,$options:"mi"}},{'name': {$regex: search,$options:"i"}}]})
+				search = await Common.removeVietnameseTones(search);
+				match.$and.push({$or:[{'phone': {$regex: search,$options:"mi"}},{'query_name': {$regex: search,$options:"i"}}]})
 			}
 			let customers = await Customer.find(match).sort({createdAt: -1})
 			Store_sale.sendData(res, customers);
@@ -158,6 +160,7 @@ class Store_sale extends Controller{
 			}else{
 				let new_customer = Customer({
 					name: req.body.name,
+					query_name: await Common.removeVietnameseTones(req.body.name),
 					birthday: req.body.birthday,
 					address: req.body.address,
 					note: req.body.note,

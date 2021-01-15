@@ -3,6 +3,7 @@ const Customer = require('../../models/customer');
 const mongoose = require('mongoose');
 const Invoice_sale = require('../../models/invoice_sale');
 const Invoice_service = require('../../models/invoice_service');
+const Common = require("../../../core/common");
 class Admin_customer extends Controller{
     static show(req, res){
         Admin_customer.setLocalValue(req,res);
@@ -17,6 +18,7 @@ class Admin_customer extends Controller{
 			}else{
 				let new_customer = Customer({
 					name: req.body.name,
+					query_name: await Common.removeVietnameseTones(req.body.name),
 					birthday: req.body.birthday,
 					gener: req.body.gener,
 					address: req.body.address,
@@ -40,7 +42,8 @@ class Admin_customer extends Controller{
 				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id)} ] 
 			}
 			if(search){
-				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
+				search = await Common.removeVietnameseTones(search) 
+				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'query_name': {$regex: search,$options:"i"}}]})
 			}
 			//set default variables
 			let pageSize = 10
@@ -93,6 +96,7 @@ class Admin_customer extends Controller{
 					return Admin_customer.sendError(res, "Số điện thoại đã có người dùng", "Vui lòng xem lại thông tin đã nhập");
 				}else{
 					find.name = req.body.name;
+					find.query_name = await Common.removeVietnameseTones(req.body.name);
 					find.birthday = req.body.birthday;
 					find.gener = req.body.gener;
 					find.address = req.body.address;

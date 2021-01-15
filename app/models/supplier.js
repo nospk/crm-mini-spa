@@ -3,6 +3,9 @@ const SuppliersSchema = mongoose.Schema({
 	name: {
         type: String
     },
+	query_name:{
+		type: String,required: true
+	},
     address:{
         type: String
     },

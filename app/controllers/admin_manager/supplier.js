@@ -1,6 +1,7 @@
 const Controller = require('../../../core/controller');
 const Supplier = require('../../models/supplier');
 const mongoose = require('mongoose');
+const Common = require("../../../core/common");
 class Admin_supplier extends Controller{
     static show(req, res){
         Admin_supplier.setLocalValue(req,res);
@@ -11,6 +12,7 @@ class Admin_supplier extends Controller{
 		try{
 			let new_supplier = Supplier({
 				name: req.body.name,
+				query_name: await Common.removeVietnameseTones(req.body.name),
 				address: req.body.address,
 				phone: req.body.phone,
 				email: req.body.email,
@@ -31,7 +33,8 @@ class Admin_supplier extends Controller{
 				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id), isActive: true} ] 
 			}
 			if(search){
-				match.$and.push({'name': {$regex: search,$options:"i"}})
+				search = await Common.removeVietnameseTones(search) 
+				match.$and.push({'query_name': {$regex: search,$options:"i"}})
 			}
 			//set default variables
 			let pageSize = 10
@@ -62,6 +65,7 @@ class Admin_supplier extends Controller{
 			let find = await Supplier.findOne({company: req.session.user.company._id, _id: req.body.id});
 			if(find){
 				find.name = req.body.name;
+				find.query_name = await Common.removeVietnameseTones(req.body.name);
 				find.address = req.body.address;
 				find.phone = req.body.phone;
 				find.email = req.body.email;

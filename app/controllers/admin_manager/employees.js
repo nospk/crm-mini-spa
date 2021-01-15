@@ -2,6 +2,7 @@ const Controller = require('../../../core/controller');
 const Employees = require('../../models/employees');
 const mongoose = require('mongoose');
 const Store = require('../../models/store');
+const Common = require("../../../core/common");
 class Admin_employees extends Controller{
     static show(req, res){
         Admin_employees.setLocalValue(req,res);
@@ -16,6 +17,7 @@ class Admin_employees extends Controller{
 			}else{
 				let new_employees = Employees({
 					name: req.body.name,
+					query_name: await Common.removeVietnameseTones(req.body.name),
 					gener: req.body.gener,
 					store: req.body.store != false ? req.body.store : undefined,
 					birthday: req.body.birthday,
@@ -49,7 +51,8 @@ class Admin_employees extends Controller{
 				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id), isActive: true} ] 
 			}
 			if(search){
-				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
+				search = await Common.removeVietnameseTones(search) 
+				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'query_name': {$regex: search,$options:"i"}}]})
 			}
 			//set default variables
 			let pageSize = 10
@@ -84,6 +87,7 @@ class Admin_employees extends Controller{
 					return Admin_employees.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
 				}else{
 					find.name = req.body.name;
+					find.query_name = await Common.removeVietnameseTones(req.body.name);
 					find.birthday = req.body.birthday;
 					find.gener = req.body.gener;
 					find.number_sales = req.body.number_sales;

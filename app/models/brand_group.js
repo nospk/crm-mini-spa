@@ -12,6 +12,9 @@ const Brand_group_Schema = mongoose.Schema({
     name:{
         type: String, require:true
     },
+	query_name:{
+		type: String,required: true
+	},
 }, { timestamps: true });
 
 module.exports = mongoose.model('Brand_group', Brand_group_Schema);

@@ -3,6 +3,9 @@ const Product_Service_Schema = mongoose.Schema({
 	name: {
         type: String,required: true
     },
+	query_name:{
+		type: String,required: true
+	},
     type:{
         type: String, required: true
     },

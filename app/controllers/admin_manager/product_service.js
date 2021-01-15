@@ -4,6 +4,7 @@ const Store = require('../../models/store');
 const Storage_stocks = require('../../models/storage_stocks');
 const Store_stocks = require('../../models/store_stocks');
 const Brand_group = require('../../models/brand_group');
+const Common = require("../../../core/common");
 const mongoose = require('mongoose');
 class Admin_product_service extends Controller{
     static show(req, res){
@@ -27,7 +28,8 @@ class Admin_product_service extends Controller{
 				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id), isActive: true} ] 
 			}
 			if(search){
-				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
+				search = await Common.removeVietnameseTones(search) 
+				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'query_name': {$regex: search,$options:"i"}}]})
 			}
 			//set default variables
 			let pageSize = 10
@@ -86,6 +88,7 @@ class Admin_product_service extends Controller{
 				let get_stores = await Store.find({company: req.session.user.company._id},{_id:1, name:1})
 				let data = Product_service({
 					name: req.body.name,
+					query_name: await Common.removeVietnameseTones(req.body.name),
 					type: req.body.type,
 					cost_price: req.body.cost_price,
 					price: req.body.price,
@@ -119,6 +122,7 @@ class Admin_product_service extends Controller{
 			}else if(req.body.type == "service"){
 				let data = Product_service({
 					name: req.body.name,
+					query_name: await Common.removeVietnameseTones(req.body.name),
 					type: req.body.type,
 					cost_price: req.body.cost_price,
 					price: req.body.price,
@@ -132,6 +136,7 @@ class Admin_product_service extends Controller{
 			}else{
 				let data = Product_service({
 					name: req.body.name,
+					query_name: await Common.removeVietnameseTones(req.body.name),
 					type: req.body.type,
 					combo: req.body.combo,
 					cost_price: 0,
@@ -159,6 +164,7 @@ class Admin_product_service extends Controller{
 					return Admin_product_service.sendError(res, "Trùng mã số này", "Vui lòng chọn mã số khác");
 				}else{
 					find.name = req.body.name;
+					find.query_name = await Common.removeVietnameseTones(req.body.name);
 					find.isSale = req.body.isSale;
 					find.price = req.body.price;
 					find.description = req.body.description;

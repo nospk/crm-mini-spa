@@ -68,6 +68,34 @@ class Store_sale extends Controller{
 			Store_sale.sendError(res, err, err.message);
 		}
 	}
+	static async get_invoice_sale(req, res){
+        try{
+			let match = {
+				$and: [ {company : mongoose.Types.ObjectId(req.session.store.company)} ] 
+			}
+			//set default variables
+			let pageSize = 20
+			let currentPage = req.body.paging_num || 1
+	
+			// find total item
+			let pages = await Invoice_sale.find(match).countDocuments()
+			// find total pages
+			let pageCount = Math.ceil(pages/pageSize)
+			let data = await Invoice_sale.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
+				path: 'customer',
+				populate: { path: 'Customer'},
+				select: 'name'
+			}).populate({
+				path: 'employees',
+				populate: { path: 'Employees'},
+				select: 'name'
+			})
+			Store_sale.sendData(res, {data, pageCount, currentPage});
+		}catch(err){
+			console.log(err)
+			Store_sale.sendError(res, err, err.message);
+		}
+	}
 	static async get_employees(req, res){
         try{
 			let match = {
@@ -191,17 +219,31 @@ class Store_sale extends Controller{
 	static async use_service(req,res){
 		try{
 			let service =  await Product_service.findOne({company :req.session.store.company, _id: req.body.service})
-			let log = Log_service({
-				company:req.session.store.company,
-				customer:req.body.customer,
-				service:req.body.service,
-				times_service: service.times_service,
-				store:req.session.store._id,
-				employees: req.body.employees
-			})
+			let log 
 			let invoice = await Invoice_service.findOneAndUpdate({company:req.session.store.company, _id: req.body.invoice, customer: req.body.customer, isActive: true},{ $inc: { times_used: 1} },{new: true});
 			if(invoice.times_used >= invoice.times){
 				invoice.isActive = false;
+			}
+			if(invoice.times_used > 10){
+				log = Log_service({
+					company:req.session.store.company,
+					customer:req.body.customer,
+					service:req.body.service,
+					times_service: service.times_service,
+					store:req.session.store._id,
+					isCount: false,
+					employees: req.body.employees
+				})
+			}else{
+				log = Log_service({
+					company:req.session.store.company,
+					customer:req.body.customer,
+					service:req.body.service,
+					times_service: service.times_service,
+					store:req.session.store._id,
+					isCount: true,
+					employees: req.body.employees
+				})
 			}
 			await log.save()
 			invoice.log_service.unshift(log._id)
@@ -264,6 +306,7 @@ class Store_sale extends Controller{
 									   [
 										 { $eq: [ "$employees",  "$$pid" ] },
 										 { $eq: [ "$isActive",  true ] },
+										 { $eq: [ "$isCount",  true ] },
 										 { $gte:[ "$createdAt", "$$start_month"]},
 										 { $lt: [ "$createdAt", "$$end_month"]},
 									   ]

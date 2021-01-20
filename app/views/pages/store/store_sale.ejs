@@ -111,7 +111,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				  display: none;
 			  }
 			 .card-columns {
-				 column-count: 2;
+				 column-count: 1;
 			}
 		}
 		 @media (min-width: 768px) {
@@ -250,7 +250,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<button class="dropdown-item" data-toggle="modal" data-target="#report" type="button"><i class="fas fa-calculator"></i> Báo cáo</button>
 									<button class="dropdown-item" data-toggle="modal" id="button_unlock_manager" data-target="#unlock_manager" type="button"><i class="fas fa-lock"></i></i> Mở Quản lý</button>
 									<button class="dropdown-item" id="button_lock_manager" style="display:none;" onclick="lock_manager()" type="button"><i class="fas fa-unlock"></i> Khóa Quản lý</button>
-									<button class="dropdown-item" id="button_edit_bill" style="display:none;" data-target="#" type="button"><i class="fas fa-file-invoice-dollar"></i> Sửa hóa đơn</button>
+									<button class="dropdown-item" id="button_edit_bill" data-toggle="modal" style="display:none;" data-target="#edit_bill" type="button"><i class="fas fa-file-invoice-dollar"></i> Sửa hóa đơn</button>
 									<button class="dropdown-item" onclick="location.href='/logout'" type="button"><i class="fas fa-sign-out-alt"></i> Thoát</button>
 								  </div>
 								</div>
@@ -268,7 +268,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											<th>Giá</th>
 											<th>Số lượng</th>
 											<th>Tổng cộng</th>
-											<th></th>
+											<th width="5%"></th>
 										</tr>
 									</thead>
 									<tbody id="add_product">
@@ -354,7 +354,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					</div>
 				</div>
 				
-				<div class="carousel" data-ride="carousel" style="min-height:25vh; padding: 7.5px 0px 0px 0px" data-interval="false" id="get_service">
+				<div class="carousel" data-ride="carousel" style="min-height: 25vh; padding: 7.5px 0px 0px 0px" data-interval="false" id="get_service">
 
 				</div>
 			</div><!-- /.container-fluid -->
@@ -366,9 +366,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<div class="modal-content">
 			  <div class="modal-header">
 				<h5 class="modal-title">Tạo khách hàng mới </h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<a  class="close" data-dismiss="modal" aria-label="Close">
 				  <span aria-hidden="true">&times;</span>
-				</button>
+				</a>
 			  </div>
 			  <div class="modal-body">
 				<div class="input-group">
@@ -426,9 +426,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<div class="modal-content">
 			  <div class="modal-header">
 				<h5 class="modal-title">Thanh Toán</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<a  class="close" data-dismiss="modal" aria-label="Close">
 				  <span aria-hidden="true">&times;</span>
-				</button>
+				</a>
 			  </div>
 			  <div class="modal-body">
 				<div class="input-group">
@@ -460,9 +460,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<div class="modal-content">
 			  <div class="modal-header">
 				<h5 class="modal-title">Thanh Toán</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<a  class="close" data-dismiss="modal" aria-label="Close">
 				  <span aria-hidden="true">&times;</span>
-				</button>
+				</a>
 			  </div>
 			  <div class="modal-body">
 				<div class="input-group">
@@ -480,15 +480,43 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		  </div>
 		</div>
 		<!-- End Modal pay cash -->
+		<!-- Modal edit bill -->
+		<div class="modal fade" id="edit_bill" tabindex="-1" role="dialog" aria-labelledby="type_cash" data-backdrop="static">
+		  <div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title">Danh sách hóa đơn</h5>
+				<a  class="close" data-dismiss="modal" aria-label="Close">
+				  <span aria-hidden="true">&times;</span>
+				</a>
+			  </div>
+			  <div class="modal-body">
+					<div class="card">
+							<!-- /.card-header -->
+							<div class="table-responsive-xl p-0" id="show_bill_edit">
+							</div> 
+							<!-- /.card-body -->
+							<div class="card-footer clearfix" id="pagination">
+							</div>
+							<!-- /.card-footer -->
+					</div>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		<!-- End Modal edit bill -->
 		<!-- Modal report -->
 		<div class="modal fade" id="report" tabindex="-1" role="dialog" aria-labelledby="report" data-backdrop="static">
 		  <div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
 			  <div class="modal-header">
 				<h5 class="modal-title">Báo cáo bán hàng</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<a  class="close" data-dismiss="modal" aria-label="Close">
 				  <span aria-hidden="true">&times;</span>
-				</button>
+				</a>
 			  </div>
 			  <div class="modal-body">
 				<ul class="nav nav-tabs" role="tablist">
@@ -596,9 +624,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<div class="modal-content">
 			  <div class="modal-header">
 				<h5 class="modal-title">Thông tin khách hàng</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<a  class="close" data-dismiss="modal" aria-label="Close">
 				  <span aria-hidden="true">&times;</span>
-				</button>
+				</a>
 			  </div>
 			  <div class="modal-body">
 				<ul class="nav nav-tabs" role="tablist">
@@ -681,19 +709,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
 			<div class="modal-content">
 			  <div class="modal-header">
 				<h5 class="modal-title">Nhập Mật khẩu quản lý cửa hàng</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<a  class="close" data-dismiss="modal" aria-label="Close">
 				  <span aria-hidden="true">&times;</span>
-				</button>
+				</a>
 			  </div>
 			  <div class="modal-body">
-				<form>
 					<div class="input-group">
 						<div class="input-group-prepend">
 							<div class="input-group-text bg-info">Mật khẩu</div>
 						</div>
-						<input type="password" autocomplete class="form-control" id="password_manager" placeholder="Nhập mật khẩu" aria-label="Cash">
+						<input type="password" class="form-control" id="password_manager" placeholder="Nhập mật khẩu" aria-label="Cash">
 					</div>
-				</form>
 				<br>
 			  </div>
 			  <div class="modal-footer">

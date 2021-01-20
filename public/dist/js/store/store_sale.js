@@ -3,6 +3,7 @@ let typingTimer_search;
 let doneTypingInterval = 500;  //time in ms, 1 second for example
 let show_product = $('#search_product');
 let show_customer = $('#search_customer');
+let page_now;
 let tab_list = [{
 		HD:1, 
 		item:[],
@@ -122,6 +123,9 @@ $( document ).ready(()=>{
 	});
 	$('#note_bill').on('change', function() {
 		tab_list[tab_number].note_bill = $('#note_bill').val()
+	});
+	$('#edit_bill').on('shown.bs.modal', function () {
+		get_invoice_sale('1');
 	});
 	$('#report').on('shown.bs.modal', function () {
 		 $.ajax({
@@ -394,7 +398,7 @@ function render_tablist(tab_number){
 				html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="${item.stocks_in_store[0].product_of_sale}" value="${item.sale_quantity}"></td>`
 			}  
 				 html+= `<td><span class="total" id="total-${item.number_code}" >${convert_vnd(check_price*item.sale_quantity)}</span></td>
-						<td><span style="color:red; cursor: pointer" onclick="delete_row_product(${tab_number},${index})"><i class="fas fa-times-circle"></i></span></td>
+						<td width="5%"><span style="color:red; cursor: pointer" onclick="delete_row_product(${tab_number},${index})"><i class="fas fa-times-circle"></i></span></td>
 					</tr>`
 			
 		})
@@ -891,6 +895,7 @@ function unlock_manager(){
 			if(data.status == 1){
 				$('#button_unlock_manager').hide()
 				$('#button_lock_manager').show()
+				$('#button_edit_bill').show()
 				$('#date_sale').prop( "disabled", false );
 				Swal.fire({
 					toast: true,
@@ -928,6 +933,7 @@ function lock_manager(){
 		success: function(data){
 				$('#button_unlock_manager').show()
 				$('#button_lock_manager').hide()
+				$('#button_edit_bill').hide()
 				$('#date_sale').prop( "disabled", true );
 				Swal.fire({
 					toast: true,
@@ -1005,7 +1011,7 @@ function get_customer(id){
                     html_service+=`<tr>
                             <td>${item.service.name}</td>
                             <td>${item.serial}</td>
-							<td>${item.times}</td>
+							<td>${item.times == 99999 ? 'Trọn đời' : item.times}</td>
 							<td>${item.times_used}</td>
 							<td><button type="button" class="btn btn-warning" onclick="use_service('${item._id}','${item.service.name}','${item.service._id}','${customer._id}')">Sử dụng</button></td>
                             </tr>`
@@ -1147,6 +1153,101 @@ function add_tab_menu(){
 	}
 	
 	
+}
+function get_invoice_sale(paging_num){
+    if(!paging_num){
+        paging_num = page_now
+    }
+    let data = {
+        paging_num:paging_num,
+        _csrf: $('#_csrf').val()
+    }
+    $.ajax({
+        url:'/store_sale/get_invoice_sale',
+        method:'POST',
+        data: data,
+        success: function(data){
+            if(data.status == 1){
+                page_now = data.data.currentPage
+                render_data(data.data.data, data.data.pageCount, data.data.currentPage);
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
+}
+function render_data(data, pageCount, currentPage){
+	let html = `        
+		                    <table class="table table-hover">
+		                        <thead>
+                                    <tr>
+									<th>Ngày</th>
+                                    <th>Mã hóa đơn</th>
+									<th>Nhân viên</th>
+                                    <th>Khách hàng</th>
+									<th></th>
+                                    </tr>
+		                        </thead>
+		                        <tbody>`;
+	data.forEach(item =>{
+		html+=`<tr">
+                <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
+				<td class="font-weight-bold">${item.serial}</td>
+                <td>${item.employees.name}</td>
+				<td>${item.customer ? item.customer.name : "Khách lẻ"}</td>
+				<td></td>
+                </tr>`
+    })
+    html+=`</tbody>
+                </table>
+            `;
+    $('#show_bill_edit').html(html);
+    let pageination = ''
+
+    if (pageCount > 1) {
+        let i = Number(currentPage) > 5 ? (Number(currentPage) - 4) : 1
+        pageination += `<ul class="pagination pagination-sm m-0 float-right">`
+        if (currentPage == 1){
+            pageination += `<li class="page-item disabled"><a class="page-link" href="#"><<</a></li>`  
+        }else{
+            pageination += `<li class="page-item"><a class="page-link" onclick="get_invoice_sale('1')"><<</a></li>`  
+        }
+        if (i != 1) {
+            pageination += `<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`
+        }
+        for (; i<= (Number(currentPage) + 4) && i <= pageCount; i++) {
+    
+            if (currentPage == i) {
+                pageination += `<li class="page-item active"><a class="page-link">${i}</a></li>`
+            } else {
+                    pageination += `<li class="page-item"><a class="page-link" onclick="get_invoice_sale('${i}')">${i}</a></li>`
+            }
+            if (i == Number(currentPage) + 4 && i < pageCount) {
+                pageination += `<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`
+                break
+            }
+        }
+        if (currentPage == pageCount){
+            pageination += `<li class="page-item disabled"><a class="page-link"">>></a></li>`
+        }else{
+            pageination += `<li class="page-item"><a class="page-link" onclick="get_invoice_sale('${i-1}')">>></a></li>`
+        }
+            
+        pageination += `</ul>`
+    }   
+    $("#pagination").html(pageination)
 }
 function clear_data(index_tab){
 	let number_tab = tab_list[index_tab].HD

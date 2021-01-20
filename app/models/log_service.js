@@ -18,6 +18,9 @@ const Log_service_Schema = mongoose.Schema({
 	employees:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Employees', required: true
 	},
+	isCount:{
+		type: Boolean, default:true 
+	},
 	isActive:{
 		type: Boolean, default:true 
 	}

@@ -65,6 +65,9 @@ const Invoice_sale_Schema = mongoose.Schema({
     who_created:{
 		type: String
 	},
+	edit_times:{
+		type: Number, default:0
+	},
 	note:{
 		type: String
 	},

@@ -8,6 +8,7 @@ module.exports = function (app) {
 	app.post("/store_sale/search_discount", store.loggedIn, store.search_discount)
 	app.post("/store_sale/create_customer", store.loggedIn, store.create_customer)
 	app.post("/store_sale/get_price_book", store.loggedIn, store.get_price_book)
+	app.post("/store_sale/get_invoice_sale", store.loggedIn, store.get_invoice_sale)
 	app.post("/store_sale/get_customer", store.loggedIn, store.get_customer)
 	app.post("/store_sale/use_service", store.loggedIn, store.use_service)
 	app.post("/store_sale/check_password_manager", store.loggedIn, store.check_password_manager)

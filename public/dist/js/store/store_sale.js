@@ -1193,22 +1193,48 @@ function render_data(data, pageCount, currentPage){
 		                    <table class="table table-hover">
 		                        <thead>
                                     <tr>
-									<th>Ngày</th>
-                                    <th>Mã hóa đơn</th>
-									<th>Nhân viên</th>
-                                    <th>Khách hàng</th>
-									<th></th>
+									<th scope="col">Ngày</th>
+                                    <th scope="col">Mã hóa đơn</th>
+									<th scope="col">Nhân viên</th>
+                                    <th scope="col">Khách hàng</th>
+									<th scope="col"></th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
 	data.forEach(item =>{
-		html+=`<tr">
+		html+=`<tr>
                 <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
 				<td class="font-weight-bold">${item.serial}</td>
                 <td>${item.employees.name}</td>
 				<td>${item.customer ? item.customer.name : "Khách lẻ"}</td>
-				<td></td>
-                </tr>`
+				<td><button type="button" onclick="view_bill(this,'${item._id}')" class="btn btn-primary">Xem</button>
+					<button type="button" class="btn btn-warning">Sửa</button>
+				</td>
+                </tr>
+				<tr>
+					<td colspan="5" id="view_bill_${item._id}" style="display:none">
+						<ul class="nav nav-tabs" role="tablist">
+							<li class="nav-item">
+								<a class="nav-link active" data-toggle="pill"
+									href="#view-list_sale-${item._id}" role="tab" data-toggle="tab"
+									aria-selected="true">Sản phẩm bán</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" data-toggle="pill" href="#view-bill-${item._id}" role="tab"
+									data-toggle="tab" aria-selected="false">Thanh toán</a>
+							</li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane fade active show" id="view-list_sale-${item._id}" role="tabpanel">
+								aaaaaa
+							</div>
+							<div class="tab-pane fade" id="view-bill-${item._id}" role="tabpanel">
+								bbbbbbbbb
+							</div>
+						</div>
+					</td>
+				</tr>
+			`
     })
     html+=`</tbody>
                 </table>
@@ -1248,6 +1274,15 @@ function render_data(data, pageCount, currentPage){
         pageination += `</ul>`
     }   
     $("#pagination").html(pageination)
+}
+function view_bill(btn,id){
+	if($(btn).text() == "Xem"){
+		$(btn).text("Đóng")
+		$(`#view_bill_${id}`).show();
+	}else{
+		$(btn).text("Xem")
+		$(`#view_bill_${id}`).hide();
+	}
 }
 function clear_data(index_tab){
 	let number_tab = tab_list[index_tab].HD

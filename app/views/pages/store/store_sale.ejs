@@ -756,7 +756,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<script src="/assets/plugins/select2/js/select2.full.min.js"></script>
 		<script>
 		  $(function () {
-
+			let manager = <%-manager%>
+			if(manager == true){
+				$('#button_unlock_manager').hide()
+				$('#button_lock_manager').show()
+				$('#button_edit_bill').show()
+				$('#date_sale').prop( "disabled", false );
+			}else{
+				$('#button_unlock_manager').show()
+				$('#button_lock_manager').hide()
+				$('#button_edit_bill').hide()
+				$('#date_sale').prop( "disabled", true );
+			}
 			//Date range picker
 			$('.date').daterangepicker({
 				timePicker: true,

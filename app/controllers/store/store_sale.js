@@ -29,7 +29,7 @@ const check_price_book = (item, price_book) => {
 class Store_sale extends Controller{
     static show(req, res){
         Store_sale.setLocalValue(req,res);
-		req.session.manager = "";
+		res.locals.manager = (req.session.manager && req.session.manager != "") ? true : false;
         res.render('./pages/store/store_sale');
     }
 	static async search_product(req, res){

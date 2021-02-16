@@ -841,6 +841,7 @@ function get_list_item(){
     return data;
 }
 function get_time_convert(date_time){
+	console.log(date_time)
 	let date = date_time.split(" ")[0];
 	let time = date_time.split(" ")[1];
 	return new Date(date.split("/")[1] + ' ' + date.split("/")[0] + ' ' + date.split("/")[2] + ' ' + time)
@@ -1201,7 +1202,7 @@ function render_data(data, pageCount, currentPage){
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
-	data.forEach(item =>{
+	data.forEach(item =>{ 
 		html+=`<tr>
                 <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
 				<td class="font-weight-bold">${item.serial}</td>
@@ -1226,10 +1227,18 @@ function render_data(data, pageCount, currentPage){
 						</ul>
 						<div class="tab-content">
 							<div class="tab-pane fade active show" id="view-list_sale-${item._id}" role="tabpanel">
-								aaaaaa
-							</div>
+				`
+				item.list_sale.forEach((item)=>{
+					html+=`<p style="margin-bottom:0px;">${item.id.name} (${item.id.number_code}): ${item.quantity} <span class="float-right">Giá: ${item.price_sale? convert_vnd(item.price_sale) + ' ( Giá gốc: ' + convert_vnd(item.price) + ')' : convert_vnd(item.price)}</span></p>` 
+                })
+		html+=`			</div>
 							<div class="tab-pane fade" id="view-bill-${item._id}" role="tabpanel">
-								bbbbbbbbb
+							   <p style="margin-bottom:0px;"> Tổng tiền: <span class="float-right">${convert_vnd(item.payment)}</span></p>
+			  `
+			  	item.bill.forEach((item)=>{
+					html+=`<p style="margin-bottom:0px;">${item.type_payment == "cash" ? 'Thẻ: <span class="float-right">' + convert_vnd(item.money) : 'Tiền mặt: <span class="float-right">' + convert_vnd(item.money)}</span></p>` 
+				})
+		html+=`					<p style="margin-bottom:0px;"> Tiền thối: <span class="float-right">${convert_vnd(item.payment_back)}</span></p>
 							</div>
 						</div>
 					</td>

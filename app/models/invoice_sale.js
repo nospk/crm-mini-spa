@@ -28,18 +28,6 @@ const Invoice_sale_Schema = mongoose.Schema({
         price_sale: {type:Number},
 		_id: false
     }],
-	list_service:[{
-        service: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'}, 
-		name: {type: String, required: true},
-        serial: {type: String, required: true},
-		_id: false
-    }],
-	list_service_edit:[{
-        service: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'}, 
-		name: {type: String, required: true},
-        serial: {type: String, required: true},
-		_id: false
-    }],
     discount:{
         type: mongoose.Schema.Types.ObjectId, ref:'Discount'
     },

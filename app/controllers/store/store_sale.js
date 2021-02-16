@@ -89,6 +89,14 @@ class Store_sale extends Controller{
 				path: 'employees',
 				populate: { path: 'Employees'},
 				select: 'name'
+			}).populate({
+				path: 'list_sale.id',
+				populate: { path: 'Product_services'},
+				select:'name number_code'
+			}).populate({
+				path: 'bill',
+				populate: { path: 'Cash_book'},
+				select:'type_payment money'
 			})
 			Store_sale.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
@@ -391,9 +399,13 @@ class Store_sale extends Controller{
 	}
 	static async check_out(req, res){
 		try{
-			//check price_book 
+			//check time
 			let time = new Date()
-			if (req.body.time) time = req.body.time
+			if (req.body.time && req.session.manager != ""){
+				time = req.body.time
+			}
+
+			//check price_book 
 			if(req.body.price_book != 'default'){
 				let date_now = new Date();
 				let price_book = await Price_book.findOne({company: req.session.store.company, _id:req.body.price_book, date_from:{$lt: date_now}, date_to:{$gt: date_now}, $or:[{store:[]},{store:req.session.store._id}]})
@@ -402,9 +414,11 @@ class Store_sale extends Controller{
 				}
 					
 			}
+
 			//check employees
 			let check_employees = await Employees.findOne({company :req.session.store.company, _id: req.body.employees})
 			if(!check_employees) return Store_sale.sendError(res, "Không tìm thấy nhân viên", "Vui lòng kiểm tra lại thông tin");
+
 			//check customer
 			let check_customer = ""
 			if(req.body.customer){
@@ -414,10 +428,13 @@ class Store_sale extends Controller{
 				}
 					
 			}
+
 			// check quantity
 			if(req.body.list_item == false){
 				return Store_sale.sendError(res, "Lỗi chưa chọn sản phẩm - dịch vụ", "Vui lòng chọn lại");
 			}
+
+			// main run  
 			let list_item = req.body.list_item;
 			let list_sale = [];
 			let list_service = [];
@@ -526,6 +543,7 @@ class Store_sale extends Controller{
 				check_discount.times_used = check_discount.times_used +1
 				await check_discount.save()
 			}
+
 			//invoice sale	
 			let serial_sale =  await Common.get_serial_store(req.session.store._id, 'BH')
 			let serial_stock =  await Common.get_serial_store(req.session.store._id, 'XH')
@@ -546,6 +564,7 @@ class Store_sale extends Controller{
 				createdAt: time
 			})
 			await invoice_sale.save()
+
 			//invoice store stocks
 			if(list_product != false){
 				let invoice_stock = Invoice_product_store({
@@ -568,6 +587,7 @@ class Store_sale extends Controller{
 				}
 				await invoice_stock.save()
 			}
+
 			// create bill
 			if(req.body.customer_pay_card && payment > 0){//card
 				let serial_card_book = await Common.get_serial_store(req.session.store._id, 'HDTT')
@@ -627,6 +647,7 @@ class Store_sale extends Controller{
 					await customer.save()
 				}
 			}
+
 			// invoice service for customer
 			for(let t = 0; t < list_service.length;t++){
 				let serial_service = await Common.get_serial_service(req.session.store.company)
@@ -642,8 +663,7 @@ class Store_sale extends Controller{
 				await invoice_service.save()
 				list_service[t].serial = serial_service
 			}
-			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount,payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)
-			invoice_sale.list_service = list_service
+			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount, payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)
 			invoice_sale.bill_html = bill
 			await invoice_sale.save()
             Store_sale.sendData(res, bill);

@@ -1,6 +1,7 @@
 const Controller = require('../../../core/controller');
 const Product_service = require('../../models/product_service');
 const Brand_group = require('../../models/brand_group');
+const Common = require("../../../core/common");
 const mongoose = require('mongoose');
 class Admin_brand_group extends Controller{
 	static async new_brand(req, res){

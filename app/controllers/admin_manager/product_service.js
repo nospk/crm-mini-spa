@@ -129,6 +129,7 @@ class Admin_product_service extends Controller{
 					times: req.body.times,
 					times_service: req.body.times_service,
 					description: req.body.description,
+					group: req.body.group,
 					number_code: req.body.number_code,
 					company: req.session.user.company._id,
 				});
@@ -141,6 +142,7 @@ class Admin_product_service extends Controller{
 					combo: req.body.combo,
 					cost_price: 0,
 					price: req.body.price,
+					group: req.body.group,
 					description: req.body.description,
 					number_code: req.body.number_code,
 					company: req.session.user.company._id,

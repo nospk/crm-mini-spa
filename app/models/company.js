@@ -21,9 +21,6 @@ const CompanySchema = mongoose.Schema({
 	serial_DV:{
 		type: Number, default: 0
 	},
-	money:{
-		type: Number, default: 0
-	},
 	isActive:{
 		type: Boolean, default:true
 	}

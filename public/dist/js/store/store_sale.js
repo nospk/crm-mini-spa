@@ -1194,26 +1194,29 @@ function render_data(data, pageCount, currentPage){
 		                    <table class="table table-hover">
 		                        <thead>
                                     <tr>
-									<th scope="col">Ngày</th>
-                                    <th scope="col">Mã hóa đơn</th>
-									<th scope="col">Nhân viên</th>
-                                    <th scope="col">Khách hàng</th>
-									<th scope="col"></th>
+									<th>Ngày</th>
+                                    <th>Mã hóa đơn</th>
+									<th>Nhân viên</th>
+                                    <th>Khách hàng</th>
+									<th></th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
 	data.forEach(item =>{ 
+		let date = new Date(item.createdAt).toLocaleString("vi-VN")
 		html+=`<tr>
-                <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
+                <td>${date.split(",")[0]}<br>
+					${date.split(",")[1]}
+				</td>
 				<td class="font-weight-bold">${item.serial}</td>
                 <td>${item.employees.name}</td>
 				<td>${item.customer ? item.customer.name : "Khách lẻ"}</td>
-				<td><button type="button" onclick="view_bill(this,'${item._id}')" class="btn btn-primary">Xem</button>
+				<td><button type="button" onclick="view_bill(this,'${item._id}')" class="btn btn-primary view-button">Xem</button>
 					<button type="button" class="btn btn-warning">Sửa</button>
 				</td>
                 </tr>
 				<tr>
-					<td colspan="5" id="view_bill_${item._id}" style="display:none">
+					<td colspan="5" class="view-bill" id="view_bill_${item._id}" style="display:none">
 						<ul class="nav nav-tabs" role="tablist">
 							<li class="nav-item">
 								<a class="nav-link active" data-toggle="pill"
@@ -1286,7 +1289,9 @@ function render_data(data, pageCount, currentPage){
 }
 function view_bill(btn,id){
 	if($(btn).text() == "Xem"){
+		$('.view-button').text("Xem")
 		$(btn).text("Đóng")
+		$('.view-bill').hide();
 		$(`#view_bill_${id}`).show();
 	}else{
 		$(btn).text("Xem")

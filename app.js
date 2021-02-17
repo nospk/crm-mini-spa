@@ -98,42 +98,25 @@ app.use(function (req, res, next) {
 });
 
 //add one folder then put your route files there my router folder name is routers
-const routeBasePath = "./router/";
+/* const routeBasePath = "./router/";
 fs.readdirSync(routeBasePath).forEach(function (file) {
     let route = routeBasePath + file;
     if (fs.lstatSync(route).isFile()) {
-        if (file == 'login.js' || file == 'signup.js') {
+        require(route)(app);
+    }
+}); */
+
+
+    const routeStorePath = "./router/store/";
+    fs.readdirSync(routeStorePath).forEach(function (file) {
+        let route = routeStorePath + file;
+        if (file == 'login.js') {
             require(route)(app, passport);
         } else {
             require(route)(app);
         }
-    }
-});
-if (process.env.NODE_ENV === 'production') {
-    // We are running in production mode
-    const routeStorePath = "./router/store/";
-    fs.readdirSync(routeStorePath).forEach(function (file) {
-        let route = routeStorePath + file;
-        require(route)(app);
     });
-} else {
-    // We are running in development mode
-    const routeAdminManagerPath = "./router/admin_manager/";
-    fs.readdirSync(routeAdminManagerPath).forEach(function (file) {
-        let route = routeAdminManagerPath + file;
-        require(route)(app);
-    });
-    const routeAdminStorePath = "./router/admin_store/";
-    fs.readdirSync(routeAdminStorePath).forEach(function (file) {
-        let route = routeAdminStorePath + file;
-        require(route)(app);
-    });
-    const routeStorePath = "./router/store/";
-    fs.readdirSync(routeStorePath).forEach(function (file) {
-        let route = routeStorePath + file;
-        require(route)(app);
-    });
-}
+
 
 
 //Catch not found

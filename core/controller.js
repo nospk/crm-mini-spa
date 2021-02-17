@@ -23,7 +23,7 @@ class Controller {
 			next();
 		} else {
 			req.session.destroy();
-			res.redirect('/admin/login');
+			res.redirect('/login');
 		}
 	}
 	//set menu for client
@@ -48,7 +48,7 @@ class Controller {
 				}else{
 					res.locals.menu = "login";
 				}
-				res.locals.logout = "/admin/logout";
+				res.locals.logout = "/logout";
 			} else {
 				res.locals.user_role = "";
 				res.locals.menu = "";

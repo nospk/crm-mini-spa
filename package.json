@@ -4,8 +4,10 @@
   "description": "application crm mini spa",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "app": "node app.js",
+	"admin": "node app.js",
+    "dev_app": "nodemon app.js",
+	"dev_admin": "nodemon admin.js"
   },
   "repository": {
     "type": "git",

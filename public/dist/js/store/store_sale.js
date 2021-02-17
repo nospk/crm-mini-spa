@@ -8,6 +8,8 @@ let tab_list = [{
 		HD:1, 
 		item:[],
 		time: "",
+		id:"",
+		edit_bill: false,
 		time_edit: false,
 		employee: "", 
 		customer:"", 
@@ -72,7 +74,7 @@ $( document ).ready(()=>{
     });
 	$('#number_code_discount').on('change', function(){
 			$.ajax({
-				url: '/store_sale/search_discount',
+				url: '/search_discount',
 				method: 'POST',
 				data: {
 					number_code: $('#number_code_discount').val(),
@@ -129,7 +131,7 @@ $( document ).ready(()=>{
 	});
 	$('#report').on('shown.bs.modal', function () {
 		 $.ajax({
-			url:'/store_sale/report',
+			url:'/report',
             method:'post',
             data: {_csrf: $('#_csrf').val()},
             success: function(data){
@@ -164,7 +166,7 @@ $( document ).ready(()=>{
 })
 function get_price_book(){
 	$.ajax({
-        url:'/store_sale/get_price_book',
+        url:'/get_price_book',
         method:'POST',
         data: {_csrf: $('#_csrf').val()},
         success: function(data){
@@ -204,7 +206,7 @@ function set_time(){
 function search_product() {
 	if ($('#search_product').val() != "") {
 		$.ajax({
-			url: '/store_sale/search_product',
+			url: '/search_product',
 			method: 'POST',
 			data: {
 				search: $('#search_product').val(),
@@ -269,7 +271,7 @@ function remove_customer(){
 function search_customer() {
 	if ($('#search_customer').val() != "") {
 		$.ajax({
-			url: '/store_sale/search_customer',
+			url: '/search_customer',
 			method: 'POST',
 			data: {
 				search: $('#search_customer').val(),
@@ -313,7 +315,7 @@ function search_customer() {
 }
 function add_product(id){
 	$.ajax({
-			url: '/store_sale/get_by_id',
+			url: '/get_by_id',
 			method: 'POST',
 			data: {
 				id: id,
@@ -470,6 +472,13 @@ function render_tablist(tab_number){
 	} else {
 		remove_customer()
 	}
+	if(tab_list[tab_number].edit_bill === false){
+		$('.button-edit-bill').hide()
+		$('.button-sale-bill').show()
+	}else{
+		$('.button-edit-bill').show()
+		$('.button-sale-bill').hide()
+	}
 }
 
 function delete_row_product(tab_number, index) {
@@ -500,7 +509,7 @@ function change_quantity(tab_number, index, btn){
 
 function get_employees(){
 	$.ajax({
-        url:'/store_sale/get_employees',
+        url:'/get_employees',
         method:'POST',
         data: {
 				_csrf: $('#_csrf').val()
@@ -535,7 +544,7 @@ function get_employees(){
 
 function get_service(){
 	$.ajax({
-			url: '/store_sale/get_service',
+			url: '/get_service',
 			method: 'POST',
 			data: {
 				_csrf: $('#_csrf').val()
@@ -685,7 +694,7 @@ function create_new_customer(){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/store_sale/create_customer',
+        url:'/create_customer',
         method:'POST',
         data: data,
         success: function(data){
@@ -860,7 +869,7 @@ function check_out(){
         _csrf: $('#_csrf').val()
     }
 	$.ajax({
-		url:'/store_sale/check_out',
+		url:'/check_out',
 		method:'POST',
 		contentType: "application/json; charset=utf-8",
 		data: JSON.stringify(data),
@@ -888,7 +897,7 @@ function check_out(){
 }
 function unlock_manager(){
 	$.ajax({
-		url:'/store_sale/check_password_manager',
+		url:'/check_password_manager',
 		method:'POST',
 		contentType: "application/json; charset=utf-8",
 		data: JSON.stringify({_csrf: $('#_csrf').val(), password: $('#password_manager').val()}),
@@ -927,7 +936,7 @@ function unlock_manager(){
 }
 function lock_manager(){
 	$.ajax({
-		url:'/store_sale/check_password_manager',
+		url:'/check_password_manager',
 		method:'POST',
 		contentType: "application/json; charset=utf-8",
 		data: JSON.stringify({_csrf: $('#_csrf').val(), password: ""}),
@@ -956,7 +965,7 @@ function lock_manager(){
 }
 function get_customer(id){
 	$.ajax({
-		url:'/store_sale/get_customer',
+		url:'/get_customer',
 		method:'post',
         data: {id: id, _csrf: $('#_csrf').val()},
         success: function(data){
@@ -1049,7 +1058,7 @@ function use_service(invoice,service_name, service, customer){
 	}).then(function (result) {
 		if(result.value){
 			$.ajax({
-				url:'/store_sale/use_service',
+				url:'/use_service',
 				method:'post',
 				data: {employees: result.value, invoice: invoice, service: service, customer:customer, _csrf: $('#_csrf').val()},
 				success: function(data){
@@ -1088,6 +1097,8 @@ function remove_tab_menu(btw){
 			HD:tab_max_current,
 			item:[], 
 			time: "",
+			id:"",
+			edit_bill: false,
 			time_edit: false,
 			employee: $("#select_employees option:first").val(), 
 			customer:"", 
@@ -1132,6 +1143,8 @@ function add_tab_menu(){
 			HD: tab_max_current,
 			item:[], 
 			time: "",
+			id:"",
+			edit_bill: false,
 			time_edit: false,
 			employee: $("#select_employees option:first").val(), 
 			customer:"", 
@@ -1164,7 +1177,7 @@ function get_invoice_sale(paging_num){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/store_sale/get_invoice_sale',
+        url:'/get_invoice_sale',
         method:'POST',
         data: data,
         success: function(data){

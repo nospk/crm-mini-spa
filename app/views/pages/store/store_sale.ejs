@@ -250,7 +250,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<button class="dropdown-item" data-toggle="modal" data-target="#report" type="button"><i class="fas fa-calculator"></i> Báo cáo</button>
 									<button class="dropdown-item" data-toggle="modal" id="button_unlock_manager" data-target="#unlock_manager" type="button"><i class="fas fa-lock"></i></i> Mở Quản lý</button>
 									<button class="dropdown-item" id="button_lock_manager" style="display:none;" onclick="lock_manager()" type="button"><i class="fas fa-unlock"></i> Khóa Quản lý</button>
-									<button class="dropdown-item" id="button_edit_bill" data-toggle="modal" style="display:none;" data-target="#edit_bill" type="button"><i class="fas fa-file-invoice-dollar"></i> Sửa hóa đơn</button>
+									<button class="dropdown-item" id="button_edit_bill" data-toggle="modal" style="display:none;" data-target="#modal_edit_bill" type="button"><i class="fas fa-file-invoice-dollar"></i> Sửa hóa đơn</button>
 									<button class="dropdown-item" onclick="location.href='/logout'" type="button"><i class="fas fa-sign-out-alt"></i> Thoát</button>
 								  </div>
 								</div>
@@ -482,7 +482,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		</div>
 		<!-- End Modal pay cash -->
 		<!-- Modal edit bill -->
-		<div class="modal fade" id="edit_bill" tabindex="-1" role="dialog" aria-labelledby="type_cash" data-backdrop="static">
+		<div class="modal fade" id="modal_edit_bill" tabindex="-1" role="dialog" aria-labelledby="type_cash" data-backdrop="static">
 		  <div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
 			  <div class="modal-header">

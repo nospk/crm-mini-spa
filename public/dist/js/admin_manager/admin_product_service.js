@@ -548,10 +548,10 @@ function update_data(){
                     showConfirmButton: false,
                     timer: 3000
                 }).then((result)=>{
-					//get_data()
+					get_data()
                 })
                 .catch(timer => {
-					//get_data()
+					get_data()
                 });    
             }else{
                 Swal.fire({

@@ -126,7 +126,7 @@ $( document ).ready(()=>{
 	$('#note_bill').on('change', function() {
 		tab_list[tab_number].note_bill = $('#note_bill').val()
 	});
-	$('#edit_bill').on('shown.bs.modal', function () {
+	$('#modal_edit_bill').on('shown.bs.modal', function () {
 		get_invoice_sale('1');
 	});
 	$('#report').on('shown.bs.modal', function () {
@@ -1225,7 +1225,7 @@ function render_data(data, pageCount, currentPage){
                 <td>${item.employees.name}</td>
 				<td>${item.customer ? item.customer.name : "Khách lẻ"}</td>
 				<td><button type="button" onclick="view_bill(this,'${item._id}')" class="btn btn-primary view-button">Xem</button>
-					<button type="button" class="btn btn-warning">Sửa</button>
+					<button type="button" onclick="edit_bill('${item._id}')" class="btn btn-warning">Sửa</button>
 				</td>
                 </tr>
 				<tr>
@@ -1310,6 +1310,32 @@ function view_bill(btn,id){
 		$(btn).text("Xem")
 		$(`#view_bill_${id}`).hide();
 	}
+}
+function edit_bill(id){
+	$.ajax({
+        url:'/get_invoice_sale_id',
+        method:'POST',
+        data: {id:id, _csrf: $('#_csrf').val()},
+        success: function(data){
+            if(data.status == 1){
+                console.log(data)
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
 }
 function clear_data(index_tab){
 	let number_tab = tab_list[index_tab].HD

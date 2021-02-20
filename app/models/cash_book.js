@@ -18,6 +18,16 @@ const Cash_book_Schema = mongoose.Schema({
 	money:{
 		type: Number, required: true
 	},
+	money_edit:[{
+		type: Number,
+		_id: false
+	}],
+	isEdit:{
+		type: Boolean, default:false 
+	},
+	edit_times:{
+		type: Number, default:0
+	},
 	user_created:{
 		type: String, required: true
 	},

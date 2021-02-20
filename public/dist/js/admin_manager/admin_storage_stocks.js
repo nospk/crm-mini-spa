@@ -235,6 +235,7 @@ function clear_data(){
 }
 function create_new(){
     let data = {
+        date: new Date($('#date').val()),
         total_get_goods : Number(money_total),
         payment: convert_number($('#payment').val()),
 		debt: convert_number($('#debt').val()),

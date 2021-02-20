@@ -109,6 +109,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
           </div>
           <div class="modal-body">
             <div class="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Ngày giờ</span>
+                </div>
+                <input type="text" class="form-control date" style="text-align:right;" id="date">
+              </div>
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text">Sản phẩm</span>
@@ -207,7 +213,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
         $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
         //Money Euro
         $('[data-mask]').inputmask()
-
+        $('#date').daterangepicker({
+          singleDatePicker: true,
+          showDropdowns: true,
+          minYear: 1901,
+          maxYear: parseInt(moment().format('YYYY'),10)
+        });
         //Date range picker
         $('#reservation').daterangepicker()
       })

@@ -78,10 +78,16 @@ function get_data(paging_num, type){
             if(data.status == 1){
                 page_now = data.data.currentPage
                 render_data(data.data.data, data.data.pageCount, data.data.currentPage, type);
-				$('#begin_fund').html(convert_vnd(data.data.begin_fund[0] ? data.data.begin_fund[0].totalincome - data.data.begin_fund[0].totaloutcome : 0))
-				$('#total_income').html(convert_vnd(data.data.current_fund[0] ? data.data.current_fund[0].totalincome : 0))
-				$('#total_outcome').html(convert_vnd(data.data.current_fund[0] ? data.data.current_fund[0].totaloutcome : 0))
-				$('#after_fund').html(convert_vnd(convert_number($('#begin_fund').text())+convert_number($('#total_income').text())-convert_number($('#total_outcome').text())))
+                let begin_fund = data.data.begin_fund[0] ? data.data.begin_fund[0].totalincome - data.data.begin_fund[0].totaloutcome : 0
+                let total_income = data.data.current_fund[0] ? data.data.current_fund[0].totalincome : 0
+                let total_outcome = data.data.current_fund[0] ? data.data.current_fund[0].totaloutcome : 0
+                let after_fund = begin_fund - total_outcome + total_income
+				$('#begin_fund').html(convert_vnd(begin_fund))
+				$('#total_income').html(convert_vnd(total_income))
+				$('#total_outcome').html(convert_vnd(total_outcome))
+
+                
+				$('#after_fund').html(convert_vnd(after_fund))
                 if(type=="cash"){
                     $('#showDataCash').show()
                     $('#showDataCard').hide()

@@ -1125,6 +1125,9 @@ function active_tab_menu(btw){
 	let tab = $(btw).text().trim()
 	let number_tab = tab.split(" ")[1]
 	let index_tab = tab_list.findIndex(item => item.HD == number_tab);
+	if(index_tab == -1){
+		index_tab = tab_list.findIndex(item => item.HD == tab);
+	}
 	$("#tab-menu-horizontal .menu-bill").removeClass("active");
 	$(btw).parent().addClass("active");
 	tab_number = index_tab
@@ -1177,8 +1180,8 @@ function get_invoice_sale(paging_num){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/get_invoice_sale',
-        method:'POST',
+        url:'/invoice_sales',
+        method:'GET',
         data: data,
         success: function(data){
             if(data.status == 1){
@@ -1313,12 +1316,52 @@ function view_bill(btn,id){
 }
 function edit_bill(id){
 	$.ajax({
-        url:'/get_invoice_sale_id',
-        method:'POST',
-        data: {id:id, _csrf: $('#_csrf').val()},
+        url:`/invoice_sales/${id}`,
+        method:'GET',
+        data: {_csrf: $('#_csrf').val()},
         success: function(data){
             if(data.status == 1){
-                console.log(data)
+				tab_max_current++;
+				$("#tab-menu-horizontal .menu-bill").removeClass("active");
+				tab_number = tab_max_current-1;
+				let html = `<li class="menu-bill active">
+								<a class="item pointer" onclick="active_tab_menu(this);">${data.data.serial}</a>
+								<span style="margin-left:5px;" onclick="remove_tab_menu(this);"><i class="fas fa-times"></i></span>
+							</li>`
+				let cash = data.data.bill.filter(item =>{
+					return item.type_payment === 'cash'
+				})
+				let card = data.data.bill.filter(item =>{
+					return item.type_payment === 'card'
+				})
+				tab_list.push({
+					HD: data.data.serial, 
+					item: data.data.list_sale.map(item =>{
+						item = Object.assign(item.id, {sale_quantity: item.quantity}, {price: item.price})
+						return item
+					}),
+					time: "",
+					id: data.data._id,
+					edit_bill: true,
+					time_edit: true,
+					employee: data.data.employees, 
+					customer: `${data.data.customer.name}:${data.data.customer._id}`, 
+					bill_money: "", 
+					discount_type:"",
+					money_discount: "", 
+					discount_id:"",
+					number_code_discount:"",
+					discount_value:"",
+					total_sale:"", 
+					customer_pay_card: card.length > 0 ? card[0].money: 0, 
+					customer_pay_cash: cash.length > 0 ? cash[0].money: 0, 
+					money_return:0,
+					note_bill: "",
+					price_book: "default"
+				});
+				render_tablist(tab_number)
+				$('#tab-menu-horizontal').append(html);
+				document.getElementById('tab-menu-horizontal').scrollLeft += 1000;
             }else{
                 Swal.fire({
                     title: data.error,

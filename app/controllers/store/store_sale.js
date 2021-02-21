@@ -70,18 +70,13 @@ class Store_sale extends Controller{
 	}
 	static async get_invoice_sale_id(req, res){
         try{
-			let data = await Invoice_sale.findOne({company : req.session.store.company, _id: req.body.id}).populate({
+			let data = await Invoice_sale.findOne({company : req.session.store.company, _id: req.params.id}).populate({
 				path: 'customer',
 				populate: { path: 'Customer'},
 				select: 'name'
 			}).populate({
-				path: 'employees',
-				populate: { path: 'Employees'},
-				select: 'name'
-			}).populate({
 				path: 'list_sale.id',
 				populate: { path: 'Product_services'},
-				select:'name number_code'
 			}).populate({
 				path: 'bill',
 				populate: { path: 'Cash_book'},

@@ -1325,7 +1325,7 @@ function edit_bill(id){
 				$("#tab-menu-horizontal .menu-bill").removeClass("active");
 				tab_number = tab_max_current-1;
 				let html = `<li class="menu-bill active">
-								<a class="item pointer" onclick="active_tab_menu(this);">${data.data.serial}</a>
+								<a class="item pointer" style="font-size: 11px" onclick="active_tab_menu(this);">${data.data.serial}</a>
 								<span style="margin-left:5px;" onclick="remove_tab_menu(this);"><i class="fas fa-times"></i></span>
 							</li>`
 				let cash = data.data.bill.filter(item =>{
@@ -1334,13 +1334,16 @@ function edit_bill(id){
 				let card = data.data.bill.filter(item =>{
 					return item.type_payment === 'card'
 				})
+				let time_creater = new Date(data.data.createdAt)
+				let conver_time = ('0'+ time_creater.getDate()).slice(-2) + '/'+ ('0' + (time_creater.getMonth()+1)).slice(-2) + '/' + time_creater.getFullYear() + ' ' + ('0' + time_creater.getHours()).slice(-2) + ":" + ('0' + time_creater.getMinutes()).slice(-2)
+				$('#date_sale').val(('0'+ time_creater.getDate()).slice(-2) + '/'+ ('0' + (time_creater.getMonth()+1)).slice(-2) + '/' + time_creater.getFullYear() + ' ' + ('0' + time_creater.getHours()).slice(-2) + ":" + ('0' + time_creater.getMinutes()).slice(-2))
 				tab_list.push({
 					HD: data.data.serial, 
 					item: data.data.list_sale.map(item =>{
 						item = Object.assign(item.id, {sale_quantity: item.quantity}, {price: item.price})
 						return item
 					}),
-					time: "",
+					time: conver_time,
 					id: data.data._id,
 					edit_bill: true,
 					time_edit: true,
@@ -1355,7 +1358,7 @@ function edit_bill(id){
 					total_sale:"", 
 					customer_pay_card: card.length > 0 ? card[0].money: 0, 
 					customer_pay_cash: cash.length > 0 ? cash[0].money: 0, 
-					money_return:0,
+					money_return:"",
 					note_bill: "",
 					price_book: "default"
 				});

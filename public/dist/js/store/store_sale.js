@@ -326,24 +326,24 @@ function add_product(id){
 					let product = data.data
 					if(tab_list[tab_number] == undefined){
 						tab_list[tab_number] = {item:[product]}
-						tab_list[tab_number].item[0].sale_quantity = 1
+						tab_list[tab_number].item[0].quantity = 1
 						tab_list[tab_number].item[0].price_book = product.price_book
 					}else{
 						let check = tab_list[tab_number].item.findIndex(element => element.number_code == product.number_code);
 						if(check != -1){
 							if(product.type == "product"){ 
-								if(tab_list[tab_number].item[check].sale_quantity +1 <= product.stocks_in_store[0].product_of_sale){
-									tab_list[tab_number].item[check].sale_quantity++
+								if(tab_list[tab_number].item[check].quantity +1 <= product.stocks_in_store[0].product_of_sale){
+									tab_list[tab_number].item[check].quantity++
 									tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale 
 								}else{
-									tab_list[tab_number].item[check].sale_quantity = product.stocks_in_store[0].product_of_sale
+									tab_list[tab_number].item[check].quantity = product.stocks_in_store[0].product_of_sale
 									tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale
 								}
 							}else{
-								tab_list[tab_number].item[check].sale_quantity++
+								tab_list[tab_number].item[check].quantity++
 							}
 						}else{
-							tab_list[tab_number].item.push(Object.assign(product, {sale_quantity: 1}))
+							tab_list[tab_number].item.push(Object.assign(product, {quantity: 1}))
 						}
 					}
 					render_tablist(tab_number)
@@ -378,7 +378,7 @@ function render_tablist(tab_number){
 	if(tab_list[tab_number] != undefined){
 		tab_list[tab_number].item.forEach((item, index) =>{
 			let check_price = check_price_book(item)
-			money+= check_price * item.sale_quantity
+			money+= check_price * item.quantity
 			html += `<tr>
 						<td><span class="number-code">${item.number_code}</span></td>
 					`
@@ -395,11 +395,11 @@ function render_tablist(tab_number){
 			html += `<td><span id="price-${item.number_code}">${convert_vnd(check_price)}</span>
 					   `
 			if(item.type != "product"){
-				html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="999" value="${item.sale_quantity}"></td>`
+				html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="999" value="${item.quantity}"></td>`
 			}else{
-				html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="${item.stocks_in_store[0].product_of_sale}" value="${item.sale_quantity}"></td>`
+				html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="${item.stocks_in_store[0].product_of_sale}" value="${item.quantity}"></td>`
 			}  
-				 html+= `<td><span class="total" id="total-${item.number_code}" >${convert_vnd(check_price*item.sale_quantity)}</span></td>
+				 html+= `<td><span class="total" id="total-${item.number_code}" >${convert_vnd(check_price*item.quantity)}</span></td>
 						<td width="5%"><span style="color:red; cursor: pointer" onclick="delete_row_product(${tab_number},${index})"><i class="fas fa-times-circle"></i></span></td>
 					</tr>`
 			
@@ -494,12 +494,12 @@ function change_quantity(tab_number, index, btn){
 	}else{
 		if(tab_list[tab_number].item[index].type == "product"){ 
 			if(number <= tab_list[tab_number].item[index].stocks_in_store[0].product_of_sale){
-				tab_list[tab_number].item[index].sale_quantity = number
+				tab_list[tab_number].item[index].quantity = number
 			}else{
-				tab_list[tab_number].item[index].sale_quantity = tab_list[tab_number].item[index].stocks_in_store[0].product_of_sale
+				tab_list[tab_number].item[index].quantity = tab_list[tab_number].item[index].stocks_in_store[0].product_of_sale
 			}			
 		}else{
-			tab_list[tab_number].item[index].sale_quantity = number
+			tab_list[tab_number].item[index].quantity = number
 		}	
     } 
 		
@@ -843,7 +843,7 @@ function get_list_item(){
     let data = [];
     tab_list[tab_number].item.forEach((element)=>{
         data.push({
-            sell_quantity: element.sale_quantity,
+            quantity: element.quantity,
             id: element._id,
         })
     })
@@ -996,7 +996,7 @@ function get_customer(id){
                             <td width="20%">${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
 							<td width="15%">${item.serial}</td>
 							<td width="40%">`
-                            history_sale[index].list_sale.forEach(sale=>{
+                            history_sale[index].list_item.forEach(sale=>{
                             html_history_sale += `<p style="margin-bottom:0px;">${sale.id.name} (${sale.id.number_code}): ${sale.quantity}</p>`
                         })        
                     html_history_sale +=    `</td><td width="20%">${item.employees.name}</td>
@@ -1236,7 +1236,7 @@ function render_data(data, pageCount, currentPage){
 						<ul class="nav nav-tabs" role="tablist">
 							<li class="nav-item">
 								<a class="nav-link active" data-toggle="pill"
-									href="#view-list_sale-${item._id}" role="tab" data-toggle="tab"
+									href="#view-list_item-${item._id}" role="tab" data-toggle="tab"
 									aria-selected="true">Sản phẩm bán</a>
 							</li>
 							<li class="nav-item">
@@ -1245,9 +1245,9 @@ function render_data(data, pageCount, currentPage){
 							</li>
 						</ul>
 						<div class="tab-content">
-							<div class="tab-pane fade active show" id="view-list_sale-${item._id}" role="tabpanel">
+							<div class="tab-pane fade active show" id="view-list_item-${item._id}" role="tabpanel">
 				`
-				item.list_sale.forEach((item)=>{
+				item.list_item.forEach((item)=>{
 					html+=`<p style="margin-bottom:0px;">${item.id.name} (${item.id.number_code}): ${item.quantity} <span class="float-right">Giá: ${item.price_sale? convert_vnd(item.price_sale) + ' ( Giá gốc: ' + convert_vnd(item.price) + ')' : convert_vnd(item.price)}</span></p>` 
                 })
 		html+=`			</div>
@@ -1255,7 +1255,7 @@ function render_data(data, pageCount, currentPage){
 							   <p style="margin-bottom:0px;"> Tổng tiền: <span class="float-right">${convert_vnd(item.payment)}</span></p>
 			  `
 			  	item.bill.forEach((item)=>{
-					html+=`<p style="margin-bottom:0px;">${item.type_payment == "cash" ? 'Thẻ: <span class="float-right">' + convert_vnd(item.money) : 'Tiền mặt: <span class="float-right">' + convert_vnd(item.money)}</span></p>` 
+					html+=`<p style="margin-bottom:0px;">${item.type_payment == "card" ? 'Thẻ: <span class="float-right">' + convert_vnd(item.money) : 'Tiền mặt: <span class="float-right">' + convert_vnd(item.money)}</span></p>` 
 				})
 		html+=`					<p style="margin-bottom:0px;"> Tiền thối: <span class="float-right">${convert_vnd(item.payment_back)}</span></p>
 							</div>
@@ -1339,8 +1339,8 @@ function edit_bill(id){
 				$('#date_sale').val(('0'+ time_creater.getDate()).slice(-2) + '/'+ ('0' + (time_creater.getMonth()+1)).slice(-2) + '/' + time_creater.getFullYear() + ' ' + ('0' + time_creater.getHours()).slice(-2) + ":" + ('0' + time_creater.getMinutes()).slice(-2))
 				tab_list.push({
 					HD: data.data.serial, 
-					item: data.data.list_sale.map(item =>{
-						item = Object.assign(item.id, {sale_quantity: item.quantity}, {price: item.price})
+					item: data.data.list_item.map(item =>{
+						item = Object.assign(item.id, {quantity: item.quantity}, {price: item.price})
 						return item
 					}),
 					time: conver_time,

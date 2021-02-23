@@ -75,7 +75,7 @@ class Store_sale extends Controller{
 				populate: { path: 'Customer'},
 				select: 'name'
 			}).populate({
-				path: 'list_sale.id',
+				path: 'list_item.id',
 				populate: { path: 'Product_services'},
 			}).populate({
 				path: 'bill',
@@ -110,7 +110,7 @@ class Store_sale extends Controller{
 				populate: { path: 'Employees'},
 				select: 'name'
 			}).populate({
-				path: 'list_sale.id',
+				path: 'list_item.id',
 				populate: { path: 'Product_services'},
 				select:'name number_code'
 			}).populate({
@@ -185,7 +185,7 @@ class Store_sale extends Controller{
 		try{
 			let customer = await Customer.findOne({company: req.session.store.company, _id: req.body.id});
 			let history_sale = await Invoice_sale.find({company: req.session.store.company, customer:req.body.id}).sort({createdAt: -1}).limit(20).populate({
-				path: 'list_sale.id',
+				path: 'list_item.id',
 				populate: { path: 'Product_services'},
 				select:'name number_code'
 			}).populate({
@@ -456,7 +456,7 @@ class Store_sale extends Controller{
 
 			// main run  
 			let list_item = req.body.list_item;
-			let list_sale = [];
+			let temp_convert_data_item = [];
 			let list_service = [];
 			let list_product = [];
 			let payment = 0;
@@ -474,35 +474,35 @@ class Store_sale extends Controller{
 					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] không tồn tại`, "Vui lòng chọn lại");
 				}
 				list_item[i] =  Object.assign(list_item[i], check_product_service._doc);
-				if(list_item[i].type == 'product' && list_item[i].sell_quantity > list_item[i].stocks_in_store[0].product_of_sale){
+				if(list_item[i].type == 'product' && list_item[i].quantity > list_item[i].stocks_in_store[0].product_of_sale){
 					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 				}else{
 					let check_price = req.body.price_book != 'default'? check_price_book(list_item[i], req.body.price_book) : list_item[i].price
 					list_item[i].price_sale = check_price != list_item[i].price ? check_price : undefined
-					payment += check_price * list_item[i].sell_quantity
-					list_sale.push({
+					payment += check_price * list_item[i].quantity
+					temp_convert_data_item.push({
 						id: list_item[i].id, 
-						quantity: list_item[i].sell_quantity,
+						quantity: list_item[i].quantity,
 						type: list_item[i].type,
 						price: list_item[i].price,
 						price_sale: check_price != list_item[i].price ? check_price : undefined,
 					})
 				}
 				if(list_item[i].type == 'service'){
-					for(let k = 0, length = list_item[i].sell_quantity; k < length; k++){
+					for(let k = 0, length = list_item[i].quantity; k < length; k++){
 						list_service.push({service: mongoose.Types.ObjectId(list_item[i].id), times: list_item[i].times, name: list_item[i].name})
 					}
 				}
 				if(list_item[i].type == 'product'){
 					list_product.push({
 						product: mongoose.Types.ObjectId(list_item[i].id),
-						quantity: list_item[i].sell_quantity
+						quantity: list_item[i].quantity
 					})
 				}
 				if(list_item[i].type == 'combo'){
 					list_item[i].combo.forEach(async item =>{
 						if(item.id.type == 'service'){
-							for(let k = 0, length = list_item[i].sell_quantity *item.quantity; k < length; k++){
+							for(let k = 0, length = list_item[i].quantity *item.quantity; k < length; k++){
 								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: item.id.times, name: item.id.name})
 							}
 						}else{
@@ -511,12 +511,12 @@ class Store_sale extends Controller{
 								match: { store_id: req.session.store._id },
 								select: 'product_of_sale',
 							})
-							if(list_item[i].sell_quantity *item.quantity > check_product.stocks_in_store[0].product_of_sale){
+							if(list_item[i].quantity *item.quantity > check_product.stocks_in_store[0].product_of_sale){
 								return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 							}
 							list_product.push({
 								product: mongoose.Types.ObjectId(item.id._id),
-								quantity: list_item[i].sell_quantity *item.quantity
+								quantity: list_item[i].quantity *item.quantity
 							})
 						}
 					})
@@ -557,7 +557,7 @@ class Store_sale extends Controller{
 			}else{
 				payment_back = req.body.customer_pay_card + req.body.customer_pay_cash - payment
 			}
-			
+
 			//count discount used
 			if(req.body.discount_id){
 				check_discount.times_used = check_discount.times_used +1
@@ -573,7 +573,7 @@ class Store_sale extends Controller{
 				company: req.session.store.company,
 				store: req.session.store._id,
 				payment_back: payment_back,
-				list_sale: list_sale,
+				list_item: temp_convert_data_item,
 				payment: payment > 0 ? payment : 0,
 				employees: req.body.employees,
 				customer: req.body.customer != "" ? req.body.customer : undefined,

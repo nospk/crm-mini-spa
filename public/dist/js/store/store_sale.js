@@ -365,6 +365,12 @@ function add_product(id){
 	})
 	
 }
+function change_price(btn, index){
+	let price = ($(btn).val())
+	console.log(index)
+	tab_list[tab_number].item[index].price = price
+	render_tablist(tab_number)
+}
 function render_tablist(tab_number){
 	set_time();
 	$('#search_product').val("");
@@ -377,7 +383,12 @@ function render_tablist(tab_number){
 	let combo = false;
 	if(tab_list[tab_number] != undefined){
 		tab_list[tab_number].item.forEach((item, index) =>{
-			let check_price = check_price_book(item)
+			let check_price
+			if(manager){
+				check_price = item.price
+			}else{
+				check_price = check_price_book(item)
+			}
 			money+= check_price * item.quantity
 			html += `<tr>
 						<td><span class="number-code">${item.number_code}</span></td>
@@ -392,8 +403,8 @@ function render_tablist(tab_number){
 			}else{
 				html+=`<td><span id="name-product-${item.number_code}">${item.name}</span><input type="hidden" id="id-product-${item.number_code}" value="${item._id}"></td>`
 			}		       		
-			html += `<td><span id="price-${item.number_code}">${convert_vnd(check_price)}</span>
-					   `
+			html += `<td><input class="form-control form-control-sm" id="price-${item.number_code}" ${manager==true? "": "disabled"} type="currency" step="1000" value="${convert_vnd(Number(check_price))}" onchange="change_price(this,'${index}')">
+					`
 			if(item.type != "product"){
 				html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="999" value="${item.quantity}"></td>`
 			}else{
@@ -427,6 +438,11 @@ function render_tablist(tab_number){
 		$('#add_product').html(html)
 		$('#note_bill').val(tab_list[tab_number].note_bill)
 		tab_list[tab_number].total_sale = money
+		let currencyInputs = document.querySelectorAll('input[type="currency"]')
+		currencyInputs.forEach(element => {
+			element.addEventListener('focus', onFocus)
+			element.addEventListener('blur', onBlur)
+		})
 	}
 	if(money != 0){
 		if(tab_list[tab_number].discount_type != ""){//if have discount code
@@ -845,6 +861,7 @@ function get_list_item(){
         data.push({
             quantity: element.quantity,
             id: element._id,
+			price_edit: element.price
         })
     })
     return data;
@@ -907,6 +924,8 @@ function unlock_manager(){
 				$('#button_lock_manager').show()
 				$('#button_edit_bill').show()
 				$('#date_sale').prop( "disabled", false );
+				manager = true;
+				render_tablist(tab_number)
 				Swal.fire({
 					toast: true,
 				    position: 'top-end',
@@ -945,6 +964,8 @@ function lock_manager(){
 				$('#button_lock_manager').hide()
 				$('#button_edit_bill').hide()
 				$('#date_sale').prop( "disabled", true );
+				manager = false;
+				render_tablist(tab_number)
 				Swal.fire({
 					toast: true,
 				    position: 'top-end',

@@ -215,8 +215,8 @@ class Common {
 							</tr>
 							<tr style="line-height: 12px;">
 								<td style="border-bottom:1px solid black"><span style="font-size:11px"><del>${String(item.price).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</del> ${String(item.price_sale).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
-								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${item.sell_quantity}</span></td>
-								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${String(item.price_sale * item.sell_quantity).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
+								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${item.quantity}</span></td>
+								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${String(item.price_sale * item.quantity).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
 							</tr>`
 					}else{
 						bill+=	`<tr style="line-height: 12px;">
@@ -224,8 +224,8 @@ class Common {
 							</tr>
 							<tr style="line-height: 12px;">
 								<td style="border-bottom:1px solid black"><span style="font-size:11px">${String(item.price).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
-								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${item.sell_quantity}</span></td>
-								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${String(item.price * item.sell_quantity).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
+								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${item.quantity}</span></td>
+								<td style="border-bottom:1px solid black; text-align:right"><span style="font-size:11px">${String(item.price * item.quantity).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</span></td>
 							</tr>`
 					}
 						

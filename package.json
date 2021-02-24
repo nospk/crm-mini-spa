@@ -9,6 +9,9 @@
     "dev_app": "nodemon app.js",
 	"dev_admin": "nodemon admin.js"
   },
+  "nodemonConfig": {
+    "ignore": ["public/*"]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nospk/crm-mini-spa.git"

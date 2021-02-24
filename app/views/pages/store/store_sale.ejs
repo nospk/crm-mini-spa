@@ -756,8 +756,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<!-- Select2 -->
 		<script src="/assets/plugins/select2/js/select2.full.min.js"></script>
 		<script>
+		  let manager = false;
 		  $(function () {
-			let manager = <%-manager%>
+			manager = <%-manager%>
 			if(manager == true){
 				$('#button_unlock_manager').hide()
 				$('#button_lock_manager').show()

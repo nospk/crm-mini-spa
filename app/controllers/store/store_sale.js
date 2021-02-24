@@ -138,7 +138,11 @@ class Store_sale extends Controller{
 	}
 	static async get_by_id(req,res){
 		try{
-			let find = await Product_service.findOne({company :req.session.store.company, isSale: true, _id: req.body.id})
+			let find = await Product_service.findOne({company :req.session.store.company, isSale: true, _id: req.body.id}).populate({
+				path: 'stocks_in_store',
+				match: { store_id: req.session.store._id },
+				select: 'product_of_sale',
+			})
 			if(find.type == "product" && find.stocks_in_store[0].product_of_sale == 0){
 				return Store_sale.sendError(res, "Sản phẩm hết hàng", "Vui lòng chọn sản phẩm khác hoặc thêm sản phẩm"); 
 			}
@@ -474,11 +478,19 @@ class Store_sale extends Controller{
 					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] không tồn tại`, "Vui lòng chọn lại");
 				}
 				list_item[i] =  Object.assign(list_item[i], check_product_service._doc);
+
 				if(list_item[i].type == 'product' && list_item[i].quantity > list_item[i].stocks_in_store[0].product_of_sale){
 					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 				}else{
-					let check_price = req.body.price_book != 'default'? check_price_book(list_item[i], req.body.price_book) : list_item[i].price
+					let check_price 
+
+					if(req.session.manager == ""){
+						check_price = req.body.price_book != 'default'? check_price_book(list_item[i], req.body.price_book) : list_item[i].price
 					list_item[i].price_sale = check_price != list_item[i].price ? check_price : undefined
+					}else{
+						check_price = Number(list_item[i].price_edit)
+						list_item[i].price_sale = Number(list_item[i].price_edit)
+					}
 					payment += check_price * list_item[i].quantity
 					temp_convert_data_item.push({
 						id: list_item[i].id, 
@@ -488,6 +500,7 @@ class Store_sale extends Controller{
 						price_sale: check_price != list_item[i].price ? check_price : undefined,
 					})
 				}
+
 				if(list_item[i].type == 'service'){
 					for(let k = 0, length = list_item[i].quantity; k < length; k++){
 						list_service.push({service: mongoose.Types.ObjectId(list_item[i].id), times: list_item[i].times, name: list_item[i].name})

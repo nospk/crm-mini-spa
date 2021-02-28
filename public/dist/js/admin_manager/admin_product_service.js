@@ -29,28 +29,32 @@ $( document ).ready(()=>{
             $('#brand_show').show()
             $('.combo-off').show()
             $('.combo-on').hide()
-			$('.times_show').hide()
+			$('.times_choose').hide()
+            $('.times_service').hide()
             $('#cost_price').prop("disabled", false);
 		}else if($('#type_product_service').val() == "service"){
             $('.hair-removel').hide()
             $('.combo-off').show()
             $('.combo-on').hide()
             $('#brand_show').hide()
-			$('.times_show').show()
+			$('.times_choose').show()
+            $('.times_service').show()
             $('#cost_price').prop("disabled", false);
-        }else if($('#type_product_service').val() == "hari_removel"){
+        }else if($('#type_product_service').val() == "hair_removel"){
             $('.combo-off').show()
             $('.combo-on').hide()
             $('.hair-removel').show()
             $('#brand_show').hide()
-            $('.times_show').show()
+            $('.times_choose').show()
+            $('.times_service').hide()
             $('#cost_price').prop("disabled", false);
 		}else{
             get_product_service()
             $('.hair-removel').hide()
             $('.combo-off').hide()
             $('.combo-on').show()
-			$('.times_show').hide()
+			$('.times_choose').hide()
+            $('.times_service').hide()
             $('#cost_price').prop("disabled", true);
         }
 	})
@@ -59,7 +63,7 @@ let page_now;
 const show_type = type =>{
     if(type == "product")   return "Sản Phẩm"
     else if (type == "service") return "Dịch vụ"
-    else if (type == "hari_removel") return "Triệt lông"
+    else if (type == "hair_removel") return "Triệt lông"
     else return "Combo"
 }
 function get_product_service(){
@@ -195,11 +199,12 @@ function create_new(){
             type: $('#create_new #type_product_service').val(),
             price: convert_number($('#create_new #price').val()),
             cost_price: convert_number($('#create_new #cost_price').val()),
+            service_price: convert_number($('#create_new #service_price').val()),
             number_code: $('#create_new #number_code').val(),
             description: $('#create_new #description').val(),
 			times_service: $('#create_new #times_service').val(),
             brand: $('#brand').val() == "" ? undefined : $('#brand').val(),
-			times: $('#type_product_service').val() == "service" ? $('#create_new #times_choose').val() : undefined,
+			times: ($('#type_product_service').val() == "service" || $('#type_product_service').val() == "hair_removel") ? $('#create_new #times_choose').val() : undefined,
             group: $('#group').val(),
             _csrf: $('#_csrf').val()
         }
@@ -417,8 +422,22 @@ function edit_data(id){
                     $('#edit_data #edit_cost_price').prop("disabled", false);
                     $('#edit_data #edit-stock').css("display", "none");
 					$('#edit_data #edit-history').css("display", "none");
-					$('#edit_data .edit_times_show').show();
+					$('#edit_data .edit-times-choose').show();
+                    $('#edit_data .edit-times-service').show();
 					$('#edit_data #edit_times_service').val(data.data.times_service);
+					$('#edit_data #edit_times_choose').val(data.data.times);
+                    $('.edit-hair-removel').hide()
+                    $('.combo-off').show()
+                    $('.combo-on').hide()
+                    $('#edit_brand_show').hide();
+                }else if(data.data.type =="hair_removel"){
+                    $('#edit_data #edit_cost_price').prop("disabled", false);
+                    $('#edit_data #edit-stock').css("display", "none");
+                    $('.edit-hair-removel').show()
+					$('#edit_data #edit-history').css("display", "none");
+					$('#edit_data .edit-times-choose').show();
+                    $('#edit_data .edit-times-service').hide();
+					$('#edit_data #edit_service_price').val(convert_vnd(data.data.service_price));
 					$('#edit_data #edit_times_choose').val(data.data.times);
                     $('.combo-off').show()
                     $('.combo-on').hide()
@@ -428,7 +447,9 @@ function edit_data(id){
                     $('#edit_data #edit-stock').css("display", "block");
 					$('#edit_data #edit-history').css("display", "block");
                     $('#edit_brand_show').show();
-					$('#edit_data .edit_times_show').hide();
+                    $('.edit-hair-removel').hide()
+					$('#edit_data .edit-times-choose').hide();
+                    $('#edit_data .edit-times-service').hide();
                     $('.combo-off').show()
                     $('.combo-on').hide()
                     let html = `<div class="info-box">
@@ -487,7 +508,9 @@ function edit_data(id){
                 }else{
                     $('#edit_data #edit_cost_price').prop("disabled", true);
                     $('#edit_data #edit-stock').css("display", "none");
-					$('#edit_data .edit_times_show').hide();
+                    $('.edit-hair-removel').hide()
+					$('#edit_data .edit-times-choose').hide();
+                    $('#edit_data .edit-times-service').hide();
 					$('#edit_data #edit-history').css("display", "none");
                     $('#edit_brand_show').hide();
                     get_product_service();
@@ -523,10 +546,11 @@ function update_data(){
             price: convert_number($('#edit_data #edit_price').val()),
             number_code: $('#edit_data #edit_number_code').val(),
             description: $('#edit_data #edit_description').val(),
+            service_price: convert_number($('#edit_data #edit_service_price').val()),
             isSale: $('#edit_data #isSale').val(),
 			times_service: $('#edit_data #edit_times_service').val(),
             brand: $('#edit_data #edit_brand').val() == "" ? undefined: $('#edit_data #edit_brand').val(),
-			times: $('#edit_type_product_service').val() == "service" ? $('#edit_data #edit_times_choose').val() : undefined,
+			times: ($('#edit_type_product_service').val() == "service" || $('#edit_type_product_service').val() == "hair_removel") ? $('#edit_data #edit_times_choose').val() : undefined,
             group: $('#edit_data #edit_group').val(),
             id: $('#edit_data #edit_id').val(),
             _csrf: $('#_csrf').val()
@@ -536,6 +560,7 @@ function update_data(){
             name: $('#edit_data #edit_name').val().trim(),
             combo: get_list_items(),
             price: convert_number($('#edit_data #edit_price').val()),
+            cost_price: convert_number($('#edit_data #edit_cost_price').val()),
             number_code: $('#edit_data #edit_number_code').val(),
             description: $('#edit_data #edit_description').val(),
             isSale: $('#edit_data #isSale').val(),

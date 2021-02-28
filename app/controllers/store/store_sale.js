@@ -256,14 +256,14 @@ class Store_sale extends Controller{
 			if(invoice.times_used >= invoice.times){
 				invoice.isActive = false;
 			}
-			if(invoice.times_used > 10){
+			if(service.type == "service"){
 				log = Log_service({
 					company:req.session.store.company,
 					customer:req.body.customer,
+					type: "service",
 					service:req.body.service,
 					times_service: service.times_service,
 					store:req.session.store._id,
-					isCount: false,
 					employees: req.body.employees
 				})
 			}else{
@@ -271,13 +271,16 @@ class Store_sale extends Controller{
 					company:req.session.store.company,
 					customer:req.body.customer,
 					service:req.body.service,
+					type: "hair_removel",
+					service_price: invoice.times_used > 10 ? 0 : service.service_price,
 					times_service: service.times_service,
 					store:req.session.store._id,
-					isCount: true,
 					employees: req.body.employees
 				})
 			}
+			
 			await log.save()
+
 			invoice.log_service.unshift(log._id)
 			await invoice.save()
 			Store_sale.sendMessage(res, "Đã thực hiện thành công");
@@ -337,8 +340,8 @@ class Store_sale extends Controller{
 									{ $and:
 									   [
 										 { $eq: [ "$employees",  "$$pid" ] },
+										 { $eq: [ "$type",  "service" ] },
 										 { $eq: [ "$isActive",  true ] },
-										 { $eq: [ "$isCount",  true ] },
 										 { $gte:[ "$createdAt", "$$start_month"]},
 										 { $lt: [ "$createdAt", "$$end_month"]},
 									   ]
@@ -349,10 +352,31 @@ class Store_sale extends Controller{
 						as: "service_in_month"
 					 }
 				},
-				
-				{ $unwind:"$service_in_month"},
-				{ $group : {_id:"$_id", name:{ "$first":"$name"}, minutes_service:{$sum:"$service_in_month.times_service"}, service:{ $sum:1}}}
+				{ $lookup:
+					{
+					  from: Log_service.collection.name,
+					  let: { "pid" : "$_id", "start_month":start_month,"end_month":end_month},
+					  pipeline: [
+						   { $match:
+								{ $expr:
+								   { $and:
+									  [
+										{ $eq: [ "$employees",  "$$pid" ] },
+										{ $eq: [ "$type",  "hair_removel" ] },
+										{ $eq: [ "$isActive",  true ] },
+										{ $gte:[ "$createdAt", "$$start_month"]},
+										{ $lt: [ "$createdAt", "$$end_month"]},
+									  ]
+								   }
+								}	
+							 }
+					   ],
+					   as: "hair_removel_in_month"
+					}
+			   	},
+
 			])
+
 			let report_sale_month = await Employees.aggregate([
 				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},
 				{ $lookup:
@@ -501,7 +525,7 @@ class Store_sale extends Controller{
 					})
 				}
 
-				if(list_item[i].type == 'service'){
+				if(list_item[i].type == 'service' || list_item[i].type == 'hair_removel'){
 					for(let k = 0, length = list_item[i].quantity; k < length; k++){
 						list_service.push({service: mongoose.Types.ObjectId(list_item[i].id), times: list_item[i].times, name: list_item[i].name})
 					}
@@ -514,7 +538,7 @@ class Store_sale extends Controller{
 				}
 				if(list_item[i].type == 'combo'){
 					list_item[i].combo.forEach(async item =>{
-						if(item.id.type == 'service'){
+						if(item.id.type == 'service' || item.id.type == 'hair_removel'){
 							for(let k = 0, length = list_item[i].quantity *item.quantity; k < length; k++){
 								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: item.id.times, name: item.id.name})
 							}

@@ -145,7 +145,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 							<select class="custom-select" id="type_product_service">
 								<option value="product">Sản phẩm</option>
 								<option value="service">Dịch vụ</option>
-								<option value="hari_removel">Triệt lông</option>
+								<option value="hair_removel">Triệt lông</option>
 								<option value="combo">Combo</option>
 							</select>
 						</div>
@@ -167,7 +167,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									type="button"><i class="fas fa-plus"></i></button>
 							</div>
 						</div>
-						<div class="input-group times_show" style="display:none;">
+						<div class="input-group times_choose" style="display:none;">
 							<div class="input-group-prepend">
 								<div class="input-group-text">Số lần dịch vụ</div>
 							</div>
@@ -185,7 +185,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<option value="99999">Không giới hạn</option>
 							</select>
 						</div>
-						<div class="input-group times_show" style="display:none;">
+						<div class="input-group times_service" style="display:none;">
 							<div class="input-group-prepend">
 								<div class="input-group-text">Số phút làm dịch vụ</div>
 							</div>
@@ -313,7 +313,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									<select class="custom-select" disabled id="edit_type_product_service">
 										<option value="product">Sản phẩm</option>
 										<option value="service">Dịch vụ</option>
-										<option value="hari_removel">Triệt lông</option>
+										<option value="hair_removel">Triệt lông</option>
 										<option value="combo">Combo</option>
 									</select>
 								</div>
@@ -347,7 +347,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											data-target="#new_brand" type="button"><i class="fas fa-plus"></i></button>
 									</div>
 								</div>
-								<div class="input-group edit_times_show" style="display:none;">
+								<div class="input-group edit-times-choose" style="display:none;">
 									<div class="input-group-prepend">
 										<div class="input-group-text">Số lần dịch vụ</div>
 									</div>
@@ -365,7 +365,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<option value="99999">Không giới hạn</option>
 									</select>
 								</div>
-								<div class="input-group edit_times_show" style="display:none;">
+								<div class="input-group edit-times-service" style="display:none;">
 									<div class="input-group-prepend">
 										<div class="input-group-text">Số phút làm dịch vụ</div>
 									</div>
@@ -399,6 +399,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					
 									  </tbody>
 									</table>
+								</div>
+								<div class="input-group edit-hair-removel" style="display: none;">
+									<div class="input-group-prepend">
+										<div class="input-group-text">Tiền dịch vụ cho nhân viên</div>
+									</div>
+									<input type="currency" class="form-control" id="edit_service_price" placeholder="Nhập giá"
+										aria-label="Price">
 								</div>
 								<div class="input-group">
 									<div class="input-group-prepend">

@@ -134,13 +134,28 @@ class Admin_product_service extends Controller{
 					company: req.session.user.company._id,
 				});
 				await data.save()
+			}else if(req.body.type == "hair_removel"){
+				let data = Product_service({
+					name: req.body.name,
+					query_name: await Common.removeVietnameseTones(req.body.name),
+					type: req.body.type,
+					cost_price: req.body.cost_price,
+					price: req.body.price,
+					times: req.body.times,
+					service_price: req.body.service_price,
+					description: req.body.description,
+					group: req.body.group,
+					number_code: req.body.number_code,
+					company: req.session.user.company._id,
+				});
+				await data.save()
 			}else{
 				let data = Product_service({
 					name: req.body.name,
 					query_name: await Common.removeVietnameseTones(req.body.name),
 					type: req.body.type,
 					combo: req.body.combo,
-					cost_price: 0,
+					cost_price: req.body.cost_price,
 					price: req.body.price,
 					group: req.body.group,
 					description: req.body.description,
@@ -175,14 +190,18 @@ class Admin_product_service extends Controller{
 					find.group = req.body.group;
 					if(find.type == "service"){
 						find.cost_price = req.body.cost_price;
-					}
-					if(find.type == "combo"){
-						find.combo = req.body.combo;
-					}
-					if(find.type == "service"){
 						find.times = req.body.times;
 						find.times_service = req.body.times_service;
 					}
+					if(find.type == "hair_removel"){
+						find.service_price = req.body.service_price;
+						find.times = req.body.times;
+					}
+					if(find.type == "combo"){
+						find.cost_price = req.body.cost_price;
+						find.combo = req.body.combo;
+					}
+
 					
 					await find.save();
 					Admin_product_service.sendMessage(res, "Đã thay đổi thành công");

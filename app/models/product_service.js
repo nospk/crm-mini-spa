@@ -15,7 +15,7 @@ const Product_Service_Schema = mongoose.Schema({
 	cost_price:{
 		type: Number, required: true
 	},
-	serivce_price:{
+	service_price:{ // servi
 		type: Number
 	},
     price: {

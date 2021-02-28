@@ -154,9 +154,18 @@ $( document ).ready(()=>{
 				$('#report_sale_month').html(html_report_sale_month)
 				let html_report_service_month = "";
 				data.data.report_service_month.forEach(item => {
+					console.log(item.hair_removel_in_month)
+					let hair_removel_price = item.hair_removel_in_month.reduce((price, currValue) =>{
+						return price += currValue.service_price
+					},0)
+					let minutes_service = item.service_in_month.reduce((minutes, currValue) =>{
+						return minutes += currValue.times_service
+					},0)
+					//console.log(hair_removel_price)
 					html_report_service_month += `<li class="list-group-item"><span class="font-weight-bold">${item.name}</span>
-											<br>Số lần dịch vụ<span class="float-right">${item.service}</span>
-											<br>Số phút dịch vụ <span class="float-right">${item.minutes_service}</span>
+											<br>Số lần dịch vụ<span class="float-right">${item.service_in_month.length}</span>
+											<br>Số phút dịch vụ <span class="float-right">${minutes_service}</span>
+											<br>Số tiền triệt lông <span class="float-right">${convert_vnd(hair_removel_price)}</span>
 					</li>`
 				})
 				$('#report_service_month').html(html_report_service_month)

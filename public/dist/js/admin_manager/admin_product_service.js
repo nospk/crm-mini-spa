@@ -25,19 +25,29 @@ $( document ).ready(()=>{
 	});
 	$('#type_product_service').change(function(){
 		if($('#type_product_service').val() == "product"){
+            $('.hair-removel').hide()
             $('#brand_show').show()
             $('.combo-off').show()
             $('.combo-on').hide()
 			$('.times_show').hide()
             $('#cost_price').prop("disabled", false);
 		}else if($('#type_product_service').val() == "service"){
+            $('.hair-removel').hide()
             $('.combo-off').show()
             $('.combo-on').hide()
             $('#brand_show').hide()
 			$('.times_show').show()
             $('#cost_price').prop("disabled", false);
+        }else if($('#type_product_service').val() == "hari_removel"){
+            $('.combo-off').show()
+            $('.combo-on').hide()
+            $('.hair-removel').show()
+            $('#brand_show').hide()
+            $('.times_show').show()
+            $('#cost_price').prop("disabled", false);
 		}else{
             get_product_service()
+            $('.hair-removel').hide()
             $('.combo-off').hide()
             $('.combo-on').show()
 			$('.times_show').hide()
@@ -49,6 +59,7 @@ let page_now;
 const show_type = type =>{
     if(type == "product")   return "Sản Phẩm"
     else if (type == "service") return "Dịch vụ"
+    else if (type == "hari_removel") return "Triệt lông"
     else return "Combo"
 }
 function get_product_service(){

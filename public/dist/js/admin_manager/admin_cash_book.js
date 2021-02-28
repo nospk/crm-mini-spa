@@ -234,6 +234,7 @@ function render_data(data, pageCount, currentPage, type){
 
 function create_new(){
     let data = {
+        date: new Date($('#date').val()),
         type: $('#create_new #select_type').val(),
         type_payment: $('#create_new #select_type_payment').val(),
         type_receiver: $('#create_new #select_type_receiver').val(),

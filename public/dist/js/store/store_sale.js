@@ -376,7 +376,6 @@ function add_product(id){
 }
 function change_price(btn, index){
 	let price = ($(btn).val())
-	console.log(index)
 	tab_list[tab_number].item[index].price = price
 	render_tablist(tab_number)
 }
@@ -500,9 +499,11 @@ function render_tablist(tab_number){
 	if(tab_list[tab_number].edit_bill === false){
 		$('.button-edit-bill').hide()
 		$('.button-sale-bill').show()
+		$('#button_remove_customer').prop( "disabled", false )
 	}else{
 		$('.button-edit-bill').show()
 		$('.button-sale-bill').hide()
+		$('#button_remove_customer').prop( "disabled", true )
 	}
 }
 
@@ -809,6 +810,8 @@ function check_payment(){
 		.catch(timer => {
 			// cho vào để ko báo lỗi uncaught
 		});
+	}else if(tab_list[tab_number].id != ""){
+		update_bill()
 	}else if(tab_list[tab_number].customer == ""){
 		Swal.fire({
 			title: "Bạn chưa nhập thông tin khách hàng",
@@ -896,6 +899,43 @@ function check_out(){
     }
 	$.ajax({
 		url:'/check_out',
+		method:'POST',
+		contentType: "application/json; charset=utf-8",
+		data: JSON.stringify(data),
+		success: function(data){
+			if(data.status == 1){
+				clear_data(tab_number)
+				document.getElementById('printer').src = "data:text/html;charset=utf-8," + data.data;	
+			}else{
+				Swal.fire({
+					title: data.error,
+					text: data.message,
+					icon: "error",
+					showConfirmButton: false,    
+					timer: 3000
+				}).then((result)=>{
+					// cho vào để ko báo lỗi uncaught
+				})
+				.catch(timer => {
+					// cho vào để ko báo lỗi uncaught
+				}); 
+				
+			}
+		}
+	})
+}
+function update_bill(){
+	let data = {
+		time: tab_list[tab_number].time_edit ? get_time_convert(tab_list[tab_number].time) : undefined,
+		customer_pay_card: tab_list[tab_number].customer_pay_card,
+		customer_pay_cash: tab_list[tab_number].customer_pay_cash,
+		discount_id: tab_list[tab_number].discount_id,
+		note: tab_list[tab_number].note_bill,
+        list_item: get_list_item(),
+        _csrf: $('#_csrf').val()
+    }
+	$.ajax({
+		url:'/update_bill',
 		method:'POST',
 		contentType: "application/json; charset=utf-8",
 		data: JSON.stringify(data),

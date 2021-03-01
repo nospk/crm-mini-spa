@@ -90,8 +90,11 @@ class Store_sale extends Controller{
 	}
 	static async get_invoice_sale(req, res){
         try{
+			let now = new Date();
+			let start_month = new Date(now.getFullYear(),now.getMonth(),1,0,0,0);
+			let end_month = new Date(now.getFullYear(),now.getMonth()+1,1,0,0,0);
 			let match = {
-				$and: [ {company : mongoose.Types.ObjectId(req.session.store.company)} ] 
+				$and: [ {company : mongoose.Types.ObjectId(req.session.store.company), createdAt: {$gte: start_month, $lt: end_month}} ] 
 			}
 			//set default variables
 			let pageSize = 20
@@ -563,6 +566,256 @@ class Store_sale extends Controller{
 			if(list_service != false && req.body.customer == false){
 				return Store_sale.sendError(res, "Để lưu dịch vụ cần phải có thông tin khách hàng", "Vui chọn khách hàng hoặc tạo khách hàng mới");
 			}
+			//check discount
+			let money_discount = 0;
+			let check_discount
+			if(req.body.discount_id){
+				check_discount = await Discount.findOne({company :req.session.store.company, _id: req.body.discount_id, isActive : true})
+				if(check_discount){
+					if(check_discount.type == "limit" && check_discount.times == check_discount.times_used){
+						return Store_sale.sendError(res, "Mã giảm giá đã hết lần sử dụng", "Vui lòng nhập lại mã");
+					}else{
+						if(check_discount.type_discount == "money"){
+							money_discount = check_discount.value
+						}else{
+							money_discount = Math.ceil(payment *check_discount.value /100)
+						}
+						
+					}
+				}else{
+					return Store_sale.sendError(res, "Mã giảm giá không hợp lệ", "Vui lòng nhập lại mã");
+				}
+			}
+			payment = payment - money_discount;
+			
+			//check payment
+			if(req.body.customer_pay_card > payment){
+				return Store_sale.sendError(res, `Lỗi thanh toán số tiền chuyển khoản lớn hơn số tiền trả`, "Kiểm tra lại số tiền đã nhập");
+			}
+			if(req.body.customer_pay_card + req.body.customer_pay_cash < payment){
+				return Store_sale.sendError(res, `Lỗi thanh toán chưa đủ số tiền`, "Kiểm tra lại số tiền đã nhập");
+			}else{
+				payment_back = req.body.customer_pay_card + req.body.customer_pay_cash - payment
+			}
+
+			//count discount used
+			if(req.body.discount_id){
+				check_discount.times_used = check_discount.times_used +1
+				await check_discount.save()
+			}
+
+			//invoice sale	
+			let serial_sale =  await Common.get_serial_store(req.session.store._id, 'BH')
+			let serial_stock =  await Common.get_serial_store(req.session.store._id, 'XH')
+			let invoice_sale = Invoice_sale({
+				serial: serial_sale,
+				type : "sale",
+				company: req.session.store.company,
+				store: req.session.store._id,
+				payment_back: payment_back,
+				list_item: temp_convert_data_item,
+				payment: payment > 0 ? payment : 0,
+				employees: req.body.employees,
+				customer: req.body.customer != "" ? req.body.customer : undefined,
+				discount: req.body.discount_id != "" ? req.body.discount_id : undefined,
+				note: req.body.note_bill,
+				who_created: req.session.store.name,
+				bill:[],
+				createdAt: time
+			})
+			await invoice_sale.save()
+
+			//invoice store stocks
+			if(list_product != false){
+				let invoice_stock = Invoice_product_store({
+					serial: serial_stock,
+					type: "sale",
+					company: req.session.store.company, 
+					store: req.session.store._id, 
+					list_products: list_product,
+					who_created: req.session.store.name,
+					invoice: invoice_sale._id,
+					createdAt: time
+				})
+				
+				await invoice_stock.save()
+				for (let i = 0; i < list_product.length; i++){
+					let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.store.company, store_id:req.session.store._id, product: list_product[i].product},{$inc:{product_of_sale:Number(list_product[i].quantity)*-1, quantity:Number(list_product[i].quantity)*-1}},{new: true})
+					store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_stock._id);
+					invoice_stock.list_products[i].current_quantity = store_stocks.product_of_sale
+					store_stocks.save();
+				}
+				await invoice_stock.save()
+			}
+
+			// create bill
+			if(req.body.customer_pay_card && payment > 0){//card
+				let serial_card_book = await Common.get_serial_store(req.session.store._id, 'HDTT')
+				let card_book = Cash_book({
+					serial: serial_card_book,
+					type: "income",
+					type_payment: "card",
+					company:req.session.store.company,
+					money: req.body.customer_pay_card,
+					isForCompany: false,
+					group: "Thanh toán tiền bán hàng",
+					user_created: req.session.store.name,
+					member_name: check_customer != false ? check_customer.name : "Khách lẻ",
+					member_id:check_customer != false ? check_customer._id : undefined,
+					accounting: true,
+					store: req.session.store._id,
+					createdAt: time
+				})
+				await card_book.save()
+				invoice_sale.bill.push(card_book._id)
+				await invoice_sale.save()
+				if(check_customer != false){
+					let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_customer._id},{$inc:{payment:req.body.customer_pay_card}},{new: true})
+					customer.point = Math.trunc(customer.payment / 10000)
+					await customer.save()
+				}
+			}
+			if(req.body.customer_pay_cash && payment > 0){//cash
+				let money_payment;
+				if(req.body.customer_pay_card + req.body.customer_pay_cash > payment){
+					money_payment = payment - req.body.customer_pay_card 
+				}else{
+					money_payment = req.body.customer_pay_cash
+				}
+				let serial_cash_book = await Common.get_serial_store(req.session.store._id, 'HDTT')
+				let cash_book = Cash_book({
+					serial: serial_cash_book,
+					type: "income",
+					type_payment: "cash",
+					company:req.session.store.company,
+					money: money_payment,
+					isForCompany: false,
+					group: "Thanh toán tiền bán hàng",
+					user_created: req.session.store.name,
+					member_name: check_customer != false ? check_customer.name : "Khách lẻ",
+					member_id:check_customer != false ? check_customer._id : undefined,
+					accounting: true,
+					store: req.session.store._id,
+					createdAt: time
+				})
+				await cash_book.save()
+				invoice_sale.bill.push(cash_book._id)
+				await invoice_sale.save()
+				if(check_customer != false){
+					let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_customer._id},{$inc:{payment:money_payment}},{new: true})
+					customer.point = Math.trunc(customer.payment / 10000)
+					await customer.save()
+				}
+			}
+
+			// invoice service for customer
+			for(let t = 0; t < list_service.length;t++){
+				let serial_service = await Common.get_serial_service(req.session.store.company)
+				let invoice_service = Invoice_service({
+					company: req.session.store.company,
+					customer: check_customer != false ? check_customer._id : undefined,
+					serial:serial_service,
+					times:list_service[t].times,
+					service:list_service[t].service,
+					invoice: invoice_sale._id,
+					createdAt: time
+				})
+				await invoice_service.save()
+				list_service[t].serial = serial_service
+			}
+			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount, payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)
+			invoice_sale.bill_html = bill
+			await invoice_sale.save()
+            Store_sale.sendData(res, bill);
+		}catch(err){
+			console.log(err.message)
+			Store_sale.sendError(res, err, err.message);
+		}
+	}
+	static async update_bill(req, res){
+		try{
+			//check time
+			let time = new Date()
+			if (req.body.time && req.session.manager != ""){
+				time = req.body.time
+			}
+
+
+			// check quantity
+			if(req.body.list_item == false){
+				return Store_sale.sendError(res, "Lỗi chưa chọn sản phẩm - dịch vụ", "Vui lòng chọn lại");
+			}
+
+			// main run  
+			let list_item = req.body.list_item;
+			let temp_convert_data_item = [];
+			let list_service = [];
+			let list_product = [];
+			let payment = 0;
+			let payment_back = 0;
+			for(let i = 0, list_item_length = list_item.length; i < list_item_length; i++){
+				let check_product_service = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:list_item[i].id}).populate({
+					path: 'stocks_in_store',
+					match: { store_id: req.session.store._id },
+					select: 'product_of_sale',
+				}).populate({
+					path: 'combo.id',
+					populate: { path: 'Product_services' },
+				});
+				if(!check_product_service){
+					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] không tồn tại`, "Vui lòng chọn lại");
+				}
+				list_item[i] =  Object.assign(list_item[i], check_product_service._doc);
+
+				if(list_item[i].type == 'product' && list_item[i].quantity > list_item[i].stocks_in_store[0].product_of_sale){
+					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
+				}else{
+					let check_price = Number(list_item[i].price_edit)
+
+					payment += check_price * list_item[i].quantity
+					temp_convert_data_item.push({
+						id: list_item[i].id, 
+						quantity: list_item[i].quantity,
+						type: list_item[i].type,
+						price: list_item[i].price,
+					})
+				}
+
+				if(list_item[i].type == 'service' || list_item[i].type == 'hair_removel'){
+					for(let k = 0, length = list_item[i].quantity; k < length; k++){
+						list_service.push({service: mongoose.Types.ObjectId(list_item[i].id), times: list_item[i].times, name: list_item[i].name})
+					}
+				}
+				if(list_item[i].type == 'product'){
+					list_product.push({
+						product: mongoose.Types.ObjectId(list_item[i].id),
+						quantity: list_item[i].quantity
+					})
+				}
+				if(list_item[i].type == 'combo'){
+					list_item[i].combo.forEach(async item =>{
+						if(item.id.type == 'service' || item.id.type == 'hair_removel'){
+							for(let k = 0, length = list_item[i].quantity *item.quantity; k < length; k++){
+								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: item.id.times, name: item.id.name})
+							}
+						}else{
+							let check_product = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:item.id._id}).populate({
+								path: 'stocks_in_store',
+								match: { store_id: req.session.store._id },
+								select: 'product_of_sale',
+							})
+							if(list_item[i].quantity *item.quantity > check_product.stocks_in_store[0].product_of_sale){
+								return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
+							}
+							list_product.push({
+								product: mongoose.Types.ObjectId(item.id._id),
+								quantity: list_item[i].quantity *item.quantity
+							})
+						}
+					})
+				}
+			}
+
 			//check discount
 			let money_discount = 0;
 			let check_discount

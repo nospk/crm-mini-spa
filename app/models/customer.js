@@ -7,13 +7,13 @@ const CustomerSchema = mongoose.Schema({
 		type: String,required: true
 	},
 	birthday:{
-		type: String, required: true
+		type: String
 	},
 	phone:{
 		type: String, required: true
 	},
     address:{
-        type: String, required: true
+        type: String
     },
 	note:{
         type: String

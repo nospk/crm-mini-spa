@@ -129,7 +129,7 @@ class Common {
 	
 	static print_bill(items, service, customer, store, discount, payment, money_discount, cash, card, payment_back, invoice){
 		return new Promise(async (resolve, reject)=>{
-			let convert_date = new Date(invoice.createdAt).toLocaleString("vi-VN")
+			let convert_date = new Date(invoice.createdAt).toLocaleString("vi-VN", {timeZone: "Asia/Ho_Chi_Minh"})
 			let date = convert_date.split(",")[1];
 			let time = convert_date.split(",")[0];
 			convert_date = time + ' ' + ('0' + date.split("/")[0]).slice(-2) + '/' + ('0' + date.split("/")[1]).slice(-2) + '/' + date.split("/")[2]

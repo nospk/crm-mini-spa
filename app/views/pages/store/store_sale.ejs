@@ -715,13 +715,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				</a>
 			  </div>
 			  <div class="modal-body">
+				<form onSubmit="unlock_manager()">
 					<div class="input-group">
 						<div class="input-group-prepend">
 							<div class="input-group-text bg-info">Mật khẩu</div>
 						</div>
-						<input type="password" class="form-control" id="password_manager" placeholder="Nhập mật khẩu" aria-label="Cash">
+						<input type="password" autocomplete="off" class="form-control" id="password_manager" placeholder="Nhập mật khẩu" aria-label="Cash">
 					</div>
-				<br>
+				</form>
 			  </div>
 			  <div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
@@ -775,6 +776,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 				timePicker: true,
 				singleDatePicker: true,
 				showDropdowns: true,
+				autoUpdateInput: true,
 				timePicker24Hour: true,
 				locale: {
 					format: 'DD/MM/YYYY HH:mm'

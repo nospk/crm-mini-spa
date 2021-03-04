@@ -261,6 +261,7 @@ class Store_sale extends Controller{
 			}
 			if(service.type == "service"){
 				log = Log_service({
+					createdAt: req.body.time,
 					company:req.session.store.company,
 					customer:req.body.customer,
 					type: "service",
@@ -271,6 +272,7 @@ class Store_sale extends Controller{
 				})
 			}else{
 				log = Log_service({
+					createdAt: req.body.time,
 					company:req.session.store.company,
 					customer:req.body.customer,
 					service:req.body.service,

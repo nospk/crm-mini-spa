@@ -58,6 +58,7 @@ $(window).on("click", function () {
 
 });
 $( document ).ready(()=>{
+	
 	get_service();
 	get_price_book();
 	get_employees();
@@ -154,7 +155,6 @@ $( document ).ready(()=>{
 				$('#report_sale_month').html(html_report_sale_month)
 				let html_report_service_month = "";
 				data.data.report_service_month.forEach(item => {
-					console.log(item.hair_removel_in_month)
 					let hair_removel_price = item.hair_removel_in_month.reduce((price, currValue) =>{
 						return price += currValue.service_price
 					},0)
@@ -879,7 +879,6 @@ function get_list_item(){
     return data;
 }
 function get_time_convert(date_time){
-	console.log(date_time)
 	let date = date_time.split(" ")[0];
 	let time = date_time.split(" ")[1];
 	return new Date(date.split("/")[1] + ' ' + date.split("/")[0] + ' ' + date.split("/")[2] + ' ' + time)
@@ -1107,7 +1106,14 @@ function get_customer(id){
 function use_service(invoice,service_name, service, customer){
 	Swal.fire({
         title: `Bạn xác nhận sử dụng đúng dịch vụ: [${service_name}] ?`,
-        text: "Sau khi sử dụng sẽ không hoàn lại được ?",
+		html:`<p>Sau khi sử dụng sẽ không hoàn lại được ?</p>
+			<div class="input-group">
+					<div class="input-group-prepend">
+						<span class="input-group-text bg-info text-white" style="cursor: default; width: 105px;">Ngày giờ</span>
+					</div>
+				<input type="text" class="form-control date" style="text-align:right;" ${manager==true? "": "disabled"} id="time_use_service" >
+			</div>
+		`,
 	    input: 'select',
 	    inputOptions: employees,
 	    inputPlaceholder: 'Chọn nhân viên thực hiện',
@@ -1116,6 +1122,21 @@ function use_service(invoice,service_name, service, customer){
         cancelButtonColor: '#d33',
 		cancelButtonText: 'Không',
         confirmButtonText: 'Sử dụng',
+		onBeforeOpen: function() {
+			$('#time_use_service').daterangepicker({
+				timePicker: true,
+				startDate: new Date(),
+				singleDatePicker: true,
+				showDropdowns: true,
+				timePicker24Hour: true,
+				autoUpdateInput: true,
+				locale: {
+					format: 'DD/MM/YYYY HH:mm'
+				}
+			});
+			let now = new Date()
+			$('#time_use_service').val(('0'+ now.getDate()).slice(-2) + '/'+ ('0' + (now.getMonth()+1)).slice(-2) + '/' + now.getFullYear() + ' ' + ('0' + now.getHours()).slice(-2) + ":" + ('0' + now.getMinutes()).slice(-2))
+		},
 		inputValidator: function (value) {
 			return new Promise(function (resolve, reject) {
 			  if (value != '') {
@@ -1124,13 +1145,13 @@ function use_service(invoice,service_name, service, customer){
 				resolve('Bạn chưa chọn nhân viên thực hiện dịch vụ')
 			  }
 			})
-		  }
+		}
 	}).then(function (result) {
 		if(result.value){
 			$.ajax({
 				url:'/use_service',
 				method:'post',
-				data: {employees: result.value, invoice: invoice, service: service, customer:customer, _csrf: $('#_csrf').val()},
+				data: {employees: result.value, invoice: invoice, service: service, customer:customer, time: get_time_convert($('#time_use_service').val()), _csrf: $('#_csrf').val()},
 				success: function(data){
 					get_customer(customer)
 				}

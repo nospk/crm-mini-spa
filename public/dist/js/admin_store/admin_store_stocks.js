@@ -1,17 +1,21 @@
 
 $( document ).ready(()=>{
-	get_product();
+	get_data();
 	$('#product_classification').on('show.bs.modal', function (e) {
 		get_product_of_undefined()
 	})
 })
 let page_now;
-function get_product(){
+function get_data(paging_num){
+    if(!paging_num){
+        paging_num = page_now
+    }
     let data = {
+        paging_num:paging_num,
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_store_stocks/get',
+        url:'/admin_store_stocks/get_data',
         method:'POST',
         data: data,
         success: function(data){

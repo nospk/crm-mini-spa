@@ -28,7 +28,7 @@ class Admin_store_stocks extends Controller{
 				$and: [ {company :req.session.user.company._id, type: "import"} ] 
 			}
 			//set default variables
-			let pageSize = 10
+			let pageSize = 12
 			let currentPage = req.body.paging_num || 1
 	
 			// find total item

@@ -108,8 +108,11 @@ class Admin_cash_book extends Controller{
 	}
 	static async create_new(req, res){
 		try{
-			const {type, type_payment, type_receiver, select_supplier, select_employees, isForCompany, select_store, payment, note, group, accounting, select_customer, date} = req.body;
+			const {type, type_payment, type_receiver, select_supplier, select_employees, isForCompany, select_store, payment, note, group, accounting, select_customer, time} = req.body;
 			let serial, member_name, member_id, str;
+			if(payment == 0){
+				return Admin_cash_book.sendError(res, "Lỗi thiếu thông tin", "Vui lòng nhập số tiền giao dịch");
+			}
 			if(isForCompany == true){
 				serial = await Common.get_serial_company(req.session.user.company._id, type == "outcome" ? 'HDCT' : 'HDTT')
 			}else{ 
@@ -141,7 +144,7 @@ class Admin_cash_book extends Controller{
 					break;
 			}
 			let cash_book = Cash_book({
-				createdAt: new Date(date),
+				createdAt: time,
 				serial: serial,
 				type: type,
 				type_payment: type_payment,

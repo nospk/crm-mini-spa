@@ -52,6 +52,19 @@ class Admin_store_stocks extends Controller{
 		}
 		
 	}
+	static async get_product(req, res){
+		try{
+			let store = await Store_stocks.find({company: req.session.user.company._id, store_id: req.session.store_id, quantity:{$gt: 0}}).sort({createdAt: -1}).populate({
+				path: 'product',
+				populate: { path: 'Product_services' },
+				select: 'name number_code'
+			});
+			Admin_store_stocks.sendData(res, store);
+		}catch(err){
+			console.log(err.message)
+			Admin_store_stocks.sendError(res, err, err.message);
+		}
+	}
 	static async get_product_of_undefined(req, res){
 		try{
 			let store = await Store_stocks.find({company: req.session.user.company._id, store_id: req.session.store_id, product_of_undefined:{$gt: 0}}).sort({createdAt: -1}).populate({

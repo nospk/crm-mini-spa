@@ -38,6 +38,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					<div class="col-auto mr-auto">
 					</div>
 					<div class="col-auto">
+						<button type="button" class="btn btn-primary float-right" data-toggle="modal" style="margin-left: 10px" data-target="#check_store_stocks">Kiểm kho</button>
 						<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#product_classification">Phân loại</button>
 					</div>
 				</div>
@@ -81,7 +82,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <!-- Modal create store -->
+  <!-- Modal product classification -->
 	<div class="modal fade" id="product_classification" tabindex="-1" role="dialog" aria-labelledby="product_classification" data-backdrop="static">
 	  <div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
@@ -101,7 +102,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		</div>
 	  </div>
 	</div>
-	<!-- End Modal create store -->
+	<!-- End Modal product classification -->
+	<!-- Modal check stocks -->
+	<div class="modal fade" id="check_store_stocks" tabindex="-1" role="dialog" aria-labelledby="check_store_stocks" data-backdrop="static">
+	  <div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title">Kiểm kho</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body" style="overflow-x: auto;" id="show_check_stocks">
+			
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+			<button type="button" class="btn btn-primary" onclick="send_check_stocks();" data-dismiss="modal">Lưu</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<!-- End Modal check stocks -->
   <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
   <%- include ('../../partials/footer') %>
   <script src="/dist/js/admin_store/admin_store_stocks.js"></script>

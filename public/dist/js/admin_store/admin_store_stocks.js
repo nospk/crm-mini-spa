@@ -4,6 +4,9 @@ $( document ).ready(()=>{
 	$('#product_classification').on('show.bs.modal', function (e) {
 		get_product_of_undefined()
 	})
+	$('#check_store_stocks').on('show.bs.modal', function (e) {
+		get_product()
+	})
 })
 let page_now;
 function get_product(){
@@ -156,6 +159,35 @@ function get_product_of_undefined(){
         success: function(data){
                 if(data.status == 1){
                     render_data_classification(data.data)
+                }else{
+                    Swal.fire({
+                        title: data.error,
+                        text: data.message,
+                        icon: "error",
+                        showConfirmButton: false,    
+                        timer: 3000
+                    }).then((result)=>{
+                        // cho vào để ko báo lỗi uncaught
+                    })
+                    .catch(timer => {
+                        // cho vào để ko báo lỗi uncaught
+                    }); 
+                    
+                }
+            }
+    })
+}
+function get_product(){
+	let data = {
+        _csrf: $('#_csrf').val()
+    }
+    $.ajax({
+        url:'/admin_store_stocks/get_product',
+        method:'POST',
+        data: data,
+        success: function(data){
+                if(data.status == 1){
+                    render_check_stocks(data.data)
                 }else{
                     Swal.fire({
                         title: data.error,

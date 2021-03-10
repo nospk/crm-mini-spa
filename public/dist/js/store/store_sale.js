@@ -871,9 +871,9 @@ function get_list_item(){
     let data = [];
     tab_list[tab_number].item.forEach((element)=>{
         data.push({
-            quantity: element.quantity,
+            sell_quantity: element.quantity,
             id: element._id,
-			price_edit: element.price
+			price_sell: element.price
         })
     })
     return data;

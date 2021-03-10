@@ -3,6 +3,7 @@ const Store = require('../../models/store');
 const Common = require("../../../core/common");
 const Product_service = require('../../models/product_service');
 const Store_stocks = require('../../models/store_stocks');
+const Invoice_product_store = require('../../models/invoice_product_store');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
 class Admin_store_stocks extends Controller{
@@ -39,11 +40,11 @@ class Admin_store_stocks extends Controller{
 			Admin_store_stocks.sendError(res, err, err.message);
 		}
 	}
-	static async update_stocks(req, res){
+	static async set_stocks_classify(req, res){
 		try{
 			const {products} = req.body
 			products.forEach(async item => {
-				Store_stocks.findOneAndUpdate({company: req.session.user.company._id, _id: item.id}, {$inc: {product_of_sale:item.product_of_sale, product_of_service: item.product_of_service, product_of_undefined: (item.product_of_sale+item.product_of_service) * -1}}).exec()
+				await Store_stocks.findOneAndUpdate({company: req.session.user.company._id, _id: item.id}, {$inc: {product_of_sale:item.product_of_sale, product_of_service: item.product_of_service, product_of_undefined: (item.product_of_sale+item.product_of_service) * -1}})
 			})
 			Admin_store_stocks.sendMessage(res, "Đã cập nhật thành công");
 		}catch(err){
@@ -51,6 +52,51 @@ class Admin_store_stocks extends Controller{
 			Admin_store_stocks.sendError(res, err, err.message);
 		}
 		
+	}
+	static async get_storeStocks_productId(req,res){
+		try{
+			let store = await Store_stocks.findOne({company: req.session.user.company._id, store_id: req.session.store_id, _id: req.params.id}).populate({
+				path: 'last_history',
+				populate: { path: 'Invoice_product_store' },
+			})
+			Admin_store_stocks.sendData(res, store);
+		}catch(err){
+			console.log(err.message)
+			Admin_store_stocks.sendError(res, err, err.message);
+		}
+	}
+	static async check_stocks(req, res){
+		try{
+			const {products} = req.body
+			let list_products = []
+			let id = new mongoose.Types.ObjectId();
+			for (let i = 0; i < products.length; i++){
+				list_products.push({
+					product: products[i].id,
+					quantity: products[i].lost_stocks,
+					current_quantity: products[i].current_quantity,
+				})
+				let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.user.company._id, store_id:req.session.store_id, product: products[i].id},{$set:{product_of_sale:products[i].product_of_sale, product_of_service:products[i].product_of_service, quantity:products[i].current_quantity}},{new: true})
+				store_stocks.last_history = await Common.last_history(store_stocks.last_history, id);
+				await store_stocks.save();
+				await Product_service.findOneAndUpdate({company: req.session.user.company._id, type: "product", _id: products[i].id},{$inc:{quantity:Number(products[i].lost_stocks)*-1}})
+			}
+			let serial_stock =  await Common.get_serial_store(req.session.store_id, 'XH')
+			let invoice_stock = Invoice_product_store({
+				serial: serial_stock,
+				type: "lost",
+				company: req.session.user.company._id, 
+				store: req.session.store_id, 
+				list_products: list_products,
+				who_created: req.session.user.name,
+				_id: id
+			})
+			await invoice_stock.save()
+			Admin_store_stocks.sendMessage(res, "Đã cập nhật thành công");
+		}catch(err){
+			console.log(err.message)
+			Admin_store_stocks.sendError(res, err, err.message);
+		}
 	}
 	static async get_product(req, res){
 		try{

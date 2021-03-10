@@ -100,7 +100,7 @@ function render_data(data, pageCount, currentPage){
             html +=`${item.current_quantity}<br>`
         })		
         html+= `</td>
-				<td>${(item.supplier.name)}</td>
+				<td>${(item.supplier ? item.supplier.name: "")}</td>
                 <td style="text-align: right;">${convert_vnd(item.price)}</td>
                 <td style="text-align: right;">${convert_vnd(item.payment? item.payment.money: 0)} </td>
                 </tr>
@@ -235,9 +235,9 @@ function clear_data(){
 }
 function create_new(){
     let data = {
-        date: new Date($('#date').val()),
         total_get_goods : Number(money_total),
         payment: convert_number($('#payment').val()),
+		time: get_time_convert($('#date').val()),
 		debt: convert_number($('#debt').val()),
 		type_payment: $('#type_payment').val(),
 		supplier_id: $('#select_supplier').val(),

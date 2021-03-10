@@ -30,6 +30,7 @@ class Store_sale extends Controller{
     static show(req, res){
         Store_sale.setLocalValue(req,res);
 		res.locals.manager = (req.session.manager && req.session.manager != "") ? true : false;
+		if(!req.session.manager) req.session.manager = ""
         res.render('./pages/store/store_sale');
     }
 	static async search_product(req, res){
@@ -508,43 +509,43 @@ class Store_sale extends Controller{
 				}
 				list_item[i] =  Object.assign(list_item[i], check_product_service._doc);
 
-				if(list_item[i].type == 'product' && list_item[i].quantity > list_item[i].stocks_in_store[0].product_of_sale){
+				if(list_item[i].type == 'product' && list_item[i].sell_quantity > list_item[i].stocks_in_store[0].product_of_sale){
 					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 				}else{
 					let check_price 
 
 					if(req.session.manager == ""){
 						check_price = req.body.price_book != 'default'? check_price_book(list_item[i], req.body.price_book) : list_item[i].price
-					list_item[i].price_sale = check_price != list_item[i].price ? check_price : undefined
+						list_item[i].price_sale = check_price != list_item[i].price ? check_price : undefined
 					}else{
-						check_price = Number(list_item[i].price_edit)
-						list_item[i].price_sale = Number(list_item[i].price_edit)
+						check_price = Number(list_item[i].price_sell)
+						list_item[i].price_sale = Number(list_item[i].price_sell)
 					}
-					payment += check_price * list_item[i].quantity
+					payment += check_price * list_item[i].sell_quantity
 					temp_convert_data_item.push({
 						id: list_item[i].id, 
-						quantity: list_item[i].quantity,
+						quantity: list_item[i].sell_quantity,
 						type: list_item[i].type,
 						price: list_item[i].price,
-						price_sale: check_price != list_item[i].price ? check_price : undefined,
+						price_sale: Number(check_price) != Number(list_item[i].price) ? check_price : undefined,
 					})
 				}
 
 				if(list_item[i].type == 'service' || list_item[i].type == 'hair_removel'){
-					for(let k = 0, length = list_item[i].quantity; k < length; k++){
+					for(let k = 0, length = list_item[i].sell_quantity; k < length; k++){
 						list_service.push({service: mongoose.Types.ObjectId(list_item[i].id), times: list_item[i].times, name: list_item[i].name})
 					}
 				}
 				if(list_item[i].type == 'product'){
 					list_product.push({
 						product: mongoose.Types.ObjectId(list_item[i].id),
-						quantity: list_item[i].quantity
+						quantity: list_item[i].sell_quantity
 					})
 				}
 				if(list_item[i].type == 'combo'){
 					list_item[i].combo.forEach(async item =>{
 						if(item.id.type == 'service' || item.id.type == 'hair_removel'){
-							for(let k = 0, length = list_item[i].quantity *item.quantity; k < length; k++){
+							for(let k = 0, length = list_item[i].sell_quantity *item.quantity; k < length; k++){
 								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: item.id.times, name: item.id.name})
 							}
 						}else{
@@ -553,12 +554,12 @@ class Store_sale extends Controller{
 								match: { store_id: req.session.store._id },
 								select: 'product_of_sale',
 							})
-							if(list_item[i].quantity *item.quantity > check_product.stocks_in_store[0].product_of_sale){
+							if(list_item[i].sell_quantity *item.quantity > check_product.stocks_in_store[0].product_of_sale){
 								return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 							}
 							list_product.push({
 								product: mongoose.Types.ObjectId(item.id._id),
-								quantity: list_item[i].quantity *item.quantity
+								quantity: list_item[i].sell_quantity *item.quantity
 							})
 						}
 					})
@@ -644,8 +645,9 @@ class Store_sale extends Controller{
 				for (let i = 0; i < list_product.length; i++){
 					let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.store.company, store_id:req.session.store._id, product: list_product[i].product},{$inc:{product_of_sale:Number(list_product[i].quantity)*-1, quantity:Number(list_product[i].quantity)*-1}},{new: true})
 					store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_stock._id);
-					invoice_stock.list_products[i].current_quantity = store_stocks.product_of_sale
+					invoice_stock.list_products[i].current_quantity = store_stocks.quantity
 					store_stocks.save();
+					await Product_service.findOneAndUpdate({company: req.session.store.company, type: "product", _id: list_product[i].product},{$inc:{quantity:Number(list_product[i].quantity)*-1}})
 				}
 				await invoice_stock.save()
 			}
@@ -769,35 +771,35 @@ class Store_sale extends Controller{
 				}
 				list_item[i] =  Object.assign(list_item[i], check_product_service._doc);
 
-				if(list_item[i].type == 'product' && list_item[i].quantity > list_item[i].stocks_in_store[0].product_of_sale){
+				if(list_item[i].type == 'product' && list_item[i].sell_quantity > list_item[i].stocks_in_store[0].product_of_sale){
 					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 				}else{
-					let check_price = Number(list_item[i].price_edit)
+					let check_price = Number(list_item[i].price_sell)
 
-					payment += check_price * list_item[i].quantity
+					payment += check_price * list_item[i].sell_quantity
 					temp_convert_data_item.push({
 						id: list_item[i].id, 
-						quantity: list_item[i].quantity,
+						quantity: list_item[i].sell_quantity,
 						type: list_item[i].type,
 						price: list_item[i].price,
 					})
 				}
 
 				if(list_item[i].type == 'service' || list_item[i].type == 'hair_removel'){
-					for(let k = 0, length = list_item[i].quantity; k < length; k++){
+					for(let k = 0, length = list_item[i].sell_quantity; k < length; k++){
 						list_service.push({service: mongoose.Types.ObjectId(list_item[i].id), times: list_item[i].times, name: list_item[i].name})
 					}
 				}
 				if(list_item[i].type == 'product'){
 					list_product.push({
 						product: mongoose.Types.ObjectId(list_item[i].id),
-						quantity: list_item[i].quantity
+						quantity: list_item[i].sell_quantity
 					})
 				}
 				if(list_item[i].type == 'combo'){
 					list_item[i].combo.forEach(async item =>{
 						if(item.id.type == 'service' || item.id.type == 'hair_removel'){
-							for(let k = 0, length = list_item[i].quantity *item.quantity; k < length; k++){
+							for(let k = 0, length = list_item[i].sell_quantity *item.quantity; k < length; k++){
 								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: item.id.times, name: item.id.name})
 							}
 						}else{
@@ -806,12 +808,12 @@ class Store_sale extends Controller{
 								match: { store_id: req.session.store._id },
 								select: 'product_of_sale',
 							})
-							if(list_item[i].quantity *item.quantity > check_product.stocks_in_store[0].product_of_sale){
+							if(list_item[i].sell_quantity *item.quantity > check_product.stocks_in_store[0].product_of_sale){
 								return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 							}
 							list_product.push({
 								product: mongoose.Types.ObjectId(item.id._id),
-								quantity: list_item[i].quantity *item.quantity
+								quantity: list_item[i].sell_quantity *item.quantity
 							})
 						}
 					})

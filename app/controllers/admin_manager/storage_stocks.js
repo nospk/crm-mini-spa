@@ -56,13 +56,13 @@ class Admin_store_stocks extends Controller{
     }
     static async create_new(req, res){
 		try{
-            const {total_get_goods, payment, debt, supplier_id = "", products, type_payment, date} = req.body;
-			if(supplier_id == ""){
+            const {total_get_goods, payment, debt, supplier_id = "", products, type_payment, time} = req.body;
+			if(Common.notEmpty(supplier_id) === false){
 				return Admin_store_stocks.sendError(res, "Lỗi thiếu thông tin", "Vui lòng chọn nhà cung cấp hoặc tạo mới");
 			}
 			let serial_NH = await Common.get_serial_company(req.session.user.company._id, 'NH')
 			let invoice_product_storage = Invoice_product_storage({
-				createdAt: new Date(date),
+				createdAt: req.body.time,
 				serial: serial_NH,
 				type: 'import',
 				company: req.session.user.company._id,
@@ -80,7 +80,7 @@ class Admin_store_stocks extends Controller{
 			if(Number(payment) > 0){
 				let serial_TTCT = await Common.get_serial_company(req.session.user.company._id, 'HDCT')
 				let cash_book = Cash_book({
-					createdAt: new Date(date),
+					createdAt: time,
 					serial: serial_TTCT,
 					type: "outcome",
 					type_payment:type_payment,

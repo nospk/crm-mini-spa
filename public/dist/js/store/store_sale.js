@@ -871,18 +871,14 @@ function get_list_item(){
     let data = [];
     tab_list[tab_number].item.forEach((element)=>{
         data.push({
-            quantity: element.quantity,
+            sell_quantity: element.quantity,
             id: element._id,
-			price_edit: element.price
+			price_sell: element.price
         })
     })
     return data;
 }
-function get_time_convert(date_time){
-	let date = date_time.split(" ")[0];
-	let time = date_time.split(" ")[1];
-	return new Date(date.split("/")[1] + ' ' + date.split("/")[0] + ' ' + date.split("/")[2] + ' ' + time)
-}
+
 function check_out(){
 	let data = {
 		employees: tab_list[tab_number].employee,

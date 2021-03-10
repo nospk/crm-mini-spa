@@ -58,10 +58,11 @@ class Admin_transfer_stocks extends Controller{
 	}
 	static async create_new(req, res){
 		try{
-            const {products, store, note} = req.body;
+            const {products, store, note, time} = req.body;
 			let serial_XH = await Common.get_serial_company(req.session.user.company._id, 'XH')
 			let serial_NH = await Common.get_serial_store(store, 'NH')
 			let invoice_product_storage = Invoice_product_storage({
+				createdAt: time,
 				serial: serial_XH,
 				type: 'transfer',
 				company: req.session.user.company._id,
@@ -71,6 +72,7 @@ class Admin_transfer_stocks extends Controller{
 				list_products: products
 			});
 			let invoice_product_store = Invoice_product_store({
+				createdAt: time,
 				serial: serial_NH,
 				type: 'import',
 				company: req.session.user.company._id,

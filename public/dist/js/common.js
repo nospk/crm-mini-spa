@@ -12,6 +12,11 @@ function onBlur(e){
   }
 
 }
+function get_time_convert(date_time){
+	let date = date_time.split(" ")[0];
+	let time = date_time.split(" ")[1];
+	return new Date(date.split("/")[1] + ' ' + date.split("/")[0] + ' ' + date.split("/")[2] + ' ' + time)
+}
 function onFocusPercent(e){
   let value = convert_number(e.target.value);
   e.target.value = value ? value : ''

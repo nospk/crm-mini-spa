@@ -238,6 +238,7 @@ function create_new(){
 		return;
 	}
     let data = {
+		time: get_time_convert($('#date').val()),
 		note: $('#note').val(),
         products: get_list_product(),
 		store: $('#select_store').val(),

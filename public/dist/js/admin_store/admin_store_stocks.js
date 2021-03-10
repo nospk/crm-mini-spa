@@ -1,6 +1,5 @@
 
 $( document ).ready(()=>{
-	get_product();
 	get_data();
 	$('#product_classification').on('show.bs.modal', function (e) {
 		get_product_of_undefined()
@@ -18,7 +17,6 @@ function get_data(paging_num){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/admin_store_stocks/get',
         url:'/admin_store_stocks/get_data',
         method:'POST',
         data: data,
@@ -61,7 +59,6 @@ function render_data(data, pageCount, currentPage){
 		                        </thead>	
 		                        <tbody>`;
 	data.forEach(item =>{
-		html+=`<tr>
 		html+=`<tr onclick="show_history_stocks('${item.stocks_in_store[0]._id}')" class="pointer">
                 <td>${item.name}</td>
                 <td>${item.number_code}</td>
@@ -392,8 +389,7 @@ function get_list_lost_stocks(){
     return data;
 }
 function get_list_product(){
-    let list_product = [];
-    $(".number-code").each(function () {                  
+    let list_product = [];              
     $("#show_product_classification .number-code").each(function () {                  
         list_product.push($(this).text()); 
     });
@@ -409,7 +405,8 @@ function get_list_product(){
     })
     return data;
 }
-function send_data(){
+
+
 function send_check_stocks(){
 	Swal.fire({
         title: 'Bạn xác nhận kiểm kho hàng ?',

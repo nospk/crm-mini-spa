@@ -3,7 +3,7 @@ const  store = require('../../app/controllers/store/store_sale');
 
 module.exports = function (app) {
 	app.get("/", store.loggedIn, store.show)// render page default
-	app.get("/invoice_sales", store.loggedIn, store.get_invoice_sale)
+	app.post("/invoice_sales", store.loggedIn, store.get_invoice_sale)
 	app.get("/invoice_sales/:id", store.loggedIn, store.get_invoice_sale_id)
 	app.post("/search_product", store.loggedIn, store.search_product)
 	app.post("/search_customer", store.loggedIn, store.search_customer)

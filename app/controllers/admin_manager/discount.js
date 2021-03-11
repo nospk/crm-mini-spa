@@ -1,5 +1,6 @@
 const Controller = require('../../../core/controller');
 const Discount = require('../../models/discount');
+const Common = require("../../../core/common");
 const mongoose = require('mongoose');
 class Admin_discount extends Controller{
     static show(req, res){

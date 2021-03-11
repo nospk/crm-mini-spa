@@ -51,7 +51,9 @@ show_customer.on('keydown', function () {
 	clearTimeout(typingTimer_search);
 	$('#show_search_customer').hide();
 });
-
+$('#unlock_manager').on('shown.bs.modal', function () {
+    $('#password_manager').focus();
+})  
 $(window).on("click", function () {
 	$('#show_search_customer').hide();
 	$('#show_search_product').hide();
@@ -380,16 +382,16 @@ function change_price(btn, index){
 	render_tablist(tab_number)
 }
 function render_tablist(tab_number){
-	set_time();
-	$('#search_product').val("");
-	if($('#select_price_book').val() != tab_list[tab_number].price_book){
-		$('#select_price_book').val(tab_list[tab_number].price_book);
-		get_service();
-	}
-	let html = '';
-	let money = 0;
-	let combo = false;
 	if(tab_list[tab_number] != undefined){
+		set_time();
+		$('#search_product').val("");
+		if($('#select_price_book').val() != tab_list[tab_number].price_book){
+			$('#select_price_book').val(tab_list[tab_number].price_book);
+			get_service();
+		}
+		let html = '';
+		let money = 0;
+		let combo = false;
 		tab_list[tab_number].item.forEach((item, index) =>{
 			let check_price
 			if(manager){
@@ -451,59 +453,60 @@ function render_tablist(tab_number){
 			element.addEventListener('focus', onFocus)
 			element.addEventListener('blur', onBlur)
 		})
-	}
-	if(money != 0){
-		if(tab_list[tab_number].discount_type != ""){//if have discount code
-			if(tab_list[tab_number].discount_type == "percent"){ // type percent
-				tab_list[tab_number].money_discount = Math.ceil(money * convert_number(tab_list[tab_number].discount_value) /100)
+	
+		if(tab_list[tab_number].item.length > 0){
+			if(tab_list[tab_number].discount_type != ""){//if have discount code
+				if(tab_list[tab_number].discount_type == "percent"){ // type percent
+					tab_list[tab_number].money_discount = Math.ceil(money * convert_number(tab_list[tab_number].discount_value) /100)
+				}
+				if(tab_list[tab_number].discount_type == "money"){// type money
+					tab_list[tab_number].money_discount = convert_number(tab_list[tab_number].discount_value)
+				}
+			}else{
+				tab_list[tab_number].money_discount = 0
 			}
-			if(tab_list[tab_number].discount_type == "money"){// type money
-				tab_list[tab_number].money_discount = tab_list[tab_number].discount_value
+			let bill_money = money - tab_list[tab_number].money_discount
+			if(bill_money < 0){
+				tab_list[tab_number].bill_money = 0
+			}else{
+				tab_list[tab_number].bill_money = bill_money
 			}
+				
+			$('#selection_pay').removeClass("d-none").addClass("d-flex");
+			if(tab_list[tab_number].customer_pay_cash != "" || tab_list[tab_number].customer_pay_card != ""){
+				tab_list[tab_number].money_return = tab_list[tab_number].customer_pay_cash + tab_list[tab_number].customer_pay_card - tab_list[tab_number].bill_money
+			}else{
+				tab_list[tab_number].money_return = 0
+			}
+			$('#money_return').text(convert_vnd(tab_list[tab_number].money_return))
+			$('#money_discount').text(convert_vnd(tab_list[tab_number].money_discount))
+			$('#total_sale').text(convert_vnd(tab_list[tab_number].total_sale))
+			$('#bill_money').text(convert_vnd(tab_list[tab_number].bill_money))
+			$('#customer_pay_cash').text(convert_vnd(tab_list[tab_number].customer_pay_cash == "" ? 0 :tab_list[tab_number].customer_pay_cash))
+			$('#customer_pay_card').text(convert_vnd(tab_list[tab_number].customer_pay_card == "" ? 0 :tab_list[tab_number].customer_pay_card))
 		}else{
-			tab_list[tab_number].money_discount = 0
+			$('#total_sale').text("")
+			$('#money_discount').text("")
+			$('#customer_pay_cash').text("")
+			$('#customer_pay_card').text("")
+			$('#money_return').text("")
+			$('#bill_money').text("")
+			$('#selection_pay').removeClass("d-flex").addClass("d-none");
 		}
-		let bill_money = money - tab_list[tab_number].money_discount
-		if(bill_money < 0){
-			tab_list[tab_number].bill_money = 0
+		if(tab_list[tab_number].customer != ""){
+			add_customer(tab_list[tab_number].customer)
+		} else {
+			remove_customer()
+		}
+		if(tab_list[tab_number].edit_bill === false){
+			$('.button-edit-bill').hide()
+			$('.button-sale-bill').show()
+			$('#button_remove_customer').prop( "disabled", false )
 		}else{
-			tab_list[tab_number].bill_money = bill_money
+			$('.button-edit-bill').show()
+			$('.button-sale-bill').hide()
+			$('#button_remove_customer').prop( "disabled", true )
 		}
-			
-		$('#selection_pay').removeClass("d-none").addClass("d-flex");
-		if(tab_list[tab_number].customer_pay_cash != "" || tab_list[tab_number].customer_pay_card != ""){
-			tab_list[tab_number].money_return = tab_list[tab_number].customer_pay_cash + tab_list[tab_number].customer_pay_card - tab_list[tab_number].bill_money
-		}else{
-			tab_list[tab_number].money_return = 0
-		}
-		$('#money_return').text(convert_vnd(tab_list[tab_number].money_return))
-		$('#money_discount').text(convert_vnd(tab_list[tab_number].money_discount))
-		$('#total_sale').text(convert_vnd(tab_list[tab_number].total_sale))
-		$('#bill_money').text(convert_vnd(tab_list[tab_number].bill_money))
-		$('#customer_pay_cash').text(convert_vnd(tab_list[tab_number].customer_pay_cash == "" ? 0 :tab_list[tab_number].customer_pay_cash))
-		$('#customer_pay_card').text(convert_vnd(tab_list[tab_number].customer_pay_card == "" ? 0 :tab_list[tab_number].customer_pay_card))
-	}else{
-		$('#total_sale').text("")
-		$('#money_discount').text("")
-		$('#customer_pay_cash').text("")
-		$('#customer_pay_card').text("")
-		$('#money_return').text("")
-		$('#bill_money').text("")
-		$('#selection_pay').removeClass("d-flex").addClass("d-none");
-	}
-	if(tab_list[tab_number].customer != ""){
-		add_customer(tab_list[tab_number].customer)
-	} else {
-		remove_customer()
-	}
-	if(tab_list[tab_number].edit_bill === false){
-		$('.button-edit-bill').hide()
-		$('.button-sale-bill').show()
-		$('#button_remove_customer').prop( "disabled", false )
-	}else{
-		$('.button-edit-bill').show()
-		$('.button-sale-bill').hide()
-		$('#button_remove_customer').prop( "disabled", true )
 	}
 }
 
@@ -797,7 +800,7 @@ function check_payment(){
 		.catch(timer => {
 			// cho vào để ko báo lỗi uncaught
 		}); 
-	}else if(tab_list[tab_number].customer_pay_card == 0 && tab_list[tab_number].customer_pay_cash == 0){
+	}else if(tab_list[tab_number].customer_pay_card === "" && tab_list[tab_number].customer_pay_cash === ""){
 		Swal.fire({
 			title: "Lỗi chưa nhập số tiền thanh toán của khách",
 			text: "Vui lòng nhập lại",
@@ -963,6 +966,7 @@ function unlock_manager(){
 		contentType: "application/json; charset=utf-8",
 		data: JSON.stringify({_csrf: $('#_csrf').val(), password: $('#password_manager').val()}),
 		success: function(data){
+			$('#unlock_manager').modal('hide');
 			if(data.status == 1){
 				$('#button_unlock_manager').hide()
 				$('#button_lock_manager').show()
@@ -1268,7 +1272,7 @@ function get_invoice_sale(paging_num){
     }
     $.ajax({
         url:'/invoice_sales',
-        method:'GET',
+        method:'POST',
         data: data,
         success: function(data){
             if(data.status == 1){

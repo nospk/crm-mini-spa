@@ -238,8 +238,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 												<ul id="tab-menu-horizontal"
 													style="display:flex;list-style:none;padding:0px;margin:0px;position: relative; overflow: hidden;">
 													<li class="menu-bill active">
-														<a class="item pointer" onclick="active_tab_menu(this);">HD
-															1</a>
+														<a class="item pointer" onclick="active_tab_menu(this);">HD 1</a>
 														<span style="margin-left:5px;"
 															onclick="remove_tab_menu(this);"><i
 																class="fas fa-times"></i></span>
@@ -808,12 +807,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						</a>
 					</div>
 					<div class="modal-body">
-						<form onSubmit="unlock_manager()">
+						<form onSubmit="unlock_manager();return false;">
 							<div class="input-group">
 								<div class="input-group-prepend">
 									<div class="input-group-text bg-info">Mật khẩu</div>
 								</div>
-								<input type="password" autocomplete="off" class="form-control" id="password_manager"
+								<input type="password" autocomplete="off" autofocus class="form-control" id="password_manager"
 									placeholder="Nhập mật khẩu" aria-label="Cash">
 							</div>
 						</form>
@@ -854,7 +853,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 		<script>
 			let manager = false;
 			$(function () {
-				manager = <% -manager %>
+			manager = <%- manager %>
 			if (manager == true) {
 					$('#button_unlock_manager').hide()
 					$('#button_lock_manager').show()

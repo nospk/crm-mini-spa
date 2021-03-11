@@ -94,8 +94,11 @@ class Store_sale extends Controller{
 			let now = new Date();
 			let start_month = new Date(now.getFullYear(),now.getMonth(),1,0,0,0);
 			let end_month = new Date(now.getFullYear(),now.getMonth()+1,1,0,0,0);
+			// let match = {
+			// 	$and: [ {company : mongoose.Types.ObjectId(req.session.store.company), createdAt: {$gte: start_month, $lt: end_month}} ] 
+			// }
 			let match = {
-				$and: [ {company : mongoose.Types.ObjectId(req.session.store.company), createdAt: {$gte: start_month, $lt: end_month}} ] 
+				$and: [ {company : mongoose.Types.ObjectId(req.session.store.company)} ] 
 			}
 			//set default variables
 			let pageSize = 20

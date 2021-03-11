@@ -4,168 +4,192 @@ This is a starter template page. Use this page to start your new project from
 scratch. This page gets rid of all links and provides the needed markup only.
 -->
 <html lang="vi">
-<head>
-  <%- include ('../../partials/head') %>
-  <title>Quản lý kho cửa hàng</title>
-  <style>
-  .callout {
-	  padding: 10px;
-	  margin: 10px 0;
-	  border: 1px solid #eee;
-	  border-left-width: 5px;
-	  border-radius: 3px;
-  }
-  .callout-primary {
-	  border-left-color: #007BFF;
-  }
-  .input-group{
-	  margin: 10px 0;
-  }
-  </style>
-</head>
-<body class="hold-transition sidebar-mini sidebar-collapse">
-<div class="wrapper">
-  <%- include ('../../partials/header') %>
-  <%- include ('../../partials/menu') %>
 
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-	<!-- Content Header (Page header) -->
-    <section class="content-header">
-		<div class="container-fluid">
-			<div class="callout callout-primary">
-				<div class="row">
-					<div class="col-auto mr-auto">
-					</div>
-					<div class="col-auto">
-						<button type="button" class="btn btn-primary float-right" data-toggle="modal" style="margin-left: 10px" data-target="#check_store_stocks">Kiểm kho</button>
-						<button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#product_classification">Phân loại</button>
-					</div>
-				</div>
-			</div>
-		</div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content-header -->
-	
-	<!-- Main content -->
-    <section class="content">
-		<div class="container-fluid">
-			<!-- Small boxes (Stat box) -->
-				<div class="row">
-					<div class="col-12">
-						<div class="card">
-							<div class="card-header" style="background-color: black;">
-								<h3 class="card-title" style="color: whitesmoke;">Danh sách sản phẩm</h3>
-								<div class="card-tools">
-									<div class="input-group input-group-sm" style="width: 150px;">
-										<input type="text" name="table_search" class="form-control float-right" id="search_word" placeholder="Tìm">
-	
-										<div class="input-group-append">
-											<button type="submit" class="btn btn-default" onclick="get_data()"><i class="fas fa-search"></i></button>
-										</div>
+<head>
+	<%- include ('../../partials/head') %>
+		<title>Quản lý kho cửa hàng</title>
+		<style>
+			.callout {
+				padding: 10px;
+				margin: 10px 0;
+				border: 1px solid #eee;
+				border-left-width: 5px;
+				border-radius: 3px;
+			}
+
+			.callout-primary {
+				border-left-color: #007BFF;
+			}
+
+			.input-group {
+				margin: 10px 0;
+			}
+
+			.pointer {
+				cursor: pointer;
+			}
+		</style>
+</head>
+
+<body class="hold-transition sidebar-mini sidebar-collapse">
+	<div class="wrapper">
+		<%- include ('../../partials/header') %>
+			<%- include ('../../partials/menu') %>
+
+				<!-- Content Wrapper. Contains page content -->
+				<div class="content-wrapper">
+					<!-- Content Header (Page header) -->
+					<section class="content-header">
+						<div class="container-fluid">
+							<div class="callout callout-primary">
+								<div class="row">
+									<div class="col-auto mr-auto">
+									</div>
+									<div class="col-auto">
+										<button type="button" class="btn btn-primary float-right" data-toggle="modal"
+											style="margin-left: 10px" data-target="#check_store_stocks">Kiểm
+											kho</button>
+										<button type="button" class="btn btn-primary float-right" data-toggle="modal"
+											data-target="#product_classification">Phân loại</button>
 									</div>
 								</div>
 							</div>
-							<!-- /.card-header -->
-							<div class="card-body table-responsive p-0" id="show_data">
-							</div> 
-							<!-- /.card-body -->
-							<div class="card-footer clearfix" id="pagination">
-							</div>
-							<!-- /.card-footer -->
-						</div>
-						<!-- /.card -->
-					</div>
-				</div>
-		</div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-  <!-- Modal product classification -->
-	<div class="modal fade" id="product_classification" tabindex="-1" role="dialog" aria-labelledby="product_classification" data-backdrop="static">
-	  <div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<h5 class="modal-title">Phân loại sản phẩm</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-		  </div>
-		  <div class="modal-body" style="overflow-x: auto;" id="show_product_classification">
-			
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-			<button type="button" class="btn btn-primary" onclick="set_stocks_classify();" data-dismiss="modal">Lưu</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
-	<!-- End Modal product classification -->
-	<!-- Modal check stocks -->
-	<div class="modal fade" id="check_store_stocks" tabindex="-1" role="dialog" aria-labelledby="check_store_stocks" data-backdrop="static">
-	  <div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<h5 class="modal-title">Kiểm kho</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-		  </div>
-		  <div class="modal-body" style="overflow-x: auto;" id="show_check_stocks">
-			
-		  </div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-			<button type="button" class="btn btn-primary" onclick="send_check_stocks();" data-dismiss="modal">Lưu</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
-	<!-- End Modal check stocks -->
-	<!-- Modal show stocks -->
-		<div class="modal" id="show_history_stocks" tabindex="-1" role="dialog" aria-labelledby="show_history_stocks">
-			<div class="modal-dialog modal-lg" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">Thông tin hàng hóa</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body" style="overflow-x: auto;">
-						<ul class="nav nav-tabs" role="tablist">
-							<li class="nav-item">
-								<a class="nav-link active" id="edit-information" data-toggle="pill"
-									href="#edit-history-tab" role="tab" data-toggle="tab" aria-controls="edit-history-tab"
-									aria-selected="true">Lịch sử hàng hóa</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" id="edit-classification" data-toggle="pill" href="#edit-classification-tab" role="tab"
-									aria-controls="edit-classification-tab" data-toggle="tab" aria-selected="false">Chuyển hàng bán - dịch vụ</a>
-							</li>
-						</ul>
-						<div class="tab-content">
-							<div class="tab-pane fade active show" id="edit-history-tab" role="tabpanel" aria-labelledby="edit-history">
-								<div id="show_history">
+						</div><!-- /.container-fluid -->
+					</section>
+					<!-- /.content-header -->
+
+					<!-- Main content -->
+					<section class="content">
+						<div class="container-fluid">
+							<!-- Small boxes (Stat box) -->
+							<div class="row">
+								<div class="col-12">
+									<div class="card">
+										<div class="card-header" style="background-color: black;">
+											<h3 class="card-title" style="color: whitesmoke;">Danh sách sản phẩm</h3>
+											<div class="card-tools">
+												<div class="input-group input-group-sm" style="width: 150px;">
+													<input type="text" name="table_search"
+														class="form-control float-right" id="search_word"
+														placeholder="Tìm">
+
+													<div class="input-group-append">
+														<button type="submit" class="btn btn-default"
+															onclick="get_data()"><i class="fas fa-search"></i></button>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.card-header -->
+										<div class="card-body table-responsive p-0" id="show_data">
+										</div>
+										<!-- /.card-body -->
+										<div class="card-footer clearfix" id="pagination">
+										</div>
+										<!-- /.card-footer -->
+									</div>
+									<!-- /.card -->
 								</div>
-								
 							</div>
-							<div class="tab-pane fade" id="edit-classification-tab" role="tabpanel" aria-labelledby="edit-classification">
-								<input type="hidden" id="edit_id" value="" />
+						</div><!-- /.container-fluid -->
+					</section>
+					<!-- /.content -->
+				</div>
+				<!-- /.content-wrapper -->
+				<!-- Modal product classification -->
+				<div class="modal fade" id="product_classification" tabindex="-1" role="dialog"
+					aria-labelledby="product_classification" data-backdrop="static">
+					<div class="modal-dialog modal-lg" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Phân loại sản phẩm</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body" style="overflow-x: auto;" id="show_product_classification">
+
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+								<button type="button" class="btn btn-primary" onclick="set_stocks_classify();"
+									data-dismiss="modal">Lưu</button>
 							</div>
 						</div>
 					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+				</div>
+				<!-- End Modal product classification -->
+				<!-- Modal check stocks -->
+				<div class="modal fade" id="check_store_stocks" tabindex="-1" role="dialog"
+					aria-labelledby="check_store_stocks" data-backdrop="static">
+					<div class="modal-dialog modal-lg" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Kiểm kho</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body" style="overflow-x: auto;" id="show_check_stocks">
+
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+								<button type="button" class="btn btn-primary" onclick="send_check_stocks();"
+									data-dismiss="modal">Lưu</button>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-	<!-- END Modal show stocks -->
-  <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
-  <%- include ('../../partials/footer') %>
-  <script src="/dist/js/admin_store/admin_store_stocks.js"></script>
+				<!-- End Modal check stocks -->
+				<!-- Modal show stocks -->
+				<div class="modal" id="show_history_stocks" tabindex="-1" role="dialog"
+					aria-labelledby="show_history_stocks">
+					<div class="modal-dialog modal-lg" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Thông tin hàng hóa</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body" style="overflow-x: auto;">
+								<ul class="nav nav-tabs" role="tablist">
+									<li class="nav-item">
+										<a class="nav-link active" id="edit-information" data-toggle="pill"
+											href="#edit-history-tab" role="tab" data-toggle="tab"
+											aria-controls="edit-history-tab" aria-selected="true">Lịch sử hàng hóa</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" id="edit-classification" data-toggle="pill"
+											href="#edit-classification-tab" role="tab"
+											aria-controls="edit-classification-tab" data-toggle="tab"
+											aria-selected="false">Chuyển hàng bán - dịch vụ</a>
+									</li>
+								</ul>
+								<div class="tab-content">
+									<div class="tab-pane fade active show" id="edit-history-tab" role="tabpanel"
+										aria-labelledby="edit-history">
+										<div id="show_history">
+										</div>
+
+									</div>
+									<div class="tab-pane fade" id="edit-classification-tab" role="tabpanel"
+										aria-labelledby="edit-classification">
+										<input type="hidden" id="edit_id" value="" />
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- END Modal show stocks -->
+				<input type="hidden" id="_csrf" value="<%=csrfToken %>" />
+				<%- include ('../../partials/footer') %>
+					<script src="/dist/js/admin_store/admin_store_stocks.js"></script>
 </body>
+
 </html>

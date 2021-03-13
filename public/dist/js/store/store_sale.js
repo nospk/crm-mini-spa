@@ -924,11 +924,14 @@ function check_out(){
 }
 function update_bill(){
 	let data = {
-		time: tab_list[tab_number].time_edit ? get_time_convert(tab_list[tab_number].time) : undefined,
+		time: get_time_convert(tab_list[tab_number].time),
+		employees: tab_list[tab_number].employee,
 		customer_pay_card: tab_list[tab_number].customer_pay_card,
 		customer_pay_cash: tab_list[tab_number].customer_pay_cash,
 		discount_id: tab_list[tab_number].discount_id,
+		customer: tab_list[tab_number].customer ? tab_list[tab_number].customer.split(":")[1] : "",
 		note: tab_list[tab_number].note_bill,
+		id: tab_list[tab_number].id,
         list_item: get_list_item(),
         _csrf: $('#_csrf').val()
     }
@@ -1439,7 +1442,7 @@ function edit_bill(id){
 					edit_bill: true,
 					time_edit: true,
 					employee: data.data.employees, 
-					customer: `${data.data.customer.name}:${data.data.customer._id}`, 
+					customer: `${data.data.customer ? data.data.customer.name+":"+data.data.customer._id : ""}`, 
 					bill_money: "", 
 					discount_type:"",
 					money_discount: "", 
@@ -1476,7 +1479,11 @@ function edit_bill(id){
 }
 function clear_data(index_tab){
 	let number_tab = tab_list[index_tab].HD
-	remove_tab_menu($(`a:contains('HD ${number_tab}')`))
+	if(tab_list[index_tab].edit_bill == true){
+		remove_tab_menu($(`a:contains('${number_tab}')`))
+	}else{
+		remove_tab_menu($(`a:contains('HD ${number_tab}')`))
+	}
 	render_tablist(tab_number)
 }
 function slideLeft(){
@@ -1485,3 +1492,4 @@ function slideLeft(){
 function slideRight(){
 	document.getElementById('tab-menu-horizontal').scrollLeft += 70;
 }
+

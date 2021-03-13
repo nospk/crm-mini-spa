@@ -17,5 +17,6 @@ module.exports = function (app) {
 	app.post("/get_by_id", store.loggedIn, store.get_by_id)
 	app.post("/get_service", store.loggedIn, store.get_service)
 	app.post("/check_out", store.loggedIn, store.check_out)
+	//app.post("/update_bill", store.loggedIn, store.update_bill)
 	app.post("/get_employees", store.loggedIn, store.get_employees)
 }

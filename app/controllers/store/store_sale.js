@@ -741,12 +741,14 @@ class Store_sale extends Controller{
 	}
 	static async update_bill(req, res){
 		try{
-			//check time
-			let time = new Date()
-			if (req.body.time && req.session.manager != ""){
-				time = req.body.time
+			//check can edit bill
+			let check_bill = await Invoice_sale.findOne({company :req.session.store.company,store:req.session.store._id,_id:req.body.id})
+			if(check_bill.isCanBeEdit === false){
+				return Store_sale.sendError(res, "Lỗi hóa đơn đã được sử dụng dịch vụ", "Không thể chỉnh sửa hóa đơn");
 			}
-
+			
+			//set time
+			time = req.body.time
 
 			// check quantity
 			if(req.body.list_item == false){
@@ -772,21 +774,18 @@ class Store_sale extends Controller{
 				if(!check_product_service){
 					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] không tồn tại`, "Vui lòng chọn lại");
 				}
+
+				// not check enough quantity because this's edit bill will calculate quantity later
 				list_item[i] =  Object.assign(list_item[i], check_product_service._doc);
 
-				if(list_item[i].type == 'product' && list_item[i].sell_quantity > list_item[i].stocks_in_store[0].product_of_sale){
-					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
-				}else{
-					let check_price = Number(list_item[i].price_sell)
+				payment += Number(list_item[i].price_sell) * list_item[i].sell_quantity
+				temp_convert_data_item.push({
+					id: list_item[i].id, 
+					quantity: list_item[i].sell_quantity,
+					type: list_item[i].type,
+					price: list_item[i].price,
+				})
 
-					payment += check_price * list_item[i].sell_quantity
-					temp_convert_data_item.push({
-						id: list_item[i].id, 
-						quantity: list_item[i].sell_quantity,
-						type: list_item[i].type,
-						price: list_item[i].price,
-					})
-				}
 
 				if(list_item[i].type == 'service' || list_item[i].type == 'hair_removel'){
 					for(let k = 0, length = list_item[i].sell_quantity; k < length; k++){
@@ -806,14 +805,6 @@ class Store_sale extends Controller{
 								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: item.id.times, name: item.id.name})
 							}
 						}else{
-							let check_product = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:item.id._id}).populate({
-								path: 'stocks_in_store',
-								match: { store_id: req.session.store._id },
-								select: 'product_of_sale',
-							})
-							if(list_item[i].sell_quantity *item.quantity > check_product.stocks_in_store[0].product_of_sale){
-								return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
-							}
 							list_product.push({
 								product: mongoose.Types.ObjectId(item.id._id),
 								quantity: list_item[i].sell_quantity *item.quantity

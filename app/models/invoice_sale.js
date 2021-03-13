@@ -65,6 +65,9 @@ const Invoice_sale_Schema = mongoose.Schema({
 	isEdit:{
 		type: Boolean, default:false 
 	},
+    isCanBeEdit:{
+        type: Boolean, default:true 
+    }
 	
 }, { timestamps: true });
 

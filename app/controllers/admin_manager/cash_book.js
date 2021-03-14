@@ -19,13 +19,13 @@ class Admin_cash_book extends Controller{
 			let start_time = req.body.start_time.split("/")
 			let end_time = req.body.end_time.split("/")
 			let match = {
-				$and: [ {company :req.session.user.company._id, isActive:true, createdAt: {$gte: new Date(start_time[2],start_time[1]-1,start_time[0],0,0,0), $lt: new Date(end_time[2],end_time[1]-1,end_time[0]+1,0,0,0)}}] 
+				$and: [ {company :req.session.user.company._id, isActive:true, createdAt: {$gte: new Date(start_time[2],Number(start_time[1])-1,start_time[0],0,0,0), $lt: new Date(end_time[2],Number(end_time[1])-1,Number(end_time[0])+1,0,0,0)}}] 
 			}
 			let match_current_fund = {
-				$and: [ {company :mongoose.Types.ObjectId(req.session.user.company._id), isActive:true, createdAt: {$gte: new Date(start_time[2],start_time[1]-1,start_time[0],0,0,0), $lt: new Date(end_time[2],end_time[1]-1,end_time[0]+1,0,0,0)}}] 
+				$and: [ {company :mongoose.Types.ObjectId(req.session.user.company._id), isActive:true, createdAt: {$gte: new Date(start_time[2],Number(start_time[1])-1,start_time[0],0,0,0), $lt: new Date(end_time[2],Number(end_time[1])-1,Number(end_time[0])+1,0,0,0)}}] 
 			}
 			let match_begin_fund = {
-				$and: [{company: mongoose.Types.ObjectId(req.session.user.company._id), isActive:true, createdAt: {$gte: new Date(start_time[2],0,1,0,0,0), $lt: new Date(start_time[2],start_time[1]-1,start_time[0]-1,23,59,59)}}]
+				$and: [{company: mongoose.Types.ObjectId(req.session.user.company._id), isActive:true, createdAt: {$gte: new Date(start_time[2],0,1,0,0,0), $lt: new Date(start_time[2],Number(start_time[1])-1,Number(start_time[0])-1,23,59,59)}}]
 			}
 			if(search_find_selection == "company"){
 				match.$and.push({isForCompany: true})

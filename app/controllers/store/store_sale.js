@@ -93,7 +93,7 @@ class Store_sale extends Controller{
         try{
 			let now = new Date();
 			let start_month = new Date(now.getFullYear(),now.getMonth(),1,0,0,0);
-			let end_month = new Date(now.getFullYear(),now.getMonth()+1,1,0,0,0);
+			let end_month = new Date(now.getFullYear(),Number(now.getMonth())+1,1,0,0,0);
 			let match = {
 				$and: [ {company : mongoose.Types.ObjectId(req.session.store.company), createdAt: {$gte: start_month, $lt: end_month}} ] 
 			}
@@ -316,7 +316,7 @@ class Store_sale extends Controller{
 			let start_day = new Date(now.getFullYear(),now.getMonth(),now.getDate(),0,0,0);
 			let end_day = new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,0);
 			let start_month = new Date(now.getFullYear(),now.getMonth(),1,0,0,0);
-			let end_month = new Date(now.getFullYear(),now.getMonth()+1,1,0,0,0);
+			let end_month = new Date(now.getFullYear(),Number(now.getMonth())+1,1,0,0,0);
 			let report_day = await Invoice_sale.aggregate([
 				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company), isActive:true,store: mongoose.Types.ObjectId(req.session.store._id), createdAt: {$gte: start_day, $lt: end_day}}},
 				{ $group : {

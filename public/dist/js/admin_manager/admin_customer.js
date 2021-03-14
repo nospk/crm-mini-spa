@@ -196,7 +196,8 @@ function edit_data(id){
                             <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
 							<td>${item.serial}</td>
 							<td>`
-                            history_sale[index].list_sale.forEach(sale=>{
+                            history_sale[index].list_item.forEach(sale=>{
+                                console.log(sale)
                             html_history_sale += `<p style="margin-bottom:0px;">${sale.id.name} (${sale.id.number_code}): ${sale.quantity}</p>`
                         })        
                     html_history_sale +=    `</td><td>${item.employees.name}</td>

@@ -170,6 +170,7 @@ function edit_data(id){
                 let customer = data.data.customer;
                 let history_sale = data.data.history_sale;
                 let service = data.data.service;
+				let log_service = data.data.log_service;
 				$('#edit_data #edit_name').val(customer.name);
 				$('#edit_data #edit_birthday').val(customer.birthday);
 				$('#edit_data #edit_note').val(customer.note),
@@ -231,6 +232,28 @@ function edit_data(id){
                             </table>
                         `;
                 $('#edit-service-tab').html(html_service);
+				let html_history_service= `<table class="table table-sm  table-hover">
+                                    <thead>
+                                        <tr>
+										<th>Ngày sử dụng</th>
+                                        <th>Dịch vụ</th>
+                                        <th>Mã</th>
+										<th>Nhân viên làm</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+                log_service.forEach((item)=>{
+                    html_history_service+=`<tr>
+							<td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
+                            <td>${item.service.name}</td>
+                            <td>${item.serial ? item.serial : ""}</td>
+							<td>${item.employees.name}</td>
+                            </tr>`
+                })
+                html_history_service+=`</tbody>
+                            </table>
+                        `;
+                $('#edit-history-service-tab').html(html_history_service);
             }
 		}
 	})

@@ -209,12 +209,21 @@ class Store_sale extends Controller{
 				populate: { path: 'Discount'},
 				select:'number_code'
 			});
-			let service = await Invoice_service.find({company: req.session.store.company, customer:req.body.id, isActive: true}).populate({
+			let service = await Invoice_service.find({company: req.session.store.company, customer:req.body.id, isActive: true}).sort({createdAt: 1}).populate({
 				path: 'service',
 				populate: { path: 'Product_services'},
 				select:'name number_code'
 			})
-			Store_sale.sendData(res, {customer, history_sale, service});
+			let log_service = await Log_service.find({company: req.session.store.company, customer:req.body.id, isActive: true}).sort({createdAt: -1}).populate({
+				path: 'service',
+				populate: { path: 'Product_services'},
+				select:'name number_code'
+			}).populate({
+				path: 'employees',
+				populate: { path: 'Employees'},
+				select:'name'
+			})
+			Store_sale.sendData(res, {customer, history_sale, service, log_service});
 		}catch(err){
 			console.log(err.message)
 			Store_sale.sendError(res, err, err.message);
@@ -260,9 +269,9 @@ class Store_sale extends Controller{
 		try{
 			let service =  await Product_service.findOne({company :req.session.store.company, _id: req.body.service})
 			let log 
-			let invoice = await Invoice_service.findOneAndUpdate({company:req.session.store.company, _id: req.body.invoice, customer: req.body.customer, isActive: true},{ $inc: { times_used: 1} },{new: true});
-			if(invoice.times_used >= invoice.times){
-				invoice.isActive = false;
+			let invoice_service = await Invoice_service.findOneAndUpdate({company:req.session.store.company, _id: req.body.invoice, customer: req.body.customer, isActive: true},{ $inc: { times_used: 1} },{new: true});
+			if(invoice_service.times_used >= invoice_service.times){
+				invoice_service.isActive = false;
 			}
 			if(service.type == "service"){
 				log = Log_service({
@@ -270,6 +279,7 @@ class Store_sale extends Controller{
 					company:req.session.store.company,
 					customer:req.body.customer,
 					type: "service",
+					serial: invoice_service.serial,
 					service:req.body.service,
 					times_service: service.times_service,
 					store:req.session.store._id,
@@ -281,8 +291,9 @@ class Store_sale extends Controller{
 					company:req.session.store.company,
 					customer:req.body.customer,
 					service:req.body.service,
+					serial: invoice_service.serial,
 					type: "hair_removel",
-					service_price: invoice.times_used > 10 ? 0 : service.service_price,
+					service_price: invoice_service.times_used > 10 ? 0 : service.service_price,
 					times_service: service.times_service,
 					store:req.session.store._id,
 					employees: req.body.employees
@@ -291,8 +302,13 @@ class Store_sale extends Controller{
 			
 			await log.save()
 
-			invoice.log_service.unshift(log._id)
-			await invoice.save()
+			invoice_service.log_service.unshift(log._id)
+			await invoice_service.save()
+			let checkCanEditBill = await Invoice_sale.findOne({company:req.session.store.company, _id:invoice_service.invoice})
+			if(checkCanEditBill.isCanBeEdit !== false){
+				checkCanEditBill.isCanBeEdit = false
+				await checkCanEditBill.save()
+			}
 			Store_sale.sendMessage(res, "Đã thực hiện thành công");
 		}catch(err){
 			console.log(err)
@@ -749,7 +765,7 @@ class Store_sale extends Controller{
 			}
 			
 			//set time
-			time = req.body.time
+			let time = req.body.time
 
 			// check quantity
 			if(req.body.list_item == false){

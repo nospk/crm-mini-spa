@@ -2,6 +2,7 @@ const Controller = require('../../../core/controller');
 const Customer = require('../../models/customer');
 const mongoose = require('mongoose');
 const Invoice_sale = require('../../models/invoice_sale');
+const Log_service = require('../../models/log_service');
 const Invoice_service = require('../../models/invoice_service');
 const Common = require("../../../core/common");
 class Admin_customer extends Controller{
@@ -76,12 +77,21 @@ class Admin_customer extends Controller{
 				populate: { path: 'Discount'},
 				select:'number_code'
 			});
-			let service = await Invoice_service.find({company: req.session.user.company._id, customer:req.body.id, isActive: true}).populate({
+			let service = await Invoice_service.find({company: req.session.user.company._id, customer:req.body.id, isActive: true}).sort({createdAt: 1}).populate({
 				path: 'service',
 				populate: { path: 'Product_services'},
 				select:'name number_code'
 			})
-			Admin_customer.sendData(res, {customer, history_sale, service});
+			let log_service = await Log_service.find({company: req.session.user.company._id, customer:req.body.id, isActive: true}).sort({createdAt: -1}).populate({
+				path: 'service',
+				populate: { path: 'Product_services'},
+				select:'name number_code'
+			}).populate({
+				path: 'employees',
+				populate: { path: 'Employees'},
+				select:'name'
+			})
+			Admin_customer.sendData(res, {customer, history_sale, service, log_service});
 		}catch(err){
 			console.log(err.message)
 			Admin_customer.sendError(res, err, err.message);

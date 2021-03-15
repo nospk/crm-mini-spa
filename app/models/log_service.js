@@ -18,6 +18,9 @@ const Log_service_Schema = mongoose.Schema({
 	times_service:{
 		type: Number
 	},
+	serial:{
+		type: String, required: true
+	},
 	store:{
 		type: mongoose.Schema.Types.ObjectId, ref:'Stores' 
 	},

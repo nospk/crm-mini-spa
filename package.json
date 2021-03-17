@@ -5,12 +5,14 @@
   "main": "app.js",
   "scripts": {
     "app": "node app.js",
-	"admin": "node app.js",
+    "admin": "node app.js",
     "dev_app": "nodemon app.js",
-	"dev_admin": "nodemon admin.js"
+    "dev_admin": "nodemon admin.js"
   },
   "nodemonConfig": {
-    "ignore": ["public/*"]
+    "ignore": [
+      "public/*"
+    ]
   },
   "repository": {
     "type": "git",
@@ -34,7 +36,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "helmet": "^3.22.0",
-    "mongoose": "^5.10.0",
+    "mongoose": "^5.12.0",
     "morgan": "^1.9.1",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0"

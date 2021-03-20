@@ -641,7 +641,7 @@ class Store_sale extends Controller{
 				employees: req.body.employees,
 				customer: req.body.customer != "" ? req.body.customer : undefined,
 				discount: req.body.discount_id != "" ? req.body.discount_id : undefined,
-				note: req.body.note_bill,
+				note: req.body.note,
 				who_created: req.session.store.name,
 				bill:[],
 				createdAt: time
@@ -883,7 +883,7 @@ class Store_sale extends Controller{
 				employees: req.body.employees,
 				customer: req.body.customer != "" ? req.body.customer : undefined,
 				discount: req.body.discount_id != "" ? req.body.discount_id : undefined,
-				note: req.body.note_bill,
+				note: req.body.note,
 				who_created: req.session.store.name,
 				bill:[],
 				createdAt: time

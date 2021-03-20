@@ -341,17 +341,13 @@ function add_product(id){
 						tab_list[tab_number].item[0].price_book = product.price_book
 					}else{
 						let check = tab_list[tab_number].item.findIndex(element => element.number_code == product.number_code);
-						if(check != -1){
-							if(product.type == "product"){ 
-								if(tab_list[tab_number].item[check].quantity +1 <= product.stocks_in_store[0].product_of_sale){
-									tab_list[tab_number].item[check].quantity++
-									tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale 
-								}else{
-									tab_list[tab_number].item[check].quantity = product.stocks_in_store[0].product_of_sale
-									tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale
-								}
-							}else{
+						if(check != -1 && product.type == "product"){
+							if(tab_list[tab_number].item[check].quantity +1 <= product.stocks_in_store[0].product_of_sale){
 								tab_list[tab_number].item[check].quantity++
+								tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale 
+							}else{
+								tab_list[tab_number].item[check].quantity = product.stocks_in_store[0].product_of_sale
+								tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale
 							}
 						}else{
 							tab_list[tab_number].item.push(Object.assign(product, {quantity: 1}))

@@ -224,7 +224,7 @@ function render_data(data, pageCount, currentPage, type){
         if (currentPage == pageCount){
             pageination += `<li class="page-item disabled"><a class="page-link"">>></a></li>`
         }else{
-            pageination += `<li class="page-item"><a class="page-link" onclick="get_data('${i-1}', '${type})'">>></a></li>`
+            pageination += `<li class="page-item"><a class="page-link" onclick="get_data('${i-1}', '${type}')">>></a></li>`
         }
             
         pageination += `</ul>`

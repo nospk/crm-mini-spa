@@ -26,12 +26,12 @@ const check_price_book = (item, price_book) => {
 		return item.price
 	}
 }
-class Store_sale extends Controller{
+class Store_sell extends Controller{
     static show(req, res){
-        Store_sale.setLocalValue(req,res);
+        Store_sell.setLocalValue(req,res);
 		res.locals.manager = (req.session.manager && req.session.manager != "") ? true : false;
 		if(!req.session.manager) req.session.manager = ""
-        res.render('./pages/store/store_sale');
+        res.render('./pages/store/store_sell');
     }
 	static async search_product(req, res){
         try{
@@ -51,10 +51,10 @@ class Store_sale extends Controller{
 				path: 'combo.id',
 				populate: { path: 'Product_services' },
 			});
-			Store_sale.sendData(res, products);
+			Store_sell.sendData(res, products);
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
     }
 	static async get_service(req, res){
@@ -63,10 +63,10 @@ class Store_sale extends Controller{
 				$and: [ {company :req.session.store.company, isSale: true, type: "service"} ] 
 			}
 			let services = await Product_service.find(match).sort({createdAt: -1})
-			Store_sale.sendData(res, services);
+			Store_sell.sendData(res, services);
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async get_invoice_sale_id(req, res){
@@ -83,10 +83,10 @@ class Store_sale extends Controller{
 				populate: { path: 'Cash_book'},
 				select:'type_payment money'
 			})
-			Store_sale.sendData(res, data);
+			Store_sell.sendData(res, data);
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async get_invoice_sale(req, res){
@@ -126,10 +126,10 @@ class Store_sale extends Controller{
 				populate: { path: 'Cash_book'},
 				select:'type_payment money'
 			})
-			Store_sale.sendData(res, {data, pageCount, currentPage});
+			Store_sell.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async get_employees(req, res){
@@ -138,10 +138,10 @@ class Store_sale extends Controller{
 				$and: [ {company :req.session.store.company, store: req.session.store._id, isActive: true} ] 
 			}
 			let employees = await Employees.find(match).sort({createdAt: -1})
-			Store_sale.sendData(res, employees);
+			Store_sell.sendData(res, employees);
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async get_by_id(req,res){
@@ -152,12 +152,12 @@ class Store_sale extends Controller{
 				select: 'product_of_sale',
 			})
 			if(find.type == "product" && find.stocks_in_store[0].product_of_sale == 0){
-				return Store_sale.sendError(res, "Sản phẩm hết hàng", "Vui lòng chọn sản phẩm khác hoặc thêm sản phẩm"); 
+				return Store_sell.sendError(res, "Sản phẩm hết hàng", "Vui lòng chọn sản phẩm khác hoặc thêm sản phẩm"); 
 			}
-			Store_sale.sendData(res, find);
+			Store_sell.sendData(res, find);
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async search_customer(req, res){
@@ -171,10 +171,10 @@ class Store_sale extends Controller{
 				match.$and.push({$or:[{'phone': {$regex: search,$options:"mi"}},{'query_name': {$regex: search,$options:"i"}}]})
 			}
 			let customers = await Customer.find(match).sort({createdAt: -1})
-			Store_sale.sendData(res, customers);
+			Store_sell.sendData(res, customers);
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async search_discount(req,res){
@@ -182,21 +182,21 @@ class Store_sale extends Controller{
 			let discount = await Discount.findOne({company :req.session.store.company, number_code: req.body.number_code, isActive : true})
 			if(discount){
 				if(discount.type == "limit" && discount.times == discount.times_used){
-					return Store_sale.sendError(res, "Mã đã hết lần sử dụng", "Vui lòng nhập lại mã");
+					return Store_sell.sendError(res, "Mã đã hết lần sử dụng", "Vui lòng nhập lại mã");
 				}
-				Store_sale.sendData(res, discount);
+				Store_sell.sendData(res, discount);
 			}else{
-				return Store_sale.sendError(res, "Mã không hợp lệ", "Vui lòng nhập lại mã");
+				return Store_sell.sendError(res, "Mã không hợp lệ", "Vui lòng nhập lại mã");
 			}
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async get_customer(req, res){
 		try{
 			let customer = await Customer.findOne({company: req.session.store.company, _id: req.body.id});
-			let history_sale = await Invoice_sale.find({company: req.session.store.company, customer:req.body.id}).sort({createdAt: -1}).limit(20).populate({
+			let history_sell = await Invoice_sale.find({company: req.session.store.company, customer:req.body.id}).sort({createdAt: -1}).limit(20).populate({
 				path: 'list_item.id',
 				populate: { path: 'Product_services'},
 				select:'name number_code'
@@ -223,17 +223,17 @@ class Store_sale extends Controller{
 				populate: { path: 'Employees'},
 				select:'name'
 			})
-			Store_sale.sendData(res, {customer, history_sale, service, log_service});
+			Store_sell.sendData(res, {customer, history_sell, service, log_service});
 		}catch(err){
 			console.log(err.message)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async create_customer(req, res){
 		try{
 			let check = await Customer.findOne({company: req.session.store.company, phone:req.body.phone});
 			if(check){
-				return Store_sale.sendError(res, "Số điện thoại đã có người dùng", "Vui lòng xem lại thông tin đã nhập");
+				return Store_sell.sendError(res, "Số điện thoại đã có người dùng", "Vui lòng xem lại thông tin đã nhập");
 			}else{
 				let new_customer = Customer({
 					name: req.body.name,
@@ -246,11 +246,11 @@ class Store_sale extends Controller{
 					company: req.session.store.company
 				});
 				await new_customer.save()
-				Store_sale.sendMessage(res, "Đã tạo thành công");
+				Store_sell.sendMessage(res, "Đã tạo thành công");
 			}
 		}catch(err){
 			console.log(err.message)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 		
 	}
@@ -258,10 +258,10 @@ class Store_sale extends Controller{
 		try{
 			let date_now = new Date();
 			let price_book = await Price_book.find({company: req.session.store.company, date_from:{$lt: date_now}, date_to:{$gt: date_now}, $or:[{store:[]},{store:req.session.store._id}]})
-			Store_sale.sendData(res, price_book);
+			Store_sell.sendData(res, price_book);
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 		
 	}
@@ -309,10 +309,10 @@ class Store_sale extends Controller{
 				checkCanEditBill.isCanBeEdit = false
 				await checkCanEditBill.save()
 			}
-			Store_sale.sendMessage(res, "Đã thực hiện thành công");
+			Store_sell.sendMessage(res, "Đã thực hiện thành công");
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async check_password_manager(req,res){
@@ -320,14 +320,14 @@ class Store_sale extends Controller{
 			let store = await Store.findOne({company: req.session.store.company, _id: req.session.store._id})
 			if (!store.validPassword_manager(req.body.password)){
 				req.session.manager = "";
-				Store_sale.sendError(res, "Không đúng mật khẩu quản lý", "Nhập lại mật khẩu quản lý");
+				Store_sell.sendError(res, "Không đúng mật khẩu quản lý", "Nhập lại mật khẩu quản lý");
 			}else{
 				req.session.manager = req.body.password;
-				Store_sale.sendMessage(res, "Đăng nhập quản lý thành công");
+				Store_sell.sendMessage(res, "Đăng nhập quản lý thành công");
 			}
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async report(req, res){
@@ -403,7 +403,7 @@ class Store_sale extends Controller{
 
 			])
 
-			let report_sale_month = await Employees.aggregate([
+			let report_sell_month = await Employees.aggregate([
 				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},
 				{ $lookup:
 					 {
@@ -423,11 +423,11 @@ class Store_sale extends Controller{
 								 }	
 							  }
 						],
-						as: "sale_in_month"
+						as: "sell_in_month"
 					 }
 				},
-				{ $unwind:"$sale_in_month"},
-				{ $group : {_id:"$_id", name:{ "$first":"$name"}, money_sale:{$sum:"$sale_in_month.payment"}}}
+				{ $unwind:"$sell_in_month"},
+				{ $group : {_id:"$_id", name:{ "$first":"$name"}, money_sell:{$sum:"$sell_in_month.payment"}}}
 			])
 			let employees = await Employees.aggregate([
 				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},
@@ -449,26 +449,26 @@ class Store_sale extends Controller{
 								 }	
 							  }
 						],
-						as: "sale_in_day"
+						as: "sell_in_day"
 						}
 				},
-				{ $unwind:"$sale_in_day"},
-				{ $group : {_id:"$_id", name:{ "$first":"$name"}, money_sale:{$sum:"$sale_in_day.payment"}}}
+				{ $unwind:"$sell_in_day"},
+				{ $group : {_id:"$_id", name:{ "$first":"$name"}, money_sell:{$sum:"$sell_in_day.payment"}}}
 			])
 			let cash_book = await Cash_book.find({company: mongoose.Types.ObjectId(req.session.store.company), isActive:true,store: mongoose.Types.ObjectId(req.session.store._id), type: "income", createdAt: {$gte: start_day, $lt: end_day}})
-			let money_sales_card = 0;
-			let money_sales_cash = 0;
+			let money_sell_card = 0;
+			let money_sell_cash = 0;
 			cash_book.forEach(item=>{
 				if(item.type_payment == "card"){
-					money_sales_card = money_sales_card+item.money
+					money_sell_card = money_sell_card+item.money
 				}else{
-					money_sales_cash = money_sales_cash+item.money
+					money_sell_cash = money_sell_cash+item.money
 				}
 			})
-			Store_sale.sendData(res, {report_day, service_day, report_sale_month, report_service_month, employees, money_sales_card, money_sales_cash});
+			Store_sell.sendData(res, {report_day, service_day, report_sell_month, report_service_month, employees, money_sell_card, money_sell_cash});
 		}catch(err){
 			console.log(err)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async check_out(req, res){
@@ -484,28 +484,28 @@ class Store_sale extends Controller{
 				let date_now = new Date();
 				let price_book = await Price_book.findOne({company: req.session.store.company, _id:req.body.price_book, date_from:{$lt: date_now}, date_to:{$gt: date_now}, $or:[{store:[]},{store:req.session.store._id}]})
 				if(!price_book){
-					return Store_sale.sendError(res, "Đã hết thời gian khuyến mãi", "Vui lòng chọn lại bảng giá khác");
+					return Store_sell.sendError(res, "Đã hết thời gian khuyến mãi", "Vui lòng chọn lại bảng giá khác");
 				}
 					
 			}
 
 			//check employees
 			let check_employees = await Employees.findOne({company :req.session.store.company, _id: req.body.employees})
-			if(!check_employees) return Store_sale.sendError(res, "Không tìm thấy nhân viên", "Vui lòng kiểm tra lại thông tin");
+			if(!check_employees) return Store_sell.sendError(res, "Không tìm thấy nhân viên", "Vui lòng kiểm tra lại thông tin");
 
 			//check customer
 			let check_customer = ""
 			if(req.body.customer){
 				check_customer = await Customer.findOne({company: req.session.store.company, _id:req.body.customer})
 				if(!check_customer){
-					return Store_sale.sendError(res, "Khách hàng không hợp lệ", "Vui lòng kiểm tra lại thông tin");
+					return Store_sell.sendError(res, "Khách hàng không hợp lệ", "Vui lòng kiểm tra lại thông tin");
 				}
 					
 			}
 
 			// check quantity
 			if(req.body.list_item == false){
-				return Store_sale.sendError(res, "Lỗi chưa chọn sản phẩm - dịch vụ", "Vui lòng chọn lại");
+				return Store_sell.sendError(res, "Lỗi chưa chọn sản phẩm - dịch vụ", "Vui lòng chọn lại");
 			}
 
 			// main run  
@@ -525,12 +525,12 @@ class Store_sale extends Controller{
 					populate: { path: 'Product_services' },
 				});
 				if(!check_product_service){
-					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] không tồn tại`, "Vui lòng chọn lại");
+					return Store_sell.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] không tồn tại`, "Vui lòng chọn lại");
 				}
 				list_item[i] =  Object.assign(list_item[i], check_product_service._doc);
 
 				if(list_item[i].type == 'product' && list_item[i].sell_quantity > list_item[i].stocks_in_store[0].product_of_sale){
-					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
+					return Store_sell.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 				}else{
 					let check_price 
 
@@ -575,7 +575,7 @@ class Store_sale extends Controller{
 								select: 'product_of_sale',
 							})
 							if(list_item[i].sell_quantity *item.quantity > check_product.stocks_in_store[0].product_of_sale){
-								return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
+								return Store_sell.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 							}
 							list_product.push({
 								product: mongoose.Types.ObjectId(item.id._id),
@@ -587,7 +587,7 @@ class Store_sale extends Controller{
 			}
 			//check if have service but not customer
 			if(list_service != false && req.body.customer == false){
-				return Store_sale.sendError(res, "Để lưu dịch vụ cần phải có thông tin khách hàng", "Vui chọn khách hàng hoặc tạo khách hàng mới");
+				return Store_sell.sendError(res, "Để lưu dịch vụ cần phải có thông tin khách hàng", "Vui chọn khách hàng hoặc tạo khách hàng mới");
 			}
 			//check discount
 			let money_discount = 0;
@@ -596,7 +596,7 @@ class Store_sale extends Controller{
 				check_discount = await Discount.findOne({company :req.session.store.company, _id: req.body.discount_id, isActive : true})
 				if(check_discount){
 					if(check_discount.type == "limit" && check_discount.times == check_discount.times_used){
-						return Store_sale.sendError(res, "Mã giảm giá đã hết lần sử dụng", "Vui lòng nhập lại mã");
+						return Store_sell.sendError(res, "Mã giảm giá đã hết lần sử dụng", "Vui lòng nhập lại mã");
 					}else{
 						if(check_discount.type_discount == "money"){
 							money_discount = check_discount.value
@@ -606,17 +606,17 @@ class Store_sale extends Controller{
 						
 					}
 				}else{
-					return Store_sale.sendError(res, "Mã giảm giá không hợp lệ", "Vui lòng nhập lại mã");
+					return Store_sell.sendError(res, "Mã giảm giá không hợp lệ", "Vui lòng nhập lại mã");
 				}
 			}
 			payment = payment - money_discount;
 			
 			//check payment
 			if(req.body.customer_pay_card > payment){
-				return Store_sale.sendError(res, `Lỗi thanh toán số tiền chuyển khoản lớn hơn số tiền trả`, "Kiểm tra lại số tiền đã nhập");
+				return Store_sell.sendError(res, `Lỗi thanh toán số tiền chuyển khoản lớn hơn số tiền trả`, "Kiểm tra lại số tiền đã nhập");
 			}
 			if(req.body.customer_pay_card + req.body.customer_pay_cash < payment){
-				return Store_sale.sendError(res, `Lỗi thanh toán chưa đủ số tiền`, "Kiểm tra lại số tiền đã nhập");
+				return Store_sell.sendError(res, `Lỗi thanh toán chưa đủ số tiền`, "Kiểm tra lại số tiền đã nhập");
 			}else{
 				payment_back = req.body.customer_pay_card + req.body.customer_pay_cash - payment
 			}
@@ -627,7 +627,7 @@ class Store_sale extends Controller{
 				await check_discount.save()
 			}
 
-			//invoice sale	
+			//invoice sell	
 			let serial_sale =  await Common.get_serial_store(req.session.store._id, 'BH')
 			let serial_stock =  await Common.get_serial_store(req.session.store._id, 'XH')
 			let invoice_sale = Invoice_sale({
@@ -750,10 +750,10 @@ class Store_sale extends Controller{
 			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount, payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)
 			invoice_sale.bill_html = bill
 			await invoice_sale.save()
-            Store_sale.sendData(res, bill);
+            Store_sell.sendData(res, bill);
 		}catch(err){
 			console.log(err.message)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 	static async update_bill(req, res){
@@ -761,7 +761,7 @@ class Store_sale extends Controller{
 			//check can edit bill
 			let check_bill = await Invoice_sale.findOne({company :req.session.store.company,store:req.session.store._id,_id:req.body.id})
 			if(check_bill.isCanBeEdit === false){
-				return Store_sale.sendError(res, "Lỗi hóa đơn đã được sử dụng dịch vụ", "Không thể chỉnh sửa hóa đơn");
+				return Store_sell.sendError(res, "Lỗi hóa đơn đã được sử dụng dịch vụ", "Không thể chỉnh sửa hóa đơn");
 			}
 			
 			//set time
@@ -769,7 +769,7 @@ class Store_sale extends Controller{
 
 			// check quantity
 			if(req.body.list_item == false){
-				return Store_sale.sendError(res, "Lỗi chưa chọn sản phẩm - dịch vụ", "Vui lòng chọn lại");
+				return Store_sell.sendError(res, "Lỗi chưa chọn sản phẩm - dịch vụ", "Vui lòng chọn lại");
 			}
 
 			// main run  
@@ -789,7 +789,7 @@ class Store_sale extends Controller{
 					populate: { path: 'Product_services' },
 				});
 				if(!check_product_service){
-					return Store_sale.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] không tồn tại`, "Vui lòng chọn lại");
+					return Store_sell.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] không tồn tại`, "Vui lòng chọn lại");
 				}
 
 				// not check enough quantity because this's edit bill will calculate quantity later
@@ -838,7 +838,7 @@ class Store_sale extends Controller{
 				check_discount = await Discount.findOne({company :req.session.store.company, _id: req.body.discount_id, isActive : true})
 				if(check_discount){
 					if(check_discount.type == "limit" && check_discount.times == check_discount.times_used){
-						return Store_sale.sendError(res, "Mã giảm giá đã hết lần sử dụng", "Vui lòng nhập lại mã");
+						return Store_sell.sendError(res, "Mã giảm giá đã hết lần sử dụng", "Vui lòng nhập lại mã");
 					}else{
 						if(check_discount.type_discount == "money"){
 							money_discount = check_discount.value
@@ -848,17 +848,17 @@ class Store_sale extends Controller{
 						
 					}
 				}else{
-					return Store_sale.sendError(res, "Mã giảm giá không hợp lệ", "Vui lòng nhập lại mã");
+					return Store_sell.sendError(res, "Mã giảm giá không hợp lệ", "Vui lòng nhập lại mã");
 				}
 			}
 			payment = payment - money_discount;
 			
 			//check payment
 			if(req.body.customer_pay_card > payment){
-				return Store_sale.sendError(res, `Lỗi thanh toán số tiền chuyển khoản lớn hơn số tiền trả`, "Kiểm tra lại số tiền đã nhập");
+				return Store_sell.sendError(res, `Lỗi thanh toán số tiền chuyển khoản lớn hơn số tiền trả`, "Kiểm tra lại số tiền đã nhập");
 			}
 			if(req.body.customer_pay_card + req.body.customer_pay_cash < payment){
-				return Store_sale.sendError(res, `Lỗi thanh toán chưa đủ số tiền`, "Kiểm tra lại số tiền đã nhập");
+				return Store_sell.sendError(res, `Lỗi thanh toán chưa đủ số tiền`, "Kiểm tra lại số tiền đã nhập");
 			}else{
 				payment_back = req.body.customer_pay_card + req.body.customer_pay_cash - payment
 			}
@@ -991,12 +991,12 @@ class Store_sale extends Controller{
 			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount, payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)
 			invoice_sale.bill_html = bill
 			await invoice_sale.save()
-            Store_sale.sendData(res, bill);
+            Store_sell.sendData(res, bill);
 		}catch(err){
 			console.log(err.message)
-			Store_sale.sendError(res, err, err.message);
+			Store_sell.sendError(res, err, err.message);
 		}
 	}
 }
 
-module.exports = Store_sale
+module.exports = Store_sell

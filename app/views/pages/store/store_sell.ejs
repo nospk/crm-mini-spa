@@ -326,7 +326,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 											style="cursor: default; width: 105px;">Ngày giờ</span>
 									</div>
 									<input type="text" class="form-control date" style="text-align:right;" disabled
-										id="date_sale">
+										id="date_sell">
 								</div>
 								<div class="input-group">
 									<div class="input-group-prepend">
@@ -388,7 +388,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<label style="margin-bottom:0px">Giảm giá</label> <span id="discount_value"
 									class="float-right"></span>
 								<br>
-								<span>Tổng cộng</span> <span id="total_sale" class="float-right"></span>
+								<span>Tổng cộng</span> <span id="total_sell" class="float-right"></span>
 								<br>
 								<span>Tiền giảm</span> <span id="money_discount" class="float-right"></span>
 								<br>
@@ -418,7 +418,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 									class="form-control btn btn-info float-left button-edit-bill"
 									onclick="check_payment()">Sửa</button>
 								<button type="button" style="height:40px"
-									class="form-control btn btn-info float-left button-sale-bill"
+									class="form-control btn btn-info float-left button-sell-bill"
 									onclick="check_payment()">Thanh toán</button>
 							</div>
 						</div>
@@ -642,7 +642,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<!-- small box -->
 										<div class="small-box bg-success">
 											<div class="inner">
-												<h3 id="total_money_sales"></h3>
+												<h3 id="total_money_sell"></h3>
 
 												<p>Tổng số tiền bán hàng</p>
 											</div>
@@ -653,7 +653,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<!-- small box -->
 										<div class="small-box bg-warning">
 											<div class="inner">
-												<h3 id="money_sales_cash"></h3>
+												<h3 id="money_sell_cash"></h3>
 
 												<p>Tiền mặt</p>
 											</div>
@@ -663,7 +663,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<!-- small box -->
 										<div class="small-box bg-warning">
 											<div class="inner">
-												<h3 id="money_sales_card"></h3>
+												<h3 id="money_sell_card"></h3>
 												<p>Ngân hàng</p>
 											</div>
 										</div>
@@ -679,7 +679,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 								<div style="margin-top: 15px">
 									<h5>Bán hàng</h5>
 									<div class="card">
-										<ul class="list-group list-group-flush" id="report_sale_month">
+										<ul class="list-group list-group-flush" id="report_sell_month">
 
 										</ul>
 									</div>
@@ -866,12 +866,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 					$('#button_unlock_manager').hide()
 					$('#button_lock_manager').show()
 					$('#button_edit_bill').show()
-					$('#date_sale').prop("disabled", false);
+					$('#date_sell').prop("disabled", false);
 				} else {
 					$('#button_unlock_manager').show()
 					$('#button_lock_manager').hide()
 					$('#button_edit_bill').hide()
-					$('#date_sale').prop("disabled", true);
+					$('#date_sell').prop("disabled", true);
 				}
 				//Date range picker
 				$('.date').daterangepicker({

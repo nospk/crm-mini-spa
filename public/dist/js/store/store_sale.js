@@ -19,7 +19,7 @@ let tab_list = [{
 		discount_id:"",
 		number_code_discount:"",
 		discount_value:"",
-		total_sale:"", 
+		total_sell:"", 
 		customer_pay_card:"", 
 		customer_pay_cash:"", 
 		money_return:"",
@@ -118,8 +118,8 @@ $( document ).ready(()=>{
 	$('#select_employees').on('change', function (){
 		tab_list[tab_number].employee = $('#select_employees').val()
 	})
-	$('#date_sale').on('change', function (){
-		tab_list[tab_number].time = $('#date_sale').val()
+	$('#date_sell').on('change', function (){
+		tab_list[tab_number].time = $('#date_sell').val()
 		tab_list[tab_number].time_edit = true
 	})
 	$('#select_price_book').on('change', function() {
@@ -141,20 +141,20 @@ $( document ).ready(()=>{
 				if(data.status == 1){
 					$('#total_orders').html(data.data.report_day[0] ? data.data.report_day[0].count : 0)
 					$('#total_services').html(data.data.service_day[0] ? data.data.service_day[0].count : 0)
-					$('#total_money_sales').html(convert_vnd(data.data.report_day[0] ? data.data.report_day[0].totalAmount : 0))
-					$('#money_sales_cash').html(convert_vnd(data.data.money_sales_cash || 0))
-					$('#money_sales_card').html(convert_vnd(data.data.money_sales_card || 0))
+					$('#total_money_sell').html(convert_vnd(data.data.report_day[0] ? data.data.report_day[0].totalAmount : 0))
+					$('#money_sell_cash').html(convert_vnd(data.data.money_sell_cash || 0))
+					$('#money_sell_card').html(convert_vnd(data.data.money_sell_card || 0))
 				}
 				let html_report_day_employees = "";
 				data.data.employees.forEach(item => {
-					html_report_day_employees += `<li class="list-group-item"><span class="font-weight-bold">${item.name}</span> <span class="float-right">${convert_vnd(item.money_sale)}</span></li>`
+					html_report_day_employees += `<li class="list-group-item"><span class="font-weight-bold">${item.name}</span> <span class="float-right">${convert_vnd(item.money_sell)}</span></li>`
 				})
 				$('#report_day_employees').html(html_report_day_employees)
-				let html_report_sale_month = "";
-				data.data.report_sale_month.forEach(item => {
-					html_report_sale_month += `<li class="list-group-item"><span class="font-weight-bold">${item.name}</span> <span class="float-right">${convert_vnd(item.money_sale)}</span></li>`
+				let html_report_sell_month = "";
+				data.data.report_sell_month.forEach(item => {
+					html_report_sell_month += `<li class="list-group-item"><span class="font-weight-bold">${item.name}</span> <span class="float-right">${convert_vnd(item.money_sell)}</span></li>`
 				})
-				$('#report_sale_month').html(html_report_sale_month)
+				$('#report_sell_month').html(html_report_sell_month)
 				let html_report_service_month = "";
 				data.data.report_service_month.forEach(item => {
 					let hair_removel_price = item.hair_removel_in_month.reduce((price, currValue) =>{
@@ -209,9 +209,9 @@ function set_time(){
 	if (tab_list[tab_number].time == ""){
 		let now = new Date()
 		tab_list[tab_number].time = ('0'+ now.getDate()).slice(-2) + '/'+ ('0' + (now.getMonth()+1)).slice(-2) + '/' + now.getFullYear() + ' ' + ('0' + now.getHours()).slice(-2) + ":" + ('0' + now.getMinutes()).slice(-2)
-		$('#date_sale').val(('0'+ now.getDate()).slice(-2) + '/'+ ('0' + (now.getMonth()+1)).slice(-2) + '/' + now.getFullYear() + ' ' + ('0' + now.getHours()).slice(-2) + ":" + ('0' + now.getMinutes()).slice(-2))
+		$('#date_sell').val(('0'+ now.getDate()).slice(-2) + '/'+ ('0' + (now.getMonth()+1)).slice(-2) + '/' + now.getFullYear() + ' ' + ('0' + now.getHours()).slice(-2) + ":" + ('0' + now.getMinutes()).slice(-2))
 	}else{
-		$('#date_sale').val(tab_list[tab_number].time)
+		$('#date_sell').val(tab_list[tab_number].time)
 	}
 }
 function search_product() {
@@ -443,7 +443,7 @@ function render_tablist(tab_number){
 		$('#discount_value').text(tab_list[tab_number].discount_value)
 		$('#add_product').html(html)
 		$('#note_bill').val(tab_list[tab_number].note_bill)
-		tab_list[tab_number].total_sale = money
+		tab_list[tab_number].total_sell = money
 		let currencyInputs = document.querySelectorAll('input[type="currency"]')
 		currencyInputs.forEach(element => {
 			element.addEventListener('focus', onFocus)
@@ -476,12 +476,12 @@ function render_tablist(tab_number){
 			}
 			$('#money_return').text(convert_vnd(tab_list[tab_number].money_return))
 			$('#money_discount').text(convert_vnd(tab_list[tab_number].money_discount))
-			$('#total_sale').text(convert_vnd(tab_list[tab_number].total_sale))
+			$('#total_sell').text(convert_vnd(tab_list[tab_number].total_sell))
 			$('#bill_money').text(convert_vnd(tab_list[tab_number].bill_money))
 			$('#customer_pay_cash').text(convert_vnd(tab_list[tab_number].customer_pay_cash == "" ? 0 :tab_list[tab_number].customer_pay_cash))
 			$('#customer_pay_card').text(convert_vnd(tab_list[tab_number].customer_pay_card == "" ? 0 :tab_list[tab_number].customer_pay_card))
 		}else{
-			$('#total_sale').text("")
+			$('#total_sell').text("")
 			$('#money_discount').text("")
 			$('#customer_pay_cash').text("")
 			$('#customer_pay_card').text("")
@@ -496,11 +496,11 @@ function render_tablist(tab_number){
 		}
 		if(tab_list[tab_number].edit_bill === false){
 			$('.button-edit-bill').hide()
-			$('.button-sale-bill').show()
+			$('.button-sell-bill').show()
 			$('#button_remove_customer').prop( "disabled", false )
 		}else{
 			$('.button-edit-bill').show()
-			$('.button-sale-bill').hide()
+			$('.button-sell-bill').hide()
 			$('#button_remove_customer').prop( "disabled", true )
 		}
 	}
@@ -970,7 +970,7 @@ function unlock_manager(){
 				$('#button_unlock_manager').hide()
 				$('#button_lock_manager').show()
 				$('#button_edit_bill').show()
-				$('#date_sale').prop( "disabled", false );
+				$('#date_sell').prop( "disabled", false );
 				manager = true;
 				render_tablist(tab_number)
 				Swal.fire({
@@ -1010,7 +1010,7 @@ function lock_manager(){
 				$('#button_unlock_manager').show()
 				$('#button_lock_manager').hide()
 				$('#button_edit_bill').hide()
-				$('#date_sale').prop( "disabled", true );
+				$('#date_sell').prop( "disabled", true );
 				manager = false;
 				render_tablist(tab_number)
 				Swal.fire({
@@ -1039,7 +1039,7 @@ function get_customer(id){
         success: function(data){
 			if(data.status == 1){
                 let customer = data.data.customer;
-                let history_sale = data.data.history_sale;
+                let history_sell = data.data.history_sell;
                 let service = data.data.service;
 				let log_service = data.data.log_service;
 				$('#edit_customer #edit_name').val(customer.name);
@@ -1049,7 +1049,7 @@ function get_customer(id){
                 $('#edit_customer #edit_gener').val(customer.gener);
 				$('#edit_customer #edit_address').val(customer.address);
 				$('#edit_customer #edit_id').val(customer._id);
-                let html_history_sale = `<table class="table table-sm  table-hover" style="display: block; overflow-x: auto;">
+                let html_history_sell = `<table class="table table-sm  table-hover" style="display: block; overflow-x: auto;">
                                         <thead>
                                             <tr>
                                             <th width="20%">Ngày</th>
@@ -1060,21 +1060,21 @@ function get_customer(id){
                                         </thead>
                                         <tbody>`;
                 
-                history_sale.forEach((item, index)=>{
-                    html_history_sale+=`<tr>
+                history_sell.forEach((item, index)=>{
+                    html_history_sell+=`<tr>
                             <td width="20%">${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
 							<td width="15%">${item.serial}</td>
 							<td width="40%">`
-                            history_sale[index].list_item.forEach(sale=>{
-                            html_history_sale += `<p style="margin-bottom:0px;">${sale.id.name} (${sale.id.number_code}): ${sale.quantity}</p>`
+                            history_sell[index].list_item.forEach(sell=>{
+                            html_history_sell += `<p style="margin-bottom:0px;">${sell.id.name} (${sell.id.number_code}): ${sell.quantity}</p>`
                         })        
-                    html_history_sale +=    `</td><td width="20%">${item.employees.name}</td>
+                    html_history_sell +=    `</td><td width="20%">${item.employees.name}</td>
                             </tr>`
                 })
-                html_history_sale+=`</tbody>
+                html_history_sell+=`</tbody>
                             </table>
                         `;
-                $('#edit-history-payment-tab').html(html_history_sale);
+                $('#edit-history-payment-tab').html(html_history_sell);
                 let html_service= `<table class="table table-sm  table-hover">
                                     <thead>
                                         <tr>
@@ -1223,7 +1223,7 @@ function remove_tab_menu(btw){
 			discount_id:"",
 			number_code_discount:"",
 			discount_value:"",
-			total_sale:"", 
+			total_sell:"", 
 			customer_pay_card:"", 
 			customer_pay_cash:"", 
 			money_return:"",
@@ -1272,7 +1272,7 @@ function add_tab_menu(){
 			discount_id:"",
 			number_code_discount:"",
 			discount_value:"",
-			total_sale:"", 
+			total_sell:"", 
 			customer_pay_card:"", 
 			customer_pay_cash:"", 
 			money_return:"",
@@ -1451,7 +1451,7 @@ function edit_bill(id){
 				})
 				let time_creater = new Date(data.data.createdAt)
 				let conver_time = ('0'+ time_creater.getDate()).slice(-2) + '/'+ ('0' + (time_creater.getMonth()+1)).slice(-2) + '/' + time_creater.getFullYear() + ' ' + ('0' + time_creater.getHours()).slice(-2) + ":" + ('0' + time_creater.getMinutes()).slice(-2)
-				$('#date_sale').val(('0'+ time_creater.getDate()).slice(-2) + '/'+ ('0' + (time_creater.getMonth()+1)).slice(-2) + '/' + time_creater.getFullYear() + ' ' + ('0' + time_creater.getHours()).slice(-2) + ":" + ('0' + time_creater.getMinutes()).slice(-2))
+				$('#date_sell').val(('0'+ time_creater.getDate()).slice(-2) + '/'+ ('0' + (time_creater.getMonth()+1)).slice(-2) + '/' + time_creater.getFullYear() + ' ' + ('0' + time_creater.getHours()).slice(-2) + ":" + ('0' + time_creater.getMinutes()).slice(-2))
 				tab_list.push({
 					HD: data.data.serial, 
 					item: data.data.list_item.map(item =>{
@@ -1470,7 +1470,7 @@ function edit_bill(id){
 					discount_id:"",
 					number_code_discount:"",
 					discount_value:"",
-					total_sale:"", 
+					total_sell:"", 
 					customer_pay_card: card.length > 0 ? card[0].money: 0, 
 					customer_pay_cash: cash.length > 0 ? cash[0].money: 0, 
 					money_return:"",

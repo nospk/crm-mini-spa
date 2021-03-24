@@ -1,4 +1,4 @@
-const  store = require('../../app/controllers/store/store_sale');
+const  store = require('../../app/controllers/store/store_sell');
 
 
 module.exports = function (app) {

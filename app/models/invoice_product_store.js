@@ -22,7 +22,7 @@ const Invoice_product_store_Schema = mongoose.Schema({
 		type: String
 	},
 	invoice:{
-		type: mongoose.Schema.Types.ObjectId, ref:'Invoice_sale'
+		type: mongoose.Schema.Types.ObjectId, ref:'Invoice_sell'
 	}
 }, { timestamps: true });
 

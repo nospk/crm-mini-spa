@@ -16,7 +16,7 @@ const Invoice_service_Schema = mongoose.Schema({
 		type: Boolean, default:true 
 	},
 	invoice:{
-		type: mongoose.Schema.Types.ObjectId, ref:'Invoice_sale'
+		type: mongoose.Schema.Types.ObjectId, ref:'Invoice_sell'
 	},
 	log_service:[{
 		type: mongoose.Schema.Types.ObjectId, ref:'Log_Service',

@@ -40,7 +40,7 @@ const Product_Service_Schema = mongoose.Schema({
 		price_sale: {type: Number, required:true},
 		_id: false
 	}],
-	isSale:{
+	isSell:{
 		type: Boolean, default:true
 	},
 	brand:{

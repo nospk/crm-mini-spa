@@ -32,7 +32,7 @@ class Admin_store_stocks extends Controller{
 				path: 'stocks_in_store',
 				populate: { path: 'Store_stocks' },
 				match: { store_id: req.session.store_id },
-				select: 'quantity product_of_sale product_of_service product_of_undefined'
+				select: 'quantity product_of_sell product_of_service product_of_undefined'
 			});
 			Admin_store_stocks.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
@@ -44,7 +44,7 @@ class Admin_store_stocks extends Controller{
 		try{
 			const {products} = req.body
 			products.forEach(async item => {
-				await Store_stocks.findOneAndUpdate({company: req.session.user.company._id, _id: item.id}, {$inc: {product_of_sale:item.product_of_sale, product_of_service: item.product_of_service, product_of_undefined: (item.product_of_sale+item.product_of_service) * -1}})
+				await Store_stocks.findOneAndUpdate({company: req.session.user.company._id, _id: item.id}, {$inc: {product_of_sell:item.product_of_sell, product_of_service: item.product_of_service, product_of_undefined: (item.product_of_sell+item.product_of_service) * -1}})
 			})
 			Admin_store_stocks.sendMessage(res, "Đã cập nhật thành công");
 		}catch(err){
@@ -76,7 +76,7 @@ class Admin_store_stocks extends Controller{
 					quantity: products[i].lost_stocks,
 					current_quantity: products[i].current_quantity,
 				})
-				let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.user.company._id, store_id:req.session.store_id, product: products[i].id},{$set:{product_of_sale:products[i].product_of_sale, product_of_service:products[i].product_of_service, quantity:products[i].current_quantity}},{new: true})
+				let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.user.company._id, store_id:req.session.store_id, product: products[i].id},{$set:{product_of_sell:products[i].product_of_sell, product_of_service:products[i].product_of_service, quantity:products[i].current_quantity}},{new: true})
 				store_stocks.last_history = await Common.last_history(store_stocks.last_history, id);
 				await store_stocks.save();
 				await Product_service.findOneAndUpdate({company: req.session.user.company._id, type: "product", _id: products[i].id},{$inc:{quantity:Number(products[i].lost_stocks)*-1}})

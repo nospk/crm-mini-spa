@@ -7,7 +7,7 @@ const Customer = require('../../models/customer');
 const Discount = require('../../models/discount');
 const mongoose = require('mongoose');
 const Employees = require('../../models/employees');
-const Invoice_sale = require('../../models/invoice_sale');
+const Invoice_sell = require('../../models/invoice_sell');
 const Invoice_product_store = require('../../models/invoice_product_store');
 const Invoice_service = require('../../models/invoice_service');
 const Cash_book = require('../../models/cash_book');
@@ -37,7 +37,7 @@ class Store_sell extends Controller{
         try{
 			let {search}=req.body
 			let match = {
-				$and: [ {company :req.session.store.company, isSale: true} ] 
+				$and: [ {company :req.session.store.company, isSell: true} ] 
 			}
 			if(search){
 				search = await Common.removeVietnameseTones(search);
@@ -46,7 +46,7 @@ class Store_sell extends Controller{
 			let products = await Product_service.find(match).sort({createdAt: -1}).populate({
 				path: 'stocks_in_store',
 				match: { store_id: req.session.store._id },
-				select: 'product_of_sale',
+				select: 'product_of_sell',
 			}).populate({
 				path: 'combo.id',
 				populate: { path: 'Product_services' },
@@ -60,7 +60,7 @@ class Store_sell extends Controller{
 	static async get_service(req, res){
         try{
 			let match = {
-				$and: [ {company :req.session.store.company, isSale: true, type: "service"} ] 
+				$and: [ {company :req.session.store.company, isSell: true, type: "service"} ] 
 			}
 			let services = await Product_service.find(match).sort({createdAt: -1})
 			Store_sell.sendData(res, services);
@@ -69,9 +69,9 @@ class Store_sell extends Controller{
 			Store_sell.sendError(res, err, err.message);
 		}
 	}
-	static async get_invoice_sale_id(req, res){
+	static async get_invoice_sell_id(req, res){
         try{
-			let data = await Invoice_sale.findOne({company : req.session.store.company, _id: req.params.id}).populate({
+			let data = await Invoice_sell.findOne({company : req.session.store.company, _id: req.params.id}).populate({
 				path: 'customer',
 				populate: { path: 'Customer'},
 				select: 'name'
@@ -89,7 +89,7 @@ class Store_sell extends Controller{
 			Store_sell.sendError(res, err, err.message);
 		}
 	}
-	static async get_invoice_sale(req, res){
+	static async get_invoice_sell(req, res){
         try{
 			let now = new Date();
 			let start_month = new Date(now.getFullYear(),now.getMonth(),1,0,0,0);
@@ -106,10 +106,10 @@ class Store_sell extends Controller{
 			let currentPage = req.body.paging_num || 1
 	
 			// find total item
-			let pages = await Invoice_sale.find(match).countDocuments()
+			let pages = await Invoice_sell.find(match).countDocuments()
 			// find total pages
 			let pageCount = Math.ceil(pages/pageSize)
-			let data = await Invoice_sale.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
+			let data = await Invoice_sell.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
 				path: 'customer',
 				populate: { path: 'Customer'},
 				select: 'name'
@@ -146,12 +146,12 @@ class Store_sell extends Controller{
 	}
 	static async get_by_id(req,res){
 		try{
-			let find = await Product_service.findOne({company :req.session.store.company, isSale: true, _id: req.body.id}).populate({
+			let find = await Product_service.findOne({company :req.session.store.company, isSell: true, _id: req.body.id}).populate({
 				path: 'stocks_in_store',
 				match: { store_id: req.session.store._id },
-				select: 'product_of_sale',
+				select: 'product_of_sell',
 			})
-			if(find.type == "product" && find.stocks_in_store[0].product_of_sale == 0){
+			if(find.type == "product" && find.stocks_in_store[0].product_of_sell == 0){
 				return Store_sell.sendError(res, "Sản phẩm hết hàng", "Vui lòng chọn sản phẩm khác hoặc thêm sản phẩm"); 
 			}
 			Store_sell.sendData(res, find);
@@ -196,7 +196,7 @@ class Store_sell extends Controller{
 	static async get_customer(req, res){
 		try{
 			let customer = await Customer.findOne({company: req.session.store.company, _id: req.body.id});
-			let history_sell = await Invoice_sale.find({company: req.session.store.company, customer:req.body.id}).sort({createdAt: -1}).limit(20).populate({
+			let history_sell = await Invoice_sell.find({company: req.session.store.company, customer:req.body.id}).sort({createdAt: -1}).limit(20).populate({
 				path: 'list_item.id',
 				populate: { path: 'Product_services'},
 				select:'name number_code'
@@ -304,7 +304,7 @@ class Store_sell extends Controller{
 
 			invoice_service.log_service.unshift(log._id)
 			await invoice_service.save()
-			let checkCanEditBill = await Invoice_sale.findOne({company:req.session.store.company, _id:invoice_service.invoice})
+			let checkCanEditBill = await Invoice_sell.findOne({company:req.session.store.company, _id:invoice_service.invoice})
 			if(checkCanEditBill.isCanBeEdit !== false){
 				checkCanEditBill.isCanBeEdit = false
 				await checkCanEditBill.save()
@@ -337,7 +337,7 @@ class Store_sell extends Controller{
 			let end_day = new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,0,0,0);
 			let start_month = new Date(now.getFullYear(),now.getMonth(),1,0,0,0);
 			let end_month = new Date(now.getFullYear(),Number(now.getMonth())+1,1,0,0,0);
-			let report_day = await Invoice_sale.aggregate([
+			let report_day = await Invoice_sell.aggregate([
 				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company), isActive:true,store: mongoose.Types.ObjectId(req.session.store._id), createdAt: {$gte: start_day, $lt: end_day}}},
 				{ $group : {
 					_id: null,
@@ -407,7 +407,7 @@ class Store_sell extends Controller{
 				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},
 				{ $lookup:
 					 {
-					   from: Invoice_sale.collection.name,
+					   from: Invoice_sell.collection.name,
 					   let: { "pid" : "$_id", "start_month":start_month,"end_month":end_month},
 					   pipeline: [
 							{ $match:
@@ -433,7 +433,7 @@ class Store_sell extends Controller{
 				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},
 				{ $lookup:
 					 {
-					   from: Invoice_sale.collection.name,
+					   from: Invoice_sell.collection.name,
 					   let: { "pid" : "$_id", "start_day":start_day,"end_day":end_day},
 					   pipeline: [
 							{ $match:
@@ -516,10 +516,10 @@ class Store_sell extends Controller{
 			let payment = 0;
 			let payment_back = 0;
 			for(let i = 0, list_item_length = list_item.length; i < list_item_length; i++){
-				let check_product_service = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:list_item[i].id}).populate({
+				let check_product_service = await Product_service.findOne({company :req.session.store.company, isSell: true, _id:list_item[i].id}).populate({
 					path: 'stocks_in_store',
 					match: { store_id: req.session.store._id },
-					select: 'product_of_sale',
+					select: 'product_of_sell',
 				}).populate({
 					path: 'combo.id',
 					populate: { path: 'Product_services' },
@@ -529,7 +529,7 @@ class Store_sell extends Controller{
 				}
 				list_item[i] =  Object.assign(list_item[i], check_product_service._doc);
 
-				if(list_item[i].type == 'product' && list_item[i].sell_quantity > list_item[i].stocks_in_store[0].product_of_sale){
+				if(list_item[i].type == 'product' && list_item[i].sell_quantity > list_item[i].stocks_in_store[0].product_of_sell){
 					return Store_sell.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 				}else{
 					let check_price 
@@ -569,12 +569,12 @@ class Store_sell extends Controller{
 								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: item.id.times, name: item.id.name})
 							}
 						}else{
-							let check_product = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:item.id._id}).populate({
+							let check_product = await Product_service.findOne({company :req.session.store.company, isSell: true, _id:item.id._id}).populate({
 								path: 'stocks_in_store',
 								match: { store_id: req.session.store._id },
-								select: 'product_of_sale',
+								select: 'product_of_sell',
 							})
-							if(list_item[i].sell_quantity *item.quantity > check_product.stocks_in_store[0].product_of_sale){
+							if(list_item[i].sell_quantity *item.quantity > check_product.stocks_in_store[0].product_of_sell){
 								return Store_sell.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 							}
 							list_product.push({
@@ -628,11 +628,11 @@ class Store_sell extends Controller{
 			}
 
 			//invoice sell	
-			let serial_sale =  await Common.get_serial_store(req.session.store._id, 'BH')
+			let serial_sell =  await Common.get_serial_store(req.session.store._id, 'BH')
 			let serial_stock =  await Common.get_serial_store(req.session.store._id, 'XH')
-			let invoice_sale = Invoice_sale({
-				serial: serial_sale,
-				type : "sale",
+			let invoice_sell = Invoice_sell({
+				serial: serial_sell,
+				type : "sell",
 				company: req.session.store.company,
 				store: req.session.store._id,
 				payment_back: payment_back,
@@ -646,24 +646,24 @@ class Store_sell extends Controller{
 				bill:[],
 				createdAt: time
 			})
-			await invoice_sale.save()
+			await invoice_sell.save()
 
 			//invoice store stocks
 			if(list_product != false){
 				let invoice_stock = Invoice_product_store({
 					serial: serial_stock,
-					type: "sale",
+					type: "sell",
 					company: req.session.store.company, 
 					store: req.session.store._id, 
 					list_products: list_product,
 					who_created: req.session.store.name,
-					invoice: invoice_sale._id,
+					invoice: invoice_sell._id,
 					createdAt: time
 				})
 				
 				await invoice_stock.save()
 				for (let i = 0; i < list_product.length; i++){
-					let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.store.company, store_id:req.session.store._id, product: list_product[i].product},{$inc:{product_of_sale:Number(list_product[i].quantity)*-1, quantity:Number(list_product[i].quantity)*-1}},{new: true})
+					let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.store.company, store_id:req.session.store._id, product: list_product[i].product},{$inc:{product_of_sell:Number(list_product[i].quantity)*-1, quantity:Number(list_product[i].quantity)*-1}},{new: true})
 					store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_stock._id);
 					invoice_stock.list_products[i].current_quantity = store_stocks.quantity
 					store_stocks.save();
@@ -691,8 +691,8 @@ class Store_sell extends Controller{
 					createdAt: time
 				})
 				await card_book.save()
-				invoice_sale.bill.push(card_book._id)
-				await invoice_sale.save()
+				invoice_sell.bill.push(card_book._id)
+				await invoice_sell.save()
 				if(check_customer != false){
 					let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_customer._id},{$inc:{payment:req.body.customer_pay_card}},{new: true})
 					customer.point = Math.trunc(customer.payment / 10000)
@@ -723,8 +723,8 @@ class Store_sell extends Controller{
 					createdAt: time
 				})
 				await cash_book.save()
-				invoice_sale.bill.push(cash_book._id)
-				await invoice_sale.save()
+				invoice_sell.bill.push(cash_book._id)
+				await invoice_sell.save()
 				if(check_customer != false){
 					let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_customer._id},{$inc:{payment:money_payment}},{new: true})
 					customer.point = Math.trunc(customer.payment / 10000)
@@ -741,15 +741,15 @@ class Store_sell extends Controller{
 					serial:serial_service,
 					times:list_service[t].times,
 					service:list_service[t].service,
-					invoice: invoice_sale._id,
+					invoice: invoice_sell._id,
 					createdAt: time
 				})
 				await invoice_service.save()
 				list_service[t].serial = serial_service
 			}
-			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount, payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)
-			invoice_sale.bill_html = bill
-			await invoice_sale.save()
+			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount, payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sell)
+			invoice_sell.bill_html = bill
+			await invoice_sell.save()
             Store_sell.sendData(res, bill);
 		}catch(err){
 			console.log(err.message)
@@ -759,7 +759,7 @@ class Store_sell extends Controller{
 	static async update_bill(req, res){
 		try{
 			//check can edit bill
-			let check_bill = await Invoice_sale.findOne({company :req.session.store.company,store:req.session.store._id,_id:req.body.id})
+			let check_bill = await Invoice_sell.findOne({company :req.session.store.company,store:req.session.store._id,_id:req.body.id})
 			if(check_bill.isCanBeEdit === false){
 				return Store_sell.sendError(res, "Lỗi hóa đơn đã được sử dụng dịch vụ", "Không thể chỉnh sửa hóa đơn");
 			}
@@ -780,10 +780,10 @@ class Store_sell extends Controller{
 			let payment = 0;
 			let payment_back = 0;
 			for(let i = 0, list_item_length = list_item.length; i < list_item_length; i++){
-				let check_product_service = await Product_service.findOne({company :req.session.store.company, isSale: true, _id:list_item[i].id}).populate({
+				let check_product_service = await Product_service.findOne({company :req.session.store.company, isSell: true, _id:list_item[i].id}).populate({
 					path: 'stocks_in_store',
 					match: { store_id: req.session.store._id },
-					select: 'product_of_sale',
+					select: 'product_of_sell',
 				}).populate({
 					path: 'combo.id',
 					populate: { path: 'Product_services' },
@@ -869,12 +869,12 @@ class Store_sell extends Controller{
 				await check_discount.save()
 			}
 
-			//invoice sale	
-			let serial_sale =  await Common.get_serial_store(req.session.store._id, 'BH')
+			//invoice sell
+			let serial_sell =  await Common.get_serial_store(req.session.store._id, 'BH')
 			let serial_stock =  await Common.get_serial_store(req.session.store._id, 'XH')
-			let invoice_sale = Invoice_sale({
-				serial: serial_sale,
-				type : "sale",
+			let invoice_sell = Invoice_sell({
+				serial: serial_sell,
+				type : "sell",
 				company: req.session.store.company,
 				store: req.session.store._id,
 				payment_back: payment_back,
@@ -888,26 +888,26 @@ class Store_sell extends Controller{
 				bill:[],
 				createdAt: time
 			})
-			await invoice_sale.save()
+			await invoice_sell.save()
 
 			//invoice store stocks
 			if(list_product != false){
 				let invoice_stock = Invoice_product_store({
 					serial: serial_stock,
-					type: "sale",
+					type: "sell",
 					company: req.session.store.company, 
 					store: req.session.store._id, 
 					list_products: list_product,
 					who_created: req.session.store.name,
-					invoice: invoice_sale._id,
+					invoice: invoice_sell._id,
 					createdAt: time
 				})
 				
 				await invoice_stock.save()
 				for (let i = 0; i < list_product.length; i++){
-					let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.store.company, store_id:req.session.store._id, product: list_product[i].product},{$inc:{product_of_sale:Number(list_product[i].quantity)*-1, quantity:Number(list_product[i].quantity)*-1}},{new: true})
+					let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.store.company, store_id:req.session.store._id, product: list_product[i].product},{$inc:{product_of_sell:Number(list_product[i].quantity)*-1, quantity:Number(list_product[i].quantity)*-1}},{new: true})
 					store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_stock._id);
-					invoice_stock.list_products[i].current_quantity = store_stocks.product_of_sale
+					invoice_stock.list_products[i].current_quantity = store_stocks.product_of_sell
 					store_stocks.save();
 				}
 				await invoice_stock.save()
@@ -932,8 +932,8 @@ class Store_sell extends Controller{
 					createdAt: time
 				})
 				await card_book.save()
-				invoice_sale.bill.push(card_book._id)
-				await invoice_sale.save()
+				invoice_sell.bill.push(card_book._id)
+				await invoice_sell.save()
 				if(check_customer != false){
 					let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_customer._id},{$inc:{payment:req.body.customer_pay_card}},{new: true})
 					customer.point = Math.trunc(customer.payment / 10000)
@@ -964,8 +964,8 @@ class Store_sell extends Controller{
 					createdAt: time
 				})
 				await cash_book.save()
-				invoice_sale.bill.push(cash_book._id)
-				await invoice_sale.save()
+				invoice_sell.bill.push(cash_book._id)
+				await invoice_sell.save()
 				if(check_customer != false){
 					let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_customer._id},{$inc:{payment:money_payment}},{new: true})
 					customer.point = Math.trunc(customer.payment / 10000)
@@ -982,15 +982,15 @@ class Store_sell extends Controller{
 					serial:serial_service,
 					times:list_service[t].times,
 					service:list_service[t].service,
-					invoice: invoice_sale._id,
+					invoice: invoice_sell._id,
 					createdAt: time
 				})
 				await invoice_service.save()
 				list_service[t].serial = serial_service
 			}
-			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount, payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sale)
-			invoice_sale.bill_html = bill
-			await invoice_sale.save()
+			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount, payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sell)
+			invoice_sell.bill_html = bill
+			await invoice_sell.save()
             Store_sell.sendData(res, bill);
 		}catch(err){
 			console.log(err.message)

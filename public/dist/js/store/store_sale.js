@@ -130,7 +130,7 @@ $( document ).ready(()=>{
 		tab_list[tab_number].note_bill = $('#note_bill').val()
 	});
 	$('#modal_edit_bill').on('shown.bs.modal', function () {
-		get_invoice_sale('1');
+		get_invoice_sell('1');
 	});
 	$('#report').on('shown.bs.modal', function () {
 		 $.ajax({
@@ -233,7 +233,7 @@ function search_product() {
 										<span class="number_code">Mã: ${item.number_code}</span><span class="float-right">Giá bán: ${convert_vnd(check_price_book(item))}</span><br>
 									`
 							if (item.type == "product") {
-								html += `<span>Số lượng: ${item.stocks_in_store[0].product_of_sale}</span>`
+								html += `<span>Số lượng: ${item.stocks_in_store[0].product_of_sell}</span>`
 							}
 							html += `</li>`
 						});
@@ -342,12 +342,12 @@ function add_product(id){
 					}else{
 						let check = tab_list[tab_number].item.findIndex(element => element.number_code == product.number_code);
 						if(check != -1 && product.type == "product"){
-							if(tab_list[tab_number].item[check].quantity +1 <= product.stocks_in_store[0].product_of_sale){
+							if(tab_list[tab_number].item[check].quantity +1 <= product.stocks_in_store[0].product_of_sell){
 								tab_list[tab_number].item[check].quantity++
-								tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale 
+								tab_list[tab_number].item[check].stocks_in_store[0].product_of_sell = product.stocks_in_store[0].product_of_sell 
 							}else{
-								tab_list[tab_number].item[check].quantity = product.stocks_in_store[0].product_of_sale
-								tab_list[tab_number].item[check].stocks_in_store[0].product_of_sale = product.stocks_in_store[0].product_of_sale
+								tab_list[tab_number].item[check].quantity = product.stocks_in_store[0].product_of_sell
+								tab_list[tab_number].item[check].stocks_in_store[0].product_of_sell = product.stocks_in_store[0].product_of_sell
 							}
 						}else{
 							tab_list[tab_number].item.push(Object.assign(product, {quantity: 1}))
@@ -414,7 +414,7 @@ function render_tablist(tab_number){
 			if(item.type != "product"){
 				html += `<td><input class="form-control form-control-sm" style="max-width:60px; " min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="999" value="${item.quantity}"></td>`
 			}else{
-				html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="${item.stocks_in_store[0].product_of_sale}" value="${item.quantity}"></td>`
+				html += `<td><input class="form-control form-control-sm" style="width:60px" min="0" type="number" onchange="change_quantity(${tab_number}, ${index}, this)" id="quantity-${item.number_code}" max="${item.stocks_in_store[0].product_of_sell}" value="${item.quantity}"></td>`
 			}  
 				 html+= `<td><span class="total" id="total-${item.number_code}" >${convert_vnd(check_price*item.quantity)}</span></td>
 						<td width="5%"><span style="color:red; cursor: pointer" onclick="delete_row_product(${tab_number},${index})"><i class="fas fa-times-circle"></i></span></td>
@@ -518,10 +518,10 @@ function change_quantity(tab_number, index, btn){
 		tab_list[tab_number].item.splice(index,1)
 	}else{
 		if(tab_list[tab_number].item[index].type == "product"){ 
-			if(number <= tab_list[tab_number].item[index].stocks_in_store[0].product_of_sale){
+			if(number <= tab_list[tab_number].item[index].stocks_in_store[0].product_of_sell){
 				tab_list[tab_number].item[index].quantity = number
 			}else{
-				tab_list[tab_number].item[index].quantity = tab_list[tab_number].item[index].stocks_in_store[0].product_of_sale
+				tab_list[tab_number].item[index].quantity = tab_list[tab_number].item[index].stocks_in_store[0].product_of_sell
 			}			
 		}else{
 			tab_list[tab_number].item[index].quantity = number
@@ -1286,7 +1286,7 @@ function add_tab_menu(){
 	
 	
 }
-function get_invoice_sale(paging_num){
+function get_invoice_sell(paging_num){
     if(!paging_num){
         paging_num = page_now
     }
@@ -1295,7 +1295,7 @@ function get_invoice_sale(paging_num){
         _csrf: $('#_csrf').val()
     }
     $.ajax({
-        url:'/invoice_sales',
+        url:'/invoice_sells',
         method:'POST',
         data: data,
         success: function(data){
@@ -1391,7 +1391,7 @@ function render_data(data, pageCount, currentPage){
         if (currentPage == 1){
             pageination += `<li class="page-item disabled"><a class="page-link" href="#"><<</a></li>`  
         }else{
-            pageination += `<li class="page-item"><a class="page-link" onclick="get_invoice_sale('1')"><<</a></li>`  
+            pageination += `<li class="page-item"><a class="page-link" onclick="get_invoice_sell('1')"><<</a></li>`  
         }
         if (i != 1) {
             pageination += `<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`
@@ -1401,7 +1401,7 @@ function render_data(data, pageCount, currentPage){
             if (currentPage == i) {
                 pageination += `<li class="page-item active"><a class="page-link">${i}</a></li>`
             } else {
-                    pageination += `<li class="page-item"><a class="page-link" onclick="get_invoice_sale('${i}')">${i}</a></li>`
+                    pageination += `<li class="page-item"><a class="page-link" onclick="get_invoice_sell('${i}')">${i}</a></li>`
             }
             if (i == Number(currentPage) + 4 && i < pageCount) {
                 pageination += `<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`
@@ -1411,7 +1411,7 @@ function render_data(data, pageCount, currentPage){
         if (currentPage == pageCount){
             pageination += `<li class="page-item disabled"><a class="page-link"">>></a></li>`
         }else{
-            pageination += `<li class="page-item"><a class="page-link" onclick="get_invoice_sale('${i-1}')">>></a></li>`
+            pageination += `<li class="page-item"><a class="page-link" onclick="get_invoice_sell('${i-1}')">>></a></li>`
         }
             
         pageination += `</ul>`
@@ -1431,7 +1431,7 @@ function view_bill(btn,id){
 }
 function edit_bill(id){
 	$.ajax({
-        url:`/invoice_sales/${id}`,
+        url:`/invoice_sells/${id}`,
         method:'GET',
         data: {_csrf: $('#_csrf').val()},
         success: function(data){

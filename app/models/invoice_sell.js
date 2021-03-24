@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Invoice_sale_Schema = mongoose.Schema({	
+const Invoice_sell_Schema = mongoose.Schema({	
     serial: {
         type: String,required: true
     },
@@ -71,4 +71,4 @@ const Invoice_sale_Schema = mongoose.Schema({
 	
 }, { timestamps: true });
 
-module.exports = mongoose.model('Invoice_sale', Invoice_sale_Schema);
+module.exports = mongoose.model('Invoice_sell', Invoice_sell_Schema);

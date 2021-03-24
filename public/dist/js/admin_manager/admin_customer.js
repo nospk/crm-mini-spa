@@ -168,7 +168,7 @@ function edit_data(id){
         success: function(data){
 			if(data.status == 1){
                 let customer = data.data.customer;
-                let history_sale = data.data.history_sale;
+                let history_sell = data.data.history_sell;
                 let service = data.data.service;
 				let log_service = data.data.log_service;
 				$('#edit_data #edit_name').val(customer.name);
@@ -179,7 +179,7 @@ function edit_data(id){
 				$('#edit_data #edit_address').val(customer.address);
 				$('#edit_data #edit_id').val(customer._id);
                 $('#edit_data').modal('show');
-                let html_history_sale = `<table class="table table-sm  table-hover">
+                let html_history_sell = `<table class="table table-sm  table-hover">
                                         <thead>
                                             <tr>
                                             <th>Ngày</th>
@@ -192,24 +192,23 @@ function edit_data(id){
                                         </thead>
                                         <tbody>`;
                 
-                history_sale.forEach((item, index)=>{
-                    html_history_sale+=`<tr>
+                history_sell.forEach((item, index)=>{
+                    html_history_sell+=`<tr>
                             <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
 							<td>${item.serial}</td>
 							<td>`
-                            history_sale[index].list_item.forEach(sale=>{
-                                console.log(sale)
-                            html_history_sale += `<p style="margin-bottom:0px;">${sale.id.name} (${sale.id.number_code}): ${sale.quantity}</p>`
+                            history_sell[index].list_item.forEach(sell=>{
+                                html_history_sell += `<p style="margin-bottom:0px;">${sell.id.name} (${sell.id.number_code}): ${sell.quantity}</p>`
                         })        
-                    html_history_sale +=    `</td><td>${item.employees.name}</td>
+                        html_history_sell +=    `</td><td>${item.employees.name}</td>
                             <td>${convert_vnd(item.payment)}</td>
                             <td>${item.discount ? item.discount.number_code : ""}</td>
                             </tr>`
                 })
-                html_history_sale+=`</tbody>
+                html_history_sell+=`</tbody>
                             </table>
                         `;
-                $('#edit-history-payment-tab').html(html_history_sale);
+                $('#edit-history-payment-tab').html(html_history_sell);
                 let html_service= `<table class="table table-sm  table-hover">
                                     <thead>
                                         <tr>

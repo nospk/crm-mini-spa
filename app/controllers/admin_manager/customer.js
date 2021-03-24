@@ -1,7 +1,7 @@
 const Controller = require('../../../core/controller');
 const Customer = require('../../models/customer');
 const mongoose = require('mongoose');
-const Invoice_sale = require('../../models/invoice_sale');
+const Invoice_sell = require('../../models/invoice_sell');
 const Log_service = require('../../models/log_service');
 const Invoice_service = require('../../models/invoice_service');
 const Common = require("../../../core/common");
@@ -64,7 +64,7 @@ class Admin_customer extends Controller{
 	static async edit_data(req, res){
 		try{
 			let customer = await Customer.findOne({company: req.session.user.company._id, _id: req.body.id});
-			let history_sale = await Invoice_sale.find({company: req.session.user.company._id, customer:req.body.id}).sort({createdAt: -1}).limit(20).populate({
+			let history_sell = await Invoice_sell.find({company: req.session.user.company._id, customer:req.body.id}).sort({createdAt: -1}).limit(20).populate({
 				path: 'list_item.id',
 				populate: { path: 'Product_services'},
 				select:'name number_code'
@@ -91,7 +91,7 @@ class Admin_customer extends Controller{
 				populate: { path: 'Employees'},
 				select:'name'
 			})
-			Admin_customer.sendData(res, {customer, history_sale, service, log_service});
+			Admin_customer.sendData(res, {customer, history_sell, service, log_service});
 		}catch(err){
 			console.log(err.message)
 			Admin_customer.sendError(res, err, err.message);

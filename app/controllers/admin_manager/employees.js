@@ -90,8 +90,6 @@ class Admin_employees extends Controller{
 					find.query_name = await Common.removeVietnameseTones(req.body.name);
 					find.birthday = req.body.birthday;
 					find.gener = req.body.gener;
-					find.number_sales = req.body.number_sales;
-					find.number_service = req.body.number_service;
 					find.store = req.body.store != false ? req.body.store : undefined;
 					find.address = req.body.address;
 					find.identity_number = req.body.identity_number;

@@ -55,7 +55,7 @@ class Admin_product_service extends Controller{
 			let data = await Product_service.findOne({company: req.session.user.company._id, _id: req.body.id}).populate({
 				path: 'stocks_in_store',
 				populate: { path: 'Stores' },
-				select: 'store_name quantity product_of_sale product_of_service product_of_undefined'
+				select: 'store_name quantity product_of_sell product_of_service product_of_undefined'
 			}).populate({
 				path: 'stocks_in_storage',
 				populate: { path: 'Storage_stocks' },
@@ -182,7 +182,7 @@ class Admin_product_service extends Controller{
 				}else{
 					find.name = req.body.name;
 					find.query_name = await Common.removeVietnameseTones(req.body.name);
-					find.isSale = req.body.isSale;
+					find.isSell = req.body.isSell;
 					find.price = req.body.price;
 					find.description = req.body.description;
 					find.number_code = req.body.number_code;
@@ -217,7 +217,7 @@ class Admin_product_service extends Controller{
 	}
 	static async delete_data(req, res){
 		try{
-			let check = await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.id}, {isActive: false, isSale: false});
+			let check = await Product_service.findOneAndUpdate({company: req.session.user.company._id, _id: req.body.id}, {isActive: false, isSell: false});
 			if(check.type != "combo"){
 				await Product_service.findOneAndUpdate({company: req.session.user.company._id, type:"combo"}, {$pull: {combo: {id: check._id}}});
 			}

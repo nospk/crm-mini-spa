@@ -281,7 +281,7 @@ function render_data(data, pageCount, currentPage){
                 <td>${item.number_code}</td>
 				<td>${convert_vnd(item.cost_price)}</td>
 				<td>${convert_vnd(item.price)}</td>
-                <td>${item.isSale ? "Đang kinh doanh" : "Ngừng kinh doanh"}</td>
+                <td>${item.isSell ? "Đang kinh doanh" : "Ngừng kinh doanh"}</td>
 				<td class="text-center">${item.type == 'product'? item.stocks_in_storage.quantity : ""}</td>
 				<td class="text-center">${item.type == 'product'? item.quantity : ""}</td>
                 </tr>`
@@ -413,7 +413,7 @@ function edit_data(id){
 				$('#edit_data #edit_type_product_service').val(data.data.type),
 				$('#edit_data #edit_number_code').val(data.data.number_code);
 				$('#edit_data #edit_description').val(data.data.description);
-				$('#edit_data #isSale').val(data.data.isSale.toString())
+				$('#edit_data #isSell').val(data.data.isSell.toString())
                 $('#edit_data #edit_id').val(data.data._id);
 				$('#edit_data #edit_brand').val(data.data.brand);
 				$('#edit_data #edit_group').val(data.data.group).change();
@@ -472,7 +472,7 @@ function edit_data(id){
                                     <div class="info-box-content">
                                         <span class="info-box-text">Cửa hàng ${data.data.stocks_in_store[i].store_name}</span>
 										<span class="info-box-number">Tổng hàng : ${data.data.stocks_in_store[i].quantity}</span>
-                                        <span class="info-box-text">Hàng bán:</span><span class="info-box-number">${data.data.stocks_in_store[i].product_of_sale}</span>
+                                        <span class="info-box-text">Hàng bán:</span><span class="info-box-number">${data.data.stocks_in_store[i].product_of_sell}</span>
 										<span class="info-box-text">Hàng dịch vụ:</span><span class="info-box-number">${data.data.stocks_in_store[i].product_of_service}</span>
 										<span class="info-box-text">Hàng chưa phân loại:</span><span class="info-box-number">${data.data.stocks_in_store[i].product_of_undefined}</span>
                                     </div>
@@ -547,7 +547,7 @@ function update_data(){
             number_code: $('#edit_data #edit_number_code').val(),
             description: $('#edit_data #edit_description').val(),
             service_price: convert_number($('#edit_data #edit_service_price').val()),
-            isSale: $('#edit_data #isSale').val(),
+            isSell: $('#edit_data #isSell').val(),
 			times_service: $('#edit_data #edit_times_service').val(),
             brand: $('#edit_data #edit_brand').val() == "" ? undefined: $('#edit_data #edit_brand').val(),
 			times: ($('#edit_type_product_service').val() == "service" || $('#edit_type_product_service').val() == "hair_removel") ? $('#edit_data #edit_times_choose').val() : undefined,
@@ -563,7 +563,7 @@ function update_data(){
             cost_price: convert_number($('#edit_data #edit_cost_price').val()),
             number_code: $('#edit_data #edit_number_code').val(),
             description: $('#edit_data #edit_description').val(),
-            isSale: $('#edit_data #isSale').val(),
+            isSell: $('#edit_data #isSell').val(),
             brand: $('#edit_data #edit_brand').val() == "" ? undefined: $('#edit_data #edit_brand').val(),
             group: $('#edit_data #edit_group').val(),
             id: $('#edit_data #edit_id').val(),

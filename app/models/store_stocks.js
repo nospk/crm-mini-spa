@@ -15,7 +15,7 @@ const Store_stocks_Schema = mongoose.Schema({
     quantity:{
         type: Number, default:0
     },
-	product_of_sale:{
+	product_of_sell:{
 		type: Number, default:0
 	},
 	product_of_service:{

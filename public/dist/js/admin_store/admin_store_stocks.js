@@ -62,10 +62,10 @@ function render_data(data, pageCount, currentPage) {
         html += `<tr onclick="show_history_stocks('${item.stocks_in_store[0]._id}')" class="pointer">
                 <td>${item.name}</td>
                 <td>${item.number_code}</td>
-				<td>${item.isSale ? "Đang kinh doanh" : "Ngừng kinh doanh"}</td>
+				<td>${item.isSell ? "Đang kinh doanh" : "Ngừng kinh doanh"}</td>
 				<td>${item.stocks_in_store[0].quantity}</td>
 				<td>${item.stocks_in_store[0].product_of_undefined}</td>
-				<td>${item.stocks_in_store[0].product_of_sale}</td>
+				<td>${item.stocks_in_store[0].product_of_sell}</td>
 				<td>${item.stocks_in_store[0].product_of_service}</td>
                 <td></td>
                 </tr>`
@@ -294,7 +294,7 @@ function render_check_stocks(data) {
         html += `<tr>
                 <td>${item.product.name}</td>
                 <td><span class="number-code">${item.product.number_code}</span></td>
-				<td><input type="number" class="form-control form-control-sm" min="0" max="${item.product_of_sale}" value="${item.product_of_sale}" onchange="check_lost_stocks('${item.product.number_code}')" id="check_quantity_sale_${item.product.number_code}"></td>
+				<td><input type="number" class="form-control form-control-sm" min="0" max="${item.product_of_sell}" value="${item.product_of_sell}" onchange="check_lost_stocks('${item.product.number_code}')" id="check_quantity_sale_${item.product.number_code}"></td>
 				<td><input type="number" class="form-control form-control-sm" min="0" max="${item.product_of_service}" value="${item.product_of_service}"  onchange="check_lost_stocks('${item.product.number_code}')" id="check_quantity_service_${item.product.number_code}"></td>
 				<td><input style="border-style:none;width: 100px;" disabled id="stock_lost_${item.product.number_code}" value="0"></td>
 				<input type="hidden" id="check_quantity_${item.product.number_code}"value="${item.quantity}" >
@@ -378,7 +378,7 @@ function get_list_lost_stocks() {
     list_product.forEach((number_code) => {
         if ($(`#stock_lost_${number_code}`).val() > 0) {
             data.push({
-                product_of_sale: Number($(`#check_quantity_sale_${number_code}`).val()),
+                product_of_sell: Number($(`#check_quantity_sale_${number_code}`).val()),
                 product_of_service: Number($(`#check_quantity_service_${number_code}`).val()),
                 lost_stocks: Number($(`#stock_lost_${number_code}`).val()),
                 current_quantity: Number($(`#check_quantity_${number_code}`).val()) - Number($(`#stock_lost_${number_code}`).val()),
@@ -397,7 +397,7 @@ function get_list_product() {
     list_product.forEach((number_code) => {
         if ($(`#quantity_sale_${number_code}`).val() > 0 || $(`#quantity_service_${number_code}`).val() > 0) {
             data.push({
-                product_of_sale: Number($(`#quantity_sale_${number_code}`).val()),
+                product_of_sell: Number($(`#quantity_sale_${number_code}`).val()),
                 product_of_service: Number($(`#quantity_service_${number_code}`).val()),
                 id: $(`#id_${number_code}`).val()
             })

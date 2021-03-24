@@ -4,7 +4,7 @@ const Invoice_sell_Schema = mongoose.Schema({
         type: String,required: true
     },
     type:{
-        type: String, required: true //sale - back
+        type: String, required: true //sell - back
     },
     company:{
 		type: mongoose.Schema.Types.ObjectId, required: true, ref:'Company' 

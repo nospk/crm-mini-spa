@@ -111,7 +111,7 @@ function render_data(data, pageCount, currentPage) {
 }
 function convertTypetoString(str) {
     switch (str) {
-        case 'sale':
+        case 'sell':
             return "Bán";
             break;
         case 'import':
@@ -294,7 +294,7 @@ function render_check_stocks(data) {
         html += `<tr>
                 <td>${item.product.name}</td>
                 <td><span class="number-code">${item.product.number_code}</span></td>
-				<td><input type="number" class="form-control form-control-sm" min="0" max="${item.product_of_sell}" value="${item.product_of_sell}" onchange="check_lost_stocks('${item.product.number_code}')" id="check_quantity_sale_${item.product.number_code}"></td>
+				<td><input type="number" class="form-control form-control-sm" min="0" max="${item.product_of_sell}" value="${item.product_of_sell}" onchange="check_lost_stocks('${item.product.number_code}')" id="check_quantity_sell_${item.product.number_code}"></td>
 				<td><input type="number" class="form-control form-control-sm" min="0" max="${item.product_of_service}" value="${item.product_of_service}"  onchange="check_lost_stocks('${item.product.number_code}')" id="check_quantity_service_${item.product.number_code}"></td>
 				<td><input style="border-style:none;width: 100px;" disabled id="stock_lost_${item.product.number_code}" value="0"></td>
 				<input type="hidden" id="check_quantity_${item.product.number_code}"value="${item.quantity}" >
@@ -324,7 +324,7 @@ function render_data_classification(data) {
                 <td>${item.product.name}</td>
                 <td><span class="number-code">${item.product.number_code}</span></td>
 				<td><input style="border-style:none;width: 100px;" disabled id="quantity_${item.product.number_code}" value="${item.product_of_undefined}"></td>
-				<td><input type="number" class="form-control form-control-sm" min="0" value="0" onchange="change_product_sale('${item.product.number_code}')" id="quantity_sale_${item.product.number_code}"></td>
+				<td><input type="number" class="form-control form-control-sm" min="0" value="0" onchange="change_product_sell('${item.product.number_code}')" id="quantity_sell_${item.product.number_code}"></td>
 				<td><input type="number" class="form-control form-control-sm" min="0" value="0" onchange="change_product_service('${item.product.number_code}')" id="quantity_service_${item.product.number_code}"></td>
 				<input type="hidden" id="default_quantity_${item.product.number_code}"value="${item.product_of_undefined}" >
 				<input type="hidden" id="id_${item.product.number_code}"value="${item._id}" >
@@ -337,21 +337,21 @@ function render_data_classification(data) {
 }
 
 function check_lost_stocks(number_code) {
-    let max_product_sale = Number($(`#check_quantity_sale_${number_code}`).attr('max'));
+    let max_product_sell = Number($(`#check_quantity_sell_${number_code}`).attr('max'));
     let max_product_service = Number($(`#check_quantity_service_${number_code}`).attr('max'));
-    let product_sale = Number($(`#check_quantity_sale_${number_code}`).val());
+    let product_sell = Number($(`#check_quantity_sell_${number_code}`).val());
     let product_service = Number($(`#check_quantity_service_${number_code}`).val());
-    let lost_stocks = (max_product_sale - product_sale) + (max_product_service - product_service);
+    let lost_stocks = (max_product_sell - product_sell + (max_product_service - product_service);
     $(`#stock_lost_${number_code}`).val(lost_stocks);
 }
-function change_product_sale(number_code) {
+function change_product_sell(number_code) {
     let quantity = $(`#default_quantity_${number_code}`).val()
-    let change_number = $(`#quantity_sale_${number_code}`).val()
+    let change_number = $(`#quantity_sell_${number_code}`).val()
     let quantity_service = $(`#quantity_service_${number_code}`).val()
     if (quantity - change_number - quantity_service >= 0) {
         $(`#quantity_${number_code}`).val(quantity - change_number - quantity_service)
     } else {
-        $(`#quantity_sale_${number_code}`).val(quantity - quantity_service)
+        $(`#quantity_sell_${number_code}`).val(quantity - quantity_service)
         $(`#quantity_${number_code}`).val(0)
     }
 
@@ -359,11 +359,11 @@ function change_product_sale(number_code) {
 function change_product_service(number_code) {
     let quantity = $(`#default_quantity_${number_code}`).val()
     let change_number = $(`#quantity_service_${number_code}`).val()
-    let quantity_sale = $(`#quantity_sale_${number_code}`).val()
-    if (quantity - change_number - quantity_sale >= 0) {
-        $(`#quantity_${number_code}`).val(quantity - change_number - quantity_sale)
+    let quantity_sell = $(`#quantity_sell_${number_code}`).val()
+    if (quantity - change_number - quantity_sell >= 0) {
+        $(`#quantity_${number_code}`).val(quantity - change_number - quantity_sell)
     } else {
-        $(`#quantity_service_${number_code}`).val(quantity - quantity_sale)
+        $(`#quantity_service_${number_code}`).val(quantity - quantity_sell)
         $(`#quantity_${number_code}`).val(0)
     }
 
@@ -378,7 +378,7 @@ function get_list_lost_stocks() {
     list_product.forEach((number_code) => {
         if ($(`#stock_lost_${number_code}`).val() > 0) {
             data.push({
-                product_of_sell: Number($(`#check_quantity_sale_${number_code}`).val()),
+                product_of_sell: Number($(`#check_quantity_sell_${number_code}`).val()),
                 product_of_service: Number($(`#check_quantity_service_${number_code}`).val()),
                 lost_stocks: Number($(`#stock_lost_${number_code}`).val()),
                 current_quantity: Number($(`#check_quantity_${number_code}`).val()) - Number($(`#stock_lost_${number_code}`).val()),
@@ -395,9 +395,9 @@ function get_list_product() {
     });
     let data = [];
     list_product.forEach((number_code) => {
-        if ($(`#quantity_sale_${number_code}`).val() > 0 || $(`#quantity_service_${number_code}`).val() > 0) {
+        if ($(`#quantity_sell_${number_code}`).val() > 0 || $(`#quantity_service_${number_code}`).val() > 0) {
             data.push({
-                product_of_sell: Number($(`#quantity_sale_${number_code}`).val()),
+                product_of_sell: Number($(`#quantity_sell_${number_code}`).val()),
                 product_of_service: Number($(`#quantity_service_${number_code}`).val()),
                 id: $(`#id_${number_code}`).val()
             })

@@ -222,8 +222,6 @@ function edit_data(id){
 			if(data.status == 1){
 				$('#edit_data #edit_name').val(data.data.name);
 				$('#edit_data #edit_gener').val(data.data.gener);
-				$('#edit_data #edit_number_service').val(data.data.number_service);
-				$('#edit_data #edit_number_sales').val(data.data.number_sales ? convert_vnd(data.data.number_sales) : "");
 				$('#edit_data #edit_select_store').val(data.data.store);
 				$('#edit_data #edit_birthday').val(data.data.birthday);
 				$('#edit_data #edit_identity_number').val(data.data.identity_number);
@@ -238,8 +236,6 @@ function edit_data(id){
 function update_data(){
 	let data = {
         name: $('#edit_data #edit_name').val().trim(),
-		number_service: $('#edit_data #edit_number_service').val(),
-		number_sales: convert_number($('#edit_data #edit_number_sales').val()),
         birthday: $('#edit_data #edit_birthday').val().trim(),
 		gener: $('#edit_data #edit_gener').val(),
 		store: $('#edit_data #edit_select_store').val(),

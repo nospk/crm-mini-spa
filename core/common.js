@@ -209,7 +209,7 @@ class Common {
 							</tr>
 				`
 				items.forEach(item =>{
-					if(item.price_sale){
+					if(Number.isInteger(item.price_sale)){
 						bill+=	`<tr style="line-height: 12px;">
 								<td colspan="3" style="padding-top:3px"><span style="font-size:12px">${item.name}</span></td>
 							</tr>

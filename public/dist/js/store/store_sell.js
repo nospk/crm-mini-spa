@@ -125,6 +125,7 @@ $( document ).ready(()=>{
 	$('#select_price_book').on('change', function() {
 		tab_list[tab_number].price_book = $('#select_price_book').val()
 		render_tablist(tab_number);
+		get_service();
 	});
 	$('#note_bill').on('change', function() {
 		tab_list[tab_number].note_bill = $('#note_bill').val()
@@ -1363,7 +1364,7 @@ function render_data(data, pageCount, currentPage){
 							<div class="tab-pane fade active show" id="view-list_item-${item._id}" role="tabpanel">
 				`
 				item.list_item.forEach((item)=>{
-					html+=`<p style="margin-bottom:0px;">${item.id.name} (${item.id.number_code}): ${item.quantity} <span class="float-right">Giá: ${item.price_sale? convert_vnd(item.price_sale) + ' ( Giá gốc: ' + convert_vnd(item.price) + ')' : convert_vnd(item.price)}</span></p>` 
+					html+=`<p style="margin-bottom:0px;">${item.id.name} (${item.id.number_code}): ${item.quantity} <span class="float-right">Giá: ${Number.isInteger(item.price_sale) ? convert_vnd(item.price_sale) + ' ( Giá gốc: ' + convert_vnd(item.price) + ')' : convert_vnd(item.price)}</span></p>` 
                 })
 		html+=`			</div>
 							<div class="tab-pane fade" id="view-bill-${item._id}" role="tabpanel">

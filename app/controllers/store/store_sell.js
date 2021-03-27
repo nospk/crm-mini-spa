@@ -868,9 +868,19 @@ class Store_sell extends Controller{
 				check_discount.times_used = check_discount.times_used +1
 				await check_discount.save()
 			}
-
+			
+			//check old_bill
+			let old_product = []
+			check_bill.list_item.forEach(item =>{
+				if(item.type == 'product') old_product.push(item)
+			});
+			console.log(old_product)
+			let old_service = []
+			check_bill.list_item.forEach(item =>{
+				if(item.type == 'product') old_product.push(item)
+			});
 			//invoice sell
-			let serial_sell =  await Common.get_serial_store(req.session.store._id, 'BH')
+			/* let serial_sell =  await Common.get_serial_store(req.session.store._id, 'BH')
 			let serial_stock =  await Common.get_serial_store(req.session.store._id, 'XH')
 			let invoice_sell = Invoice_sell({
 				serial: serial_sell,
@@ -991,7 +1001,8 @@ class Store_sell extends Controller{
 			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount, payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, invoice_sell)
 			invoice_sell.bill_html = bill
 			await invoice_sell.save()
-            Store_sell.sendData(res, bill);
+            Store_sell.sendData(res, bill); */
+			Store_sell.sendError(res, "check", "check bill");
 		}catch(err){
 			console.log(err.message)
 			Store_sell.sendError(res, err, err.message);

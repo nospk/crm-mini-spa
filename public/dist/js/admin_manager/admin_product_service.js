@@ -44,10 +44,10 @@ $( document ).ready(()=>{
             $('.combo-off').show()
             $('.combo-on').hide()
             $('.hair-removel').show()
-            $('#brand_show').hide()
             $('.times_choose').show()
             $('.times_service').hide()
             $('#cost_price').prop("disabled", false);
+            $('#brand_show').hide();
 		}else{
             get_product_service()
             $('.hair-removel').hide()
@@ -58,6 +58,41 @@ $( document ).ready(()=>{
             $('#cost_price').prop("disabled", true);
         }
 	})
+    $('#create_new').on('shown.bs.modal', function (e) {
+		if($('#type_product_service').val() == "product"){
+            $('.hair-removel').hide()
+            $('#brand_show').show()
+            $('.combo-off').show()
+            $('.combo-on').hide()
+			$('.times_choose').hide()
+            $('.times_service').hide()
+            $('#cost_price').prop("disabled", false);
+		}else if($('#type_product_service').val() == "service"){
+            $('.hair-removel').hide()
+            $('.combo-off').show()
+            $('.combo-on').hide()
+            $('#brand_show').hide()
+			$('.times_choose').show()
+            $('.times_service').show()
+            $('#cost_price').prop("disabled", false);
+        }else if($('#type_product_service').val() == "hair_removel"){
+            $('.combo-off').show()
+            $('.combo-on').hide()
+            $('.hair-removel').show()
+            $('.times_choose').show()
+            $('.times_service').hide()
+            $('#cost_price').prop("disabled", false);
+            $('#brand_show').hide();
+		}else{
+            get_product_service()
+            $('.hair-removel').hide()
+            $('.combo-off').hide()
+            $('.combo-on').show()
+			$('.times_choose').hide()
+            $('.times_service').hide()
+            $('#cost_price').prop("disabled", true);
+        }
+	});
 })
 let page_now;
 const show_type = type =>{
@@ -266,6 +301,7 @@ function render_data(data, pageCount, currentPage){
                                     <th width="20%">Tên</th>
 									<th>Loại</th>
 									<th>Mã số</th>
+                                    <th>Số lần</th>
 									<th>Giá vốn</th>
                                     <th>Giá bán</th>
                                     <th>Trạng thái</th>
@@ -279,6 +315,7 @@ function render_data(data, pageCount, currentPage){
                 <td>${item.name}</td>
 				<td>${show_type(item.type)}</td>
                 <td>${item.number_code}</td>
+                <td>${item.type == 'hair_removel'? item.times : ""}</td>
 				<td>${convert_vnd(item.cost_price)}</td>
 				<td>${convert_vnd(item.price)}</td>
                 <td>${item.isSell ? "Đang kinh doanh" : "Ngừng kinh doanh"}</td>

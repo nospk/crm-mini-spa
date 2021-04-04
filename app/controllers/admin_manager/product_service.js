@@ -194,6 +194,7 @@ class Admin_product_service extends Controller{
 						find.times_service = req.body.times_service;
 					}
 					if(find.type == "hair_removel"){
+						find.cost_price = req.body.cost_price;
 						find.service_price = req.body.service_price;
 						find.times = req.body.times;
 					}

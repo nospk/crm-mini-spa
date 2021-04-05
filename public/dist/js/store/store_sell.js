@@ -490,10 +490,12 @@ function render_tablist(tab_number){
 			$('#bill_money').text("")
 			$('#selection_pay').removeClass("d-flex").addClass("d-none");
 		}
-		if(tab_list[tab_number].customer != ""){
-			add_customer(tab_list[tab_number].customer)
-		} else {
+		let customer_id = tab_list[tab_number].customer != "" ? tab_list[tab_number].customer.split(":")[1] : ""
+		if(tab_list[tab_number].customer == ""){
 			remove_customer()
+		} 
+		if($('#select_customer').val() != customer_id){
+			add_customer(tab_list[tab_number].customer)
 		}
 		if(tab_list[tab_number].edit_bill === false){
 			$('.button-edit-bill').hide()
@@ -518,7 +520,7 @@ function change_quantity(tab_number, index, btn){
 	if(number == 0){
 		tab_list[tab_number].item.splice(index,1)
 	}else{
-		if(tab_list[tab_number].item[index].type == "product"){ 
+		if(tab_list[tab_number].item[index].type == "product" && tab_list[tab_number].edit_bill == false){ 
 			if(number <= tab_list[tab_number].item[index].stocks_in_store[0].product_of_sell){
 				tab_list[tab_number].item[index].quantity = number
 			}else{

@@ -47,10 +47,7 @@ class Store_sell extends Controller{
 				path: 'stocks_in_store',
 				match: { store_id: req.session.store._id },
 				select: 'product_of_sell',
-			}).populate({
-				path: 'combo.id',
-				populate: { path: 'Product_services' },
-			});
+			})
 			Store_sell.sendData(res, products);
 		}catch(err){
 			console.log(err)
@@ -150,7 +147,10 @@ class Store_sell extends Controller{
 				path: 'stocks_in_store',
 				match: { store_id: req.session.store._id },
 				select: 'product_of_sell',
-			})
+			}).populate({
+				path: 'combo.id',
+				populate: { path: 'Product_services' },
+			});
 			if(find.type == "product" && find.stocks_in_store[0].product_of_sell == 0){
 				return Store_sell.sendError(res, "Sản phẩm hết hàng", "Vui lòng chọn sản phẩm khác hoặc thêm sản phẩm"); 
 			}
@@ -870,15 +870,12 @@ class Store_sell extends Controller{
 			}
 			
 			//check old_bill
-			let old_product = []
+			let old_products = []
 			check_bill.list_item.forEach(item =>{
-				if(item.type == 'product') old_product.push(item)
+				if(item.type == 'product') old_products.push(item)
 			});
-			console.log(old_product)
-			let old_service = []
-			check_bill.list_item.forEach(item =>{
-				if(item.type == 'product') old_product.push(item)
-			});
+			console.log(old_products)
+
 			//invoice sell
 			/* let serial_sell =  await Common.get_serial_store(req.session.store._id, 'BH')
 			let serial_stock =  await Common.get_serial_store(req.session.store._id, 'XH')

@@ -341,7 +341,7 @@ function check_lost_stocks(number_code) {
     let max_product_service = Number($(`#check_quantity_service_${number_code}`).attr('max'));
     let product_sell = Number($(`#check_quantity_sell_${number_code}`).val());
     let product_service = Number($(`#check_quantity_service_${number_code}`).val());
-    let lost_stocks = (max_product_sell - product_sell + (max_product_service - product_service);
+    let lost_stocks = (max_product_sell - product_sell) + (max_product_service - product_service);
     $(`#stock_lost_${number_code}`).val(lost_stocks);
 }
 function change_product_sell(number_code) {

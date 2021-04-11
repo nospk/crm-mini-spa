@@ -629,7 +629,7 @@ class Store_sell extends Controller{
 
 			//invoice sell	
 			let serial_sell =  await Common.get_serial_store(req.session.store._id, 'BH')
-			let serial_stock =  await Common.get_serial_store(req.session.store._id, 'XH')
+			
 			let invoice_sell = Invoice_sell({
 				serial: serial_sell,
 				type : "sell",
@@ -650,6 +650,7 @@ class Store_sell extends Controller{
 
 			//invoice store stocks
 			if(list_product != false){
+				let serial_stock =  await Common.get_serial_store(req.session.store._id, 'XH')
 				let invoice_stock = Invoice_product_store({
 					serial: serial_stock,
 					type: "sell",

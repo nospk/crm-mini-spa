@@ -813,7 +813,9 @@ class Store_sell extends Controller{
 				if(list_item[i].type == 'product'){
 					list_product.push({
 						product: mongoose.Types.ObjectId(list_item[i].id),
-						quantity: list_item[i].sell_quantity
+						quantity: list_item[i].sell_quantity,
+						stocks: list_item[i].stocks_in_store[0].product_of_sell,
+						name: list_item[i].name
 					})
 				}
 				if(list_item[i].type == 'combo'){
@@ -825,7 +827,9 @@ class Store_sell extends Controller{
 						}else{
 							list_product.push({
 								product: mongoose.Types.ObjectId(item.id._id),
-								quantity: list_item[i].sell_quantity *item.quantity
+								quantity: list_item[i].sell_quantity *item.quantity,
+								stocks: list_item[i].stocks_in_store[0].product_of_sell,
+								name: list_item[i].name
 							})
 						}
 					})
@@ -875,23 +879,32 @@ class Store_sell extends Controller{
 			check_bill.list_item.forEach(item =>{
 				if(item.type == 'product') old_products.push(item)
 			});
+			let error = []
 			//check change product
-
 			let change_products = []
 			old_products.forEach(oldItem => {
 				list_product.forEach((newItem,newIndex)=> {
 					if(String(oldItem.id) == String(newItem.product)){
-						let quantity = Number(oldItem.quantity) - Number(newItem.quantity)
-						if(quantity != 0)change_products.push({id: oldItem.id, quantity: quantity})
+						let quantity =  Number(newItem.quantity) - Number(oldItem.quantity)
+						if(quantity != 0) {
+							if(quantity > 0 && quantity > newItem.stocks){
+								error.push(`${newItem.name} không đủ hàng tồn`)
+							}else{
+								change_products.push({id: oldItem.id, quantity: quantity})
+							}
+						}
 						list_product.splice(newIndex,1)
+						
 					}
 				})
-				
 			})
+			if(error.length > 0){
+				return Store_sell.sendError(res, error, "Vui lòng kiểm tra lại số lượng");
+			}
 			list_product.forEach(item => {
 				change_products.push({id: item.product, quantity: Number(item.quantity)})
 			})
-			console.log('Change: ', change_products)
+			console.log(change_products)
 			//remove service and hair_removel
 			
 			//edit bill

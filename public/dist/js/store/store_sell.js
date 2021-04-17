@@ -1202,7 +1202,9 @@ function remove_tab_menu(btw){
 	$(btw).parent().remove();// remove 
 	$("#tab-menu-horizontal .menu-bill").removeClass("active");
 	$("#tab-menu-horizontal .menu-bill").first().addClass("active");
-	tab_max_current = Math.max.apply(Math, tab_list.map(function(item) { return item.HD; }))
+	tab_max_current = Math.max.apply(Math, tab_list.map(function(item) {
+		return item.edit_bill==true ? tab_max_current : item.HD; 
+	}))
 	document.getElementById('tab-menu-horizontal').scrollLeft -= 1000;
 	if(tab_list.length == 0){
 		tab_number = 0;
@@ -1433,6 +1435,7 @@ function view_bill(btn,id){
 	}
 }
 function edit_bill(id){
+	$('#modal_edit_bill').modal('hide');
 	$.ajax({
         url:`/invoice_sells/${id}`,
         method:'GET',

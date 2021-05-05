@@ -539,7 +539,7 @@ class Store_sell extends Controller{
 						list_item[i].price_sale = check_price != list_item[i].price ? check_price : undefined
 					}else{
 						check_price = Number(list_item[i].price_sell)
-						list_item[i].price_sale = Number(list_item[i].price_sell)
+						list_item[i].price_sale = Number(list_item[i].price_sell) != Number(list_item[i].price) ? Number(list_item[i].price_sell) : undefined
 					}
 					payment += check_price * list_item[i].sell_quantity
 					temp_convert_data_item.push({
@@ -904,6 +904,7 @@ class Store_sell extends Controller{
 			list_product.forEach(item => {
 				change_products.push({id: item.product, quantity: Number(item.quantity)})
 			})
+			console.log(list_item)
 			console.log(change_products)
 			//remove service and hair_removel
 			

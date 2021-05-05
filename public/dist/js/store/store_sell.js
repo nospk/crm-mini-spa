@@ -1461,7 +1461,7 @@ function edit_bill(id){
 				tab_list.push({
 					HD: data.data.serial, 
 					item: data.data.list_item.map(item =>{
-						item = Object.assign(item.id, {quantity: item.quantity}, {price: item.price})
+						item = Object.assign(item.id, {quantity: item.quantity}, {price: item.price_sale ? item.price_sale: item.price})
 						return item
 					}),
 					time: conver_time,

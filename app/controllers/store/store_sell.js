@@ -904,10 +904,9 @@ class Store_sell extends Controller{
 			list_product.forEach(item => {
 				change_products.push({id: item.product, quantity: Number(item.quantity)})
 			})
-			console.log(list_item)
-			console.log(change_products)
+			/*******Main Run********/
 			//remove service and hair_removel
-			
+			await Invoice_service.updateMany({company: req.session.store.company, invoice:req.body.id},{$set:{isActive: false}}, {"multi": true})
 			//edit bill
 			
 			//edit cash_book

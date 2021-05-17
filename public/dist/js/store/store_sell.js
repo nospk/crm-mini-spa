@@ -974,6 +974,7 @@ function unlock_manager(){
 				$('#button_lock_manager').show()
 				$('#button_edit_bill').show()
 				$('#date_sell').prop( "disabled", false );
+				$('#password_manager').val("");
 				manager = true;
 				render_tablist(tab_number)
 				Swal.fire({

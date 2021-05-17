@@ -59,7 +59,7 @@ class Store_sell extends Controller{
 			let match = {
 				$and: [ {company :req.session.store.company, isSell: true, type: "service"} ] 
 			}
-			let services = await Product_service.find(match).sort({createdAt: -1})
+			let services = await Product_service.find(match,'combo group name number_code price price_book quantity query_name stocks_in_storage stocks_in_store type').sort({createdAt: -1})
 			Store_sell.sendData(res, services);
 		}catch(err){
 			console.log(err)
@@ -118,10 +118,15 @@ class Store_sell extends Controller{
 				path: 'list_item.id',
 				populate: { path: 'Product_services'},
 				select:'name number_code'
+			})
+			.populate({
+				path: 'list_item_edit.id',
+				populate : {path: 'Product_services'},
+				select:'name number_code'
 			}).populate({
 				path: 'bill',
 				populate: { path: 'Cash_book'},
-				select:'type_payment money'
+				select:'type_payment money money_edit'
 			})
 			Store_sell.sendData(res, {data, pageCount, currentPage});
 		}catch(err){
@@ -143,7 +148,7 @@ class Store_sell extends Controller{
 	}
 	static async get_by_id(req,res){
 		try{
-			let find = await Product_service.findOne({company :req.session.store.company, isSell: true, _id: req.body.id}).populate({
+			let find = await Product_service.findOne({company :req.session.store.company, isSell: true, _id: req.body.id},'combo group name number_code price price_book quantity query_name stocks_in_storage stocks_in_store type').populate({
 				path: 'stocks_in_store',
 				match: { store_id: req.session.store._id },
 				select: 'product_of_sell',
@@ -760,14 +765,18 @@ class Store_sell extends Controller{
 	static async update_bill(req, res){
 		try{
 			//check can edit bill
-			let check_bill = await Invoice_sell.findOne({company :req.session.store.company,store:req.session.store._id,_id:req.body.id})
+			let check_bill = await Invoice_sell.findOne({company :req.session.store.company,store:req.session.store._id,_id:req.body.id}).populate({
+				path: 'bill',
+				populate: { path: 'Cash_book'},
+				select:'type_payment money serial money_edit'
+			})
 			if(check_bill.isCanBeEdit === false){
 				return Store_sell.sendError(res, "Lỗi hóa đơn đã được sử dụng dịch vụ", "Không thể chỉnh sửa hóa đơn");
 			}
 			
 			//set time
 			let time = req.body.time
-
+			check_bill.createdAt = time
 			// check quantity
 			if(req.body.list_item == false){
 				return Store_sell.sendError(res, "Lỗi chưa chọn sản phẩm - dịch vụ", "Vui lòng chọn lại");
@@ -908,9 +917,48 @@ class Store_sell extends Controller{
 			//remove service and hair_removel
 			await Invoice_service.updateMany({company: req.session.store.company, invoice:req.body.id},{$set:{isActive: false}}, {"multi": true})
 			//edit bill
+			check_bill.list_item_edit.push(check_bill.list_item)
+			check_bill.list_item = temp_convert_data_item
 			
 			//edit cash_book
-			
+			//if customer pay again 2 method
+			if(check_bill.bill.length == 1 && req.body.customer_pay_card > 0 && req.body.customer_pay_cash > 0){
+				let old_cash_book = await Cash_book.findOne({company: mongoose.Types.ObjectId(req.session.store.company), store: mongoose.Types.ObjectId(req.session.store._id), _id: check_bill.bill[0]._id})
+				old_cash_book.money_edit.push(old_cash_book.money)
+				old_cash_book.money = check_bill.bill.type_payment == "cash" ? (req.body.customer_pay_cash - payment_back) :req.body.customer_pay_card;
+				let new_bill = Cash_book({
+					serial: check_bill.bill[0].serial + '-1',
+					type: "income",
+					type_payment: check_bill.bill.type_payment == "cash" ? "card" : "cash",
+					company:req.session.store.company,
+					money: check_bill.bill.type_payment == "cash" ? req.body.customer_pay_card : (req.body.customer_pay_cash - payment_back),
+					isForCompany: false,
+					group: "Thanh toán tiền bán hàng",
+					user_created: req.session.store.name,
+					member_name: old_cash_book.member_name,
+					member_id: old_cash_book.member_id,
+					accounting: true,
+					store: req.session.store._id,
+					createdAt: time
+				})
+				await old_cash_book.save()
+				await new_bill.save()
+				check_bill.bill.push(new_bill._id)
+			//if customer pay 2 method and pay again 2 method
+			}else if(check_bill.bill.length == 2 && req.body.customer_pay_card > 0 && req.body.customer_pay_cash > 0) {
+				check_bill.bill.forEach(async bill=>{
+					let old_cash_book = await Cash_book.findOne({company: mongoose.Types.ObjectId(req.session.store.company), store: mongoose.Types.ObjectId(req.session.store._id), _id: bill._id})
+					old_cash_book.money_edit.push(old_cash_book.money)
+					old_cash_book.money = bill.type_payment == "cash" ? (req.body.customer_pay_cash - payment_back) :req.body.customer_pay_card;
+					await old_cash_book.save();
+				})
+			//if cusomter pay 1 method and pay and 1 method
+			}else{
+				
+			}
+			check_bill.payment_back = payment_back;
+			check_bill.payment = payment > 0 ? payment : 0;
+			await check_bill.save()
 			
 			Store_sell.sendError(res, "check", "check bill");
 		}catch(err){

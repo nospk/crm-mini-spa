@@ -20,14 +20,14 @@ const Invoice_sell_Schema = mongoose.Schema({
         price_sale: {type:Number},
 		_id: false
     }],
-	list_item_edit:[{
+	list_item_edit:[[{
         id: {type: mongoose.Schema.Types.ObjectId, required: true, ref:'Product_services'}, 
         quantity: {type: Number, required: true},
 		type: {type:String, required:true},
         price:{type:Number, required: true},
         price_sale: {type:Number},
 		_id: false
-    }],
+    }]],
     discount:{
         type: mongoose.Schema.Types.ObjectId, ref:'Discount'
     },

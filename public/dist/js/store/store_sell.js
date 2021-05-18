@@ -500,10 +500,12 @@ function render_tablist(tab_number){
 		if(tab_list[tab_number].edit_bill === false){
 			$('.button-edit-bill').hide()
 			$('.button-sell-bill').show()
+			$('#search_customer').prop( "disabled", false )
 			$('#button_remove_customer').prop( "disabled", false )
 		}else{
 			$('.button-edit-bill').show()
 			$('.button-sell-bill').hide()
+			$('#search_customer').prop( "disabled", true )
 			$('#button_remove_customer').prop( "disabled", true )
 		}
 	}
@@ -1331,25 +1333,27 @@ function render_data(data, pageCount, currentPage){
 		                    <table class="table table-hover">
 		                        <thead>
                                     <tr>
-									<th>Ngày</th>
-                                    <th>Mã hóa đơn</th>
+									<th width=15%>Ngày</th>
+                                    <th width=15%>Mã hóa đơn</th>
 									<th>Nhân viên</th>
                                     <th>Khách hàng</th>
-									<th></th>
+									<th width=26%></th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
 	data.forEach(item =>{ 
 		let date = new Date(item.createdAt).toLocaleString("vi-VN")
 		html+=`<tr>
-                <td>${date.split(",")[0]}<br>
+                <td width=15%>${date.split(",")[0]}<br>
 					${date.split(",")[1]}
 				</td>
-				<td class="font-weight-bold">${item.serial}</td>
+				<td width=15% class="font-weight-bold">${item.serial}</td>
                 <td>${item.employees.name}</td>
 				<td>${item.customer ? item.customer.name : "Khách lẻ"}</td>
-				<td><button type="button" onclick="view_bill(this,'${item._id}')" class="btn btn-primary view-button">Xem</button>
+				<td width=26%><button type="button" onclick="view_bill(this,'${item._id}')" class="btn btn-primary view-button">Xem</button>
+					<button type="button" onclick="print_bill('${item._id}')" class="btn btn-info">In</button>
 					<button type="button" onclick="edit_bill('${item._id}')" class="btn btn-warning">Sửa</button>
+					
 				</td>
                 </tr>
 				<tr>
@@ -1374,6 +1378,7 @@ function render_data(data, pageCount, currentPage){
 		html+=`			</div>
 							<div class="tab-pane fade" id="view-bill-${item._id}" role="tabpanel">
 							   <p style="margin-bottom:0px;"> Tổng tiền: <span class="float-right">${convert_vnd(item.payment)}</span></p>
+							   <p style="margin-bottom:0px;"> Tiền khách đưa: <span class="float-right">${convert_vnd(item.customer_pay)}</span></p><br>
 			  `
 			  	item.bill.forEach((item)=>{
 					html+=`<p style="margin-bottom:0px;">${item.type_payment == "card" ? 'Thẻ: <span class="float-right">' + convert_vnd(item.money) : 'Tiền mặt: <span class="float-right">' + convert_vnd(item.money)}</span></p>` 
@@ -1520,4 +1525,34 @@ function slideLeft(){
 function slideRight(){
 	document.getElementById('tab-menu-horizontal').scrollLeft += 70;
 }
-
+function print_bill(id){
+	let data = {
+		id:id,
+		_csrf: $('#_csrf').val()
+	}
+	$.ajax({
+		url:'/print_bill',
+		method:'POST',
+		contentType: "application/json; charset=utf-8",
+		data: JSON.stringify(data),
+		success: function(data){
+			if(data.status == 1){
+				document.getElementById('printer').src = "data:text/html;charset=utf-8," + data.data;	
+			}else{
+				Swal.fire({
+					title: data.error,
+					text: data.message,
+					icon: "error",
+					showConfirmButton: false,    
+					timer: 3000
+				}).then((result)=>{
+					// cho vào để ko báo lỗi uncaught
+				})
+				.catch(timer => {
+					// cho vào để ko báo lỗi uncaught
+				}); 
+				
+			}
+		}
+	})
+}

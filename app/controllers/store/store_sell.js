@@ -648,6 +648,7 @@ class Store_sell extends Controller{
 				discount: req.body.discount_id != "" ? req.body.discount_id : undefined,
 				note: req.body.note,
 				who_created: req.session.store.name,
+				customer_pay : (req.body.customer_pay_cash != "" ? req.body.customer_pay_cash : 0) + (req.body.customer_pay_card != "" ? req.body.customer_pay_card : 0),
 				bill:[],
 				createdAt: time
 			})
@@ -876,7 +877,9 @@ class Store_sell extends Controller{
 			}else{
 				payment_back = req.body.customer_pay_card + req.body.customer_pay_cash - payment
 			}
-
+			if((check_bill.bill[0].type_payment == "card" || (check_bill.bill[1] && check_bill.bill[1].type_payment == "card")) && (req.body.customer_pay_card == 0 || req.body.customer_pay_card == "")){
+				return Store_sell.sendError(res, `Lỗi đã thanh toán bằng chuyển khoảng không thể chuyển thành thanh toán chỉ tiền mặt`, "Vui lòng kiểm tra lại phương thức thanh toán");
+			}
 			//count discount used
 			if(req.body.discount_id){
 				check_discount.times_used = check_discount.times_used +1
@@ -891,7 +894,7 @@ class Store_sell extends Controller{
 			let error = []
 			//check change product
 			let change_products = []
-			old_products.forEach(oldItem => {
+			old_products.forEach((oldItem,oldIndex) => {
 				list_product.forEach((newItem,newIndex)=> {
 					if(String(oldItem.id) == String(newItem.product)){
 						let quantity =  Number(newItem.quantity) - Number(oldItem.quantity)
@@ -899,11 +902,11 @@ class Store_sell extends Controller{
 							if(quantity > 0 && quantity > newItem.stocks){
 								error.push(`${newItem.name} không đủ hàng tồn`)
 							}else{
-								change_products.push({id: oldItem.id, quantity: quantity})
+								change_products.push({product: oldItem.id, quantity: quantity})
 							}
 						}
 						list_product.splice(newIndex,1)
-						
+						old_products.splice(oldIndex,1)
 					}
 				})
 			})
@@ -911,8 +914,12 @@ class Store_sell extends Controller{
 				return Store_sell.sendError(res, error, "Vui lòng kiểm tra lại số lượng");
 			}
 			list_product.forEach(item => {
-				change_products.push({id: item.product, quantity: Number(item.quantity)})
+				change_products.push({product: item.product, quantity: Number(item.quantity)})
 			})
+			old_products.forEach(item => {
+				change_products.push({product: item.id, quantity: Number(item.quantity)*-1})
+			})
+
 			/*******Main Run********/
 			//remove service and hair_removel
 			await Invoice_service.updateMany({company: req.session.store.company, invoice:req.body.id},{$set:{isActive: false}}, {"multi": true})
@@ -921,17 +928,17 @@ class Store_sell extends Controller{
 			check_bill.list_item = temp_convert_data_item
 			
 			//edit cash_book
-			//if customer pay again 2 method
+			//if customer pay 1 method but pay again 2 method		
 			if(check_bill.bill.length == 1 && req.body.customer_pay_card > 0 && req.body.customer_pay_cash > 0){
 				let old_cash_book = await Cash_book.findOne({company: mongoose.Types.ObjectId(req.session.store.company), store: mongoose.Types.ObjectId(req.session.store._id), _id: check_bill.bill[0]._id})
 				old_cash_book.money_edit.push(old_cash_book.money)
-				old_cash_book.money = check_bill.bill.type_payment == "cash" ? (req.body.customer_pay_cash - payment_back) :req.body.customer_pay_card;
+				old_cash_book.money = check_bill.bill[0].type_payment == "cash" ? (req.body.customer_pay_cash - payment_back) :req.body.customer_pay_card;
 				let new_bill = Cash_book({
 					serial: check_bill.bill[0].serial + '-1',
 					type: "income",
-					type_payment: check_bill.bill.type_payment == "cash" ? "card" : "cash",
+					type_payment: check_bill.bill[0].type_payment == "cash" ? "card" : "cash",
 					company:req.session.store.company,
-					money: check_bill.bill.type_payment == "cash" ? req.body.customer_pay_card : (req.body.customer_pay_cash - payment_back),
+					money: check_bill.bill[0].type_payment == "cash" ? req.body.customer_pay_card : (req.body.customer_pay_cash - payment_back),
 					isForCompany: false,
 					group: "Thanh toán tiền bán hàng",
 					user_created: req.session.store.name,
@@ -952,15 +959,107 @@ class Store_sell extends Controller{
 					old_cash_book.money = bill.type_payment == "cash" ? (req.body.customer_pay_cash - payment_back) :req.body.customer_pay_card;
 					await old_cash_book.save();
 				})
-			//if cusomter pay 1 method and pay and 1 method
+			//if customer pay cash but pay again pay card
+			}else if(check_bill.bill[0].type_payment == "cash" && (req.body.customer_pay_cash == 0 || req.body.customer_pay_cash == "") && req.body.customer_pay_card > 0){
+				let old_cash_book = await Cash_book.findOne({company: mongoose.Types.ObjectId(req.session.store.company), store: mongoose.Types.ObjectId(req.session.store._id), _id: check_bill.bill[0]._id})
+				old_cash_book.money_edit.push(old_cash_book.money)
+				old_cash_book.money = 0;
+				let new_bill = Cash_book({
+					serial: check_bill.bill[0].serial + '-1',
+					type: "income",
+					type_payment: "card",
+					company:req.session.store.company,
+					money: req.body.customer_pay_card,
+					isForCompany: false,
+					group: "Thanh toán tiền bán hàng",
+					user_created: req.session.store.name,
+					member_name: old_cash_book.member_name,
+					member_id: old_cash_book.member_id,
+					accounting: true,
+					store: req.session.store._id,
+					createdAt: time
+				})
+				await old_cash_book.save()
+				await new_bill.save()
+				check_bill.bill.push(new_bill._id)
+			//if cusomter pay 1 method and pay and 1 this method
+			}else if ((check_bill.bill[0].type_payment == "cash" && req.body.customer_pay_cash > 0) || check_bill.bill[0].type_payment == "card" && req.body.customer_pay_card > 0){
+				let old_cash_book = await Cash_book.findOne({company: mongoose.Types.ObjectId(req.session.store.company), store: mongoose.Types.ObjectId(req.session.store._id), _id: check_bill.bill[0]._id});
+				old_cash_book.money_edit.push(old_cash_book.money)
+				old_cash_book.money = check_bill.bill[0].type_payment == "cash" ? (req.body.customer_pay_cash - payment_back) :req.body.customer_pay_card;
+				await old_cash_book.save();
 			}else{
-				
+				Store_sell.sendError(res, "Lỗi không xác định", "Vui lòng báo admin");
 			}
+			//count the money after update bill
+			if(check_bill.customer != ""){
+				let money_count = payment - check_bill.payment
+				let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_bill.customer},{$inc:{payment: money_count}},{new: true})
+				customer.point = Math.trunc(customer.payment / 10000)
+				await customer.save()
+			}
+			check_bill.customer_pay = (req.body.customer_pay_cash != "" ? req.body.customer_pay_cash : 0) + (req.body.customer_pay_card != "" ? req.body.customer_pay_card : 0)
 			check_bill.payment_back = payment_back;
 			check_bill.payment = payment > 0 ? payment : 0;
-			await check_bill.save()
+
+			//invoice store stocks
+			if(change_products != false){
+				console.log(change_products)
+				let serial_stock =  await Common.get_serial_store(req.session.store._id, 'XH')
+				let invoice_stock = Invoice_product_store({
+					serial: serial_stock,
+					type: "exchange",
+					company: req.session.store.company, 
+					store: req.session.store._id, 
+					list_products: change_products,
+					who_created: req.session.store.name,
+					invoice: check_bill._id,
+					createdAt: time
+				})
+				
+				await invoice_stock.save()
+				for (let i = 0; i < change_products.length; i++){
+					let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.store.company, store_id:req.session.store._id, product: change_products[i].product},{$inc:{product_of_sell:Number(change_products[i].quantity)*-1, quantity:Number(change_products[i].quantity)*-1}},{new: true})
+					store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_stock._id);
+					invoice_stock.list_products[i].current_quantity = store_stocks.quantity
+					store_stocks.save();
+					await Product_service.findOneAndUpdate({company: req.session.store.company, type: "product", _id: change_products[i].product},{$inc:{quantity:Number(change_products[i].quantity)*-1}})
+					invoice_stock.list_products[i].quantity = Math.abs(invoice_stock.list_products[i].quantity)
+				}
+				await invoice_stock.save()
+			}
+
+			// invoice service for customer
+			let check_customer = await Customer.findOne({company: req.session.store.company, _id:check_bill.customer})
+			for(let t = 0; t < list_service.length;t++){
+				let serial_service = await Common.get_serial_service(req.session.store.company)
+				let invoice_service = Invoice_service({
+					company: req.session.store.company,
+					customer: check_customer != false ? check_customer._id : undefined,
+					serial:serial_service,
+					times:list_service[t].times,
+					service:list_service[t].service,
+					invoice: check_bill._id,
+					createdAt: time
+				})
+				await invoice_service.save()
+				list_service[t].serial = serial_service
+			}
 			
-			Store_sell.sendError(res, "check", "check bill");
+			let bill = await Common.print_bill(list_item, list_service, check_customer, req.session.store, check_discount, payment, money_discount, req.body.customer_pay_cash, req.body.customer_pay_card, payment_back, check_bill)
+			check_bill.bill_html = bill
+			await check_bill.save()
+            Store_sell.sendData(res, bill);
+		}catch(err){
+			console.log(err.message)
+			Store_sell.sendError(res, err, err.message);
+		}
+	}
+	static async print_bill(req, res){
+		try{
+			
+			let check_bill = await Invoice_sell.findOne({company :req.session.store.company,store:req.session.store._id,_id:req.body.id})
+			Store_sell.sendData(res, check_bill.bill_html);
 		}catch(err){
 			console.log(err.message)
 			Store_sell.sendError(res, err, err.message);

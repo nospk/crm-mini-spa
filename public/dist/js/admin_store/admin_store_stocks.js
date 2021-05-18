@@ -114,6 +114,9 @@ function convertTypetoString(str) {
         case 'sell':
             return "Bán";
             break;
+        case 'exchange':
+            return "Đổi Hàng";
+            break;
         case 'import':
             return "Nhập Hàng";
             break;

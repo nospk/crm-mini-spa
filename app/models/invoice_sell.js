@@ -31,6 +31,9 @@ const Invoice_sell_Schema = mongoose.Schema({
     discount:{
         type: mongoose.Schema.Types.ObjectId, ref:'Discount'
     },
+    customer_pay:{
+        type: Number, require: true
+    },
     payment:{
         type: Number, require: true
     },

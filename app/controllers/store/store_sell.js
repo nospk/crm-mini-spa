@@ -360,7 +360,7 @@ class Store_sell extends Controller{
 				}
 			])
 			let report_service_month = await Employees.aggregate([
-				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company)}},
+				{ $match: {company: mongoose.Types.ObjectId(req.session.store.company), store: mongoose.Types.ObjectId(req.session.store._id), isActive: true}},
 				{ $lookup:
 					 {
 					   from: Log_service.collection.name,

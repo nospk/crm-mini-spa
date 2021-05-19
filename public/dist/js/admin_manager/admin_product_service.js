@@ -377,7 +377,10 @@ function get_data(paging_num){
         paging_num = page_now
     }
     let data = {
-        search:$('#search_word').val().trim(),
+        search_word:$('#search_word').val().trim(),
+        search_type:$('#search_type').val(),
+        search_group:$('#search_group').val(),
+        search_brand:$('#search_brand').val(),
         paging_num:paging_num,
         _csrf: $('#_csrf').val()
     }
@@ -768,7 +771,7 @@ function get_brand_group(){
         success: function(data){
             if (data.status == 1) {
 				let html_brand = "<option></option>"
-				let html_group = ""
+				let html_group = "<option></option>"
                 data.data.forEach(item => {
                     if(item.type=="brand"){
                         html_brand += `<option value="${item._id}">${item.name}</option>`
@@ -777,8 +780,10 @@ function get_brand_group(){
                     }
                 })
                 $('#brand').html(html_brand)	
+                $('#search_brand').html(html_brand)	
 				$('#edit_brand').html(html_brand)
 				$('#group').html(html_group)
+                $('#search_group').html(html_group)
 				$('#edit_group').html(html_group)
 				$('.select2bs4').select2({
                     theme: 'bootstrap4'

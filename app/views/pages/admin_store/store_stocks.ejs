@@ -43,13 +43,38 @@ scratch. This page gets rid of all links and provides the needed markup only.
 						<div class="container-fluid">
 							<div class="callout callout-primary">
 								<div class="row">
-									<div class="col-auto mr-auto">
+									<div class="col-12">
+										<div class="input-group" >
+											<div class="input-group-prepend">
+												<span class="input-group-text">Tên và Mã Sản phẩm</span>
+											</div>
+											<input type="text" class="form-control" id="search_word" placeholder="Nhập tên hoặc mã sản phẩm">
+										</div>
+										<div class="input-group" >
+											<div class="input-group-prepend">
+												<span class="input-group-text">Nhóm</span>
+											</div>
+											<select class="form-control"  id="search_group">
+		
+											</select>
+										</div>
+										<div class="input-group" >
+											<div class="input-group-prepend">
+												<span class="input-group-text">Thương hiệu</span>
+											</div>
+											<select class="form-control"  id="search_brand">
+		
+											</select>
+		
+										</div>
 									</div>
-									<div class="col-auto">
-										<button type="button" class="btn btn-primary float-right" data-toggle="modal"
-											style="margin-left: 10px" data-target="#check_store_stocks">Kiểm
+									<div class="col-12">
+										<button type="submit" style="margin-left: 5px;" class="btn btn-info btn-flat float-right" onclick="get_data('1')">Tìm kiếm <i
+											class="fas fa-search"></i></button>
+										<button type="button" class="btn btn-primary btn-flat float-right" data-toggle="modal"
+											style="margin-left: 5px" data-target="#check_store_stocks">Kiểm
 											kho</button>
-										<button type="button" class="btn btn-primary float-right" data-toggle="modal"
+										<button type="button" class="btn btn-primary btn-flat float-right" data-toggle="modal"
 											data-target="#product_classification">Phân loại</button>
 									</div>
 								</div>
@@ -68,16 +93,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 										<div class="card-header" style="background-color: black;">
 											<h3 class="card-title" style="color: whitesmoke;">Danh sách sản phẩm</h3>
 											<div class="card-tools">
-												<div class="input-group input-group-sm" style="width: 150px;">
-													<input type="text" name="table_search"
-														class="form-control float-right" id="search_word"
-														placeholder="Tìm">
-
-													<div class="input-group-append">
-														<button type="submit" class="btn btn-default"
-															onclick="get_data()"><i class="fas fa-search"></i></button>
-													</div>
-												</div>
+	
 											</div>
 										</div>
 										<!-- /.card-header -->

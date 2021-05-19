@@ -13,12 +13,19 @@ class Admin_store_stocks extends Controller{
     }
 	static async get_data(req, res){
 		try{
-			let {search}=req.body
+			let {search_word, search_group, search_brand}=req.body
 			let match = {
 				$and: [ {company : mongoose.Types.ObjectId(req.session.user.company._id), type: "product", isActive: true} ] 
 			}
-			if(search){
-				match.$and.push({$or:[{'number_code': {$regex: search,$options:"i"}},{'name': {$regex: search,$options:"i"}}]})
+			if(search_word){
+				search_word = await Common.removeVietnameseTones(search_word) 
+				match.$and.push({$or:[{'number_code': {$regex: search_word,$options:"i"}},{'query_name': {$regex: search_word,$options:"i"}}]})
+			}
+			if(search_group){
+				match.$and.push({$or:[{'group': {$in: search_group}}]})
+			}
+			if(search_brand){
+				match.$and.push({$or:[{brand:  mongoose.Types.ObjectId(search_brand)}]})
 			}
 			//set default variables
 			let pageSize = 10

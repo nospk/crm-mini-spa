@@ -1,6 +1,7 @@
 
 $(document).ready(() => {
-    get_data();
+    get_data('1');
+    get_brand_group();
     $('#product_classification').on('show.bs.modal', function (e) {
         get_product_of_undefined()
     })
@@ -10,9 +11,13 @@ $(document).ready(() => {
 })
 let page_now;
 function get_data(paging_num) {
-
-
+    if(!paging_num){
+        paging_num = page_now
+    }
     let data = {
+        search_word:$('#search_word').val().trim(),
+        search_group:$('#search_group').val(),
+        search_brand:$('#search_brand').val(),
         paging_num: paging_num,
         _csrf: $('#_csrf').val()
     }
@@ -506,4 +511,35 @@ function set_stocks_classify() {
                 // cho vào để ko báo lỗi uncaught
             });
     }
+}
+function get_brand_group(){
+    $.ajax({
+        url:'/admin_brand_group/get_data',
+        method:'POST',
+        data: {
+            _csrf: $('#_csrf').val()
+        },
+        success: function(data){
+            if (data.status == 1) {
+				let html_brand = "<option></option>"
+				let html_group = "<option></option>"
+                data.data.forEach(item => {
+                    if(item.type=="brand"){
+                        html_brand += `<option value="${item._id}">${item.name}</option>`
+                    }else{
+                        html_group += `<option value="${item._id}">${item.name}</option>`
+                    }
+                })
+
+                $('#search_brand').html(html_brand)	
+
+
+                $('#search_group').html(html_group)
+
+				$('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
+            }
+        }
+    })
 }

@@ -68,7 +68,7 @@ class Store_sell extends Controller{
 	}
 	static async get_invoice_sell_id(req, res){
         try{
-			let data = await Invoice_sell.findOne({company : req.session.store.company, _id: req.params.id}).populate({
+			let data = await Invoice_sell.findOne({company : req.session.store.company, _id: req.params.id, isActive: true}).populate({
 				path: 'customer',
 				populate: { path: 'Customer'},
 				select: 'name'
@@ -79,7 +79,19 @@ class Store_sell extends Controller{
 				path: 'bill',
 				populate: { path: 'Cash_book'},
 				select:'type_payment money'
-			})
+			}).lean()
+			for (let i = 0; i < data.list_item.length; i++){
+				if(data.list_item[i].type == 'combo'){
+					for(let j = 0; j < data.list_item[i].id.combo.length; j++){
+						let check = await Product_service.findOne({company :req.session.store.company, isSell: true, _id:data.list_item[i].id.combo[j].id}).populate({
+							path: 'stocks_in_store',
+							match: { store_id: req.session.store._id },
+							select: 'product_of_sell',
+						})
+						data.list_item[i].id.combo[j].id =  check._doc;
+					}	
+				}
+			}
 			Store_sell.sendData(res, data);
 		}catch(err){
 			console.log(err)
@@ -96,7 +108,7 @@ class Store_sell extends Controller{
 			// 	$and: [ {company : mongoose.Types.ObjectId(req.session.store.company), createdAt: {$gte: start_month, $lt: end_month}} ] 
 			// }
 			let match = {
-				$and: [ {company : mongoose.Types.ObjectId(req.session.store.company)} ] 
+				$and: [ {company : mongoose.Types.ObjectId(req.session.store.company), isActive: true} ] 
 			}
 			//set default variables
 			let pageSize = 20
@@ -230,7 +242,7 @@ class Store_sell extends Controller{
 			})
 			Store_sell.sendData(res, {customer, history_sell, service, log_service});
 		}catch(err){
-			console.log(err.message)
+			console.log(err)
 			Store_sell.sendError(res, err, err.message);
 		}
 	}
@@ -254,7 +266,7 @@ class Store_sell extends Controller{
 				Store_sell.sendMessage(res, "Đã tạo thành công");
 			}
 		}catch(err){
-			console.log(err.message)
+			console.log(err)
 			Store_sell.sendError(res, err, err.message);
 		}
 		
@@ -568,26 +580,26 @@ class Store_sell extends Controller{
 					})
 				}
 				if(list_item[i].type == 'combo'){
-					list_item[i].combo.forEach(async item =>{
-						if(item.id.type == 'service' || item.id.type == 'hair_removel'){
-							for(let k = 0, length = list_item[i].sell_quantity *item.quantity; k < length; k++){
-								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: item.id.times, name: item.id.name})
+					for (let j = 0; j <list_item[i].combo.length; j++){
+						if(list_item[i].combo[j].id.type == 'service' || list_item[i].combo[j].id.type == 'hair_removel'){
+							for(let k = 0, length = list_item[i].sell_quantity *list_item[i].combo[j].quantity; k < length; k++){
+								list_service.push({service: mongoose.Types.ObjectId(list_item[i].combo[j].id._id), times: list_item[i].combo[j].id.times, name: list_item[i].combo[j].id.name})
 							}
 						}else{
-							let check_product = await Product_service.findOne({company :req.session.store.company, isSell: true, _id:item.id._id}).populate({
+							let check_product = await Product_service.findOne({company :req.session.store.company, isSell: true, _id:list_item[i].combo[j].id._id}).populate({
 								path: 'stocks_in_store',
 								match: { store_id: req.session.store._id },
 								select: 'product_of_sell',
 							})
-							if(list_item[i].sell_quantity *item.quantity > check_product.stocks_in_store[0].product_of_sell){
+							if(list_item[i].sell_quantity *list_item[i].combo[j].quantity > check_product.stocks_in_store[0].product_of_sell){
 								return Store_sell.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] số lượng tồn không đủ`, "Vui lòng chọn lại");
 							}
 							list_product.push({
-								product: mongoose.Types.ObjectId(item.id._id),
-								quantity: list_item[i].sell_quantity *item.quantity
+								product: mongoose.Types.ObjectId(list_item[i].combo[j].id._id),
+								quantity: list_item[i].sell_quantity *list_item[i].combo[j].quantity
 							})
 						}
-					})
+					}
 				}
 			}
 			//check if have service but not customer
@@ -759,10 +771,11 @@ class Store_sell extends Controller{
 			await invoice_sell.save()
             Store_sell.sendData(res, bill);
 		}catch(err){
-			console.log(err.message)
+			console.log(err)
 			Store_sell.sendError(res, err, err.message);
 		}
 	}
+	/*
 	static async update_bill(req, res){
 		try{
 			//check can edit bill
@@ -783,7 +796,7 @@ class Store_sell extends Controller{
 				return Store_sell.sendError(res, "Lỗi chưa chọn sản phẩm - dịch vụ", "Vui lòng chọn lại");
 			}
 
-			// main run  
+
 			let list_item = req.body.list_item;
 			let temp_convert_data_item = [];
 			let list_service = [];
@@ -829,20 +842,25 @@ class Store_sell extends Controller{
 					})
 				}
 				if(list_item[i].type == 'combo'){
-					list_item[i].combo.forEach(async item =>{
-						if(item.id.type == 'service' || item.id.type == 'hair_removel'){
-							for(let k = 0, length = list_item[i].sell_quantity *item.quantity; k < length; k++){
-								list_service.push({service: mongoose.Types.ObjectId(item.id._id), times: item.id.times, name: item.id.name})
+					for(let j = 0; j < list_item[i].combo.length; j++){
+						if(list_item[i].combo[j].id.type == 'service' || list_item[i].combo[j].id.type == 'hair_removel'){
+							for(let k = 0, length = list_item[i].sell_quantity *list_item[i].combo[j].quantity; k < length; k++){
+								list_service.push({service: mongoose.Types.ObjectId(list_item[i].combo[j].id._id), times: list_item[i].combo[j].id.times, name: list_item[i].combo[j].id.name})
 							}
 						}else{
+							let check_product = await Product_service.findOne({company :req.session.store.company, isSell: true, _id:list_item[i].combo[j].id._id}).populate({
+								path: 'stocks_in_store',
+								match: { store_id: req.session.store._id },
+								select: 'product_of_sell',
+							})
 							list_product.push({
-								product: mongoose.Types.ObjectId(item.id._id),
-								quantity: list_item[i].sell_quantity *item.quantity,
-								stocks: list_item[i].stocks_in_store[0].product_of_sell,
-								name: list_item[i].name
+								product: mongoose.Types.ObjectId(list_item[i].combo[j].id._id),
+								quantity: list_item[i].sell_quantity *list_item[i].combo[j].quantity,
+								stocks: check_product.stocks_in_store[0].product_of_sell,
+								name: check_product.name
 							})
 						}
-					})
+					}
 				}
 			}
 
@@ -888,9 +906,26 @@ class Store_sell extends Controller{
 			
 			//check old_bill
 			let old_products = []
-			check_bill.list_item.forEach(item =>{
-				if(item.type == 'product') old_products.push(item)
-			});
+			for (let i = 0; i < check_bill.list_item.length; i++){
+				if(check_bill.list_item[i].type == 'product') old_products.push(check_bill.list_item[i])
+				if(check_bill.list_item[i].type == 'combo'){
+					let check_product = await Product_service.findOne({company :req.session.store.company, isSell: true, _id:check_bill.list_item[i].id}).populate({
+						path: 'combo.id',
+						populate: { path: 'Product_services' },
+					});
+					for (let j = 0; j < check_product.combo.length; j++){
+						if(check_product.combo[j].id.type == 'product'){
+							old_products.push({
+								id: check_product.combo[j].id._id,
+								quantity: check_bill.list_item[i].quantity * check_product.combo[j].quantity
+							})
+						}
+					}		
+				}
+			}
+			for(let i = 0; i < old_products.length; i++){
+
+			}
 			let error = []
 			//check change product
 			let change_products = []
@@ -919,8 +954,8 @@ class Store_sell extends Controller{
 			old_products.forEach(item => {
 				change_products.push({product: item.id, quantity: Number(item.quantity)*-1})
 			})
+			console.log(change_products)
 
-			/*******Main Run********/
 			//remove service and hair_removel
 			await Invoice_service.updateMany({company: req.session.store.company, invoice:req.body.id},{$set:{isActive: false}}, {"multi": true})
 			//edit bill
@@ -1051,10 +1086,11 @@ class Store_sell extends Controller{
 			await check_bill.save()
             Store_sell.sendData(res, bill);
 		}catch(err){
-			console.log(err.message)
+			console.log(err)
 			Store_sell.sendError(res, err, err.message);
 		}
 	}
+	*/
 	static async print_bill(req, res){
 		try{
 			
@@ -1062,6 +1098,90 @@ class Store_sell extends Controller{
 			Store_sell.sendData(res, check_bill.bill_html);
 		}catch(err){
 			console.log(err.message)
+			Store_sell.sendError(res, err, err.message);
+		}
+	}
+	static async delete_bill(req,res){
+		try{
+			let check_bill = await Invoice_sell.findOne({company :req.session.store.company,store:req.session.store._id,_id:req.body.id}).populate({
+				path: 'customer',
+				populate: { path: 'Customer' },
+			});
+			let list_product = [];
+			for(let i = 0; i < check_bill.list_item.length; i++ ){
+				if(check_bill.list_item[i].type == 'product'){
+					list_product.push({
+						product: mongoose.Types.ObjectId(check_bill.list_item[i].id),
+						quantity: check_bill.list_item[i].quantity,
+					})
+				}
+				if(check_bill.list_item[i].type == 'combo'){
+					let check_product = await Product_service.findOne({company :req.session.store.company, _id:check_bill.list_item[i].id}).populate({
+						path: 'combo.id',
+						populate: { path: 'Product_services' },
+					});
+					for (let j = 0; j < check_product.combo.length; j++){
+						if(check_product.combo[j].id.type == 'product'){
+							list_product.push({
+								product: check_product.combo[j].id._id,
+								quantity: check_bill.list_item[i].quantity * check_product.combo[j].quantity
+							})
+						}
+					}
+				}
+				
+			}
+			if(list_product != false){
+				let serial_stock =  await Common.get_serial_store(req.session.store._id, 'NH')
+				let invoice_stock = Invoice_product_store({
+					serial: serial_stock,
+					type: "return",
+					company: req.session.store.company, 
+					store: req.session.store._id, 
+					list_products: list_product,
+					who_created: req.session.store.name,
+					invoice: check_bill._id,
+				})
+				
+				await invoice_stock.save()
+				for (let i = 0; i < list_product.length; i++){
+					let store_stocks = await Store_stocks.findOneAndUpdate({company: req.session.store.company, store_id:req.session.store._id, product: list_product[i].product},{$inc:{product_of_sell:Number(list_product[i].quantity), quantity:Number(list_product[i].quantity)}},{new: true})
+					store_stocks.last_history = await Common.last_history(store_stocks.last_history, invoice_stock._id);
+					invoice_stock.list_products[i].current_quantity = store_stocks.quantity
+					store_stocks.save();
+					await Product_service.findOneAndUpdate({company: req.session.store.company, type: "product", _id: list_product[i].product},{$inc:{quantity:Number(list_product[i].quantity)}})
+					invoice_stock.list_products[i].quantity = Math.abs(invoice_stock.list_products[i].quantity)
+				}
+				await invoice_stock.save()
+			}
+			await Invoice_service.updateMany({company: req.session.store.company, invoice:req.body.id},{$set:{isActive: false}}, {"multi": true})
+
+			if(check_bill.customer != undefined && check_bill.customer != ""){
+				let customer = await Customer.findOneAndUpdate({company: req.session.store.company, _id: check_bill.customer._id},{$inc:{payment: Number(check_bill.payment)*-1}},{new: true})
+				customer.point = Math.trunc(customer.payment / 10000)
+				await customer.save()
+			}
+			let serial_cash_book = await Common.get_serial_store(req.session.store._id, 'HDCT')
+			let new_bill = Cash_book({
+				serial: serial_cash_book,
+				type: "outcome",
+				type_payment: req.body.pay_return,
+				company:req.session.store.company,
+				money: check_bill.payment,
+				isForCompany: false,
+				group: "Hủy hóa đơn bán hàng",
+				user_created: req.session.store.name,
+				member_name: (check_bill.customer != undefined && check_bill.customer != "") ? check_bill.customer.name : "Khách lẻ",
+				member_id: (check_bill.customer != undefined && check_bill.customer != "") ? check_bill.customer._id : undefined,
+				accounting: true,
+				store: req.session.store._id,
+			})
+			await new_bill.save()
+			check_bill.isActive = false
+			check_bill.save()
+			Store_sell.sendMessage(res, "Đã xóa thành công");
+		}catch(err){
+			console.log(err)
 			Store_sell.sendError(res, err, err.message);
 		}
 	}

@@ -1337,11 +1337,12 @@ function render_data(data, pageCount, currentPage){
                                     <th width=15%>Mã hóa đơn</th>
 									<th>Nhân viên</th>
                                     <th>Khách hàng</th>
-									<th width=26%></th>
+									<th width=32%></th>
                                     </tr>
 		                        </thead>
 		                        <tbody>`;
 	data.forEach(item =>{ 
+		//<button type="button" onclick="edit_bill('${item._id}')" class="btn btn-warning">Sửa</button>
 		let date = new Date(item.createdAt).toLocaleString("vi-VN")
 		html+=`<tr>
                 <td width=15%>${date.split(",")[0]}<br>
@@ -1350,10 +1351,9 @@ function render_data(data, pageCount, currentPage){
 				<td width=15% class="font-weight-bold">${item.serial}</td>
                 <td>${item.employees.name}</td>
 				<td>${item.customer ? item.customer.name : "Khách lẻ"}</td>
-				<td width=26%><button type="button" onclick="view_bill(this,'${item._id}')" class="btn btn-primary view-button">Xem</button>
+				<td width=32%><button type="button" onclick="view_bill(this,'${item._id}')" class="btn btn-primary view-button">Xem</button>
 					<button type="button" onclick="print_bill('${item._id}')" class="btn btn-info">In</button>
-					<button type="button" onclick="edit_bill('${item._id}')" class="btn btn-warning">Sửa</button>
-					
+					<button type="button" onclick="confirm_delete_bill('${item._id}')" class="btn btn-danger">Xóa</button>
 				</td>
                 </tr>
 				<tr>
@@ -1555,4 +1555,56 @@ function print_bill(id){
 			}
 		}
 	})
+}
+
+function confirm_delete_bill(id){
+	Swal.fire({
+        title: `Xác nhận xóa Hóa Đơn này`,
+		html: `<p>Sau khi xóa Hóa Đơn sẽ không hoàn lại được !</p>
+		<div><strong>Phương Thức Hoàn Tiền</strong></div>`,
+	    input: 'select',
+	    inputOptions: {cash:'Tiền Mặt', card: 'Thẻ'},
+	    inputPlaceholder: 'Chọn phương thức hoàn tiền',
+		icon:'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+		cancelButtonText: 'Không',
+        confirmButtonText: 'Đồng ý',
+		inputValidator: function (value) {
+			return new Promise(function (resolve, reject) {
+			  if (value != '') {
+				resolve()
+			  } else {
+				resolve('Bạn chưa chọn phương thức hoàn tiền')
+			  }
+			})
+		}
+	}).then(function (result) {
+		if(result.value){
+			$.ajax({
+				url:'/delete_bill',
+				method:'delete',
+				data: {id:id, pay_return: result.value, _csrf: $('#_csrf').val()},
+				success: function(data){
+					if (data.status == 1) {
+						get_invoice_sell()
+					} else {
+						Swal.fire({
+							title: data.error,
+							text: data.message,
+							icon: "error",
+							showConfirmButton: false,
+							timer: 3000
+						}).then((result) => {
+							get_invoice_sell(paging_num)
+						})
+						.catch(timer => {
+							get_invoice_sell(paging_num)
+						});
+					}
+				}
+			})
+		}
+    });
 }

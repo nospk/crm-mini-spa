@@ -125,6 +125,9 @@ function convertTypetoString(str) {
         case 'import':
             return "Nhập Hàng";
             break;
+        case 'return':
+            return "Trả Hàng";
+            break;
         case 'lost':
             return "Mất Hàng";
             break;
@@ -150,16 +153,74 @@ function show_history_stocks(id) {
 											</tr>
 										</thead>
 										<tbody>`;
-                data.data.last_history.forEach((item) => {
-                    html_history += `<tr>
+                data.data.last_history.forEach((item, index_array) => {
+                    if(index_array == 0 ){
+                        html_history += `<tr>
 								<td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
 								<td>${item.serial}</td>
 								<td>${convertTypetoString(item.type)}</td>`
-                    let index = item.list_products.findIndex(element => element.product == data.data.product)
-                    html_history += `
-										<td>${item.list_products[index].quantity}</td>
-										<td>${item.list_products[index].current_quantity}</td></tr>
-									  `
+                        let number = []
+                        item.list_products.forEach((element,index) => {
+                            if(element.product == data.data.product) number.push(index)
+                        })
+                        if(number.length > 1){
+                            html_history += `
+                                            <td>${item.list_products[number[0]].quantity}<br>
+                                            ${item.list_products[number[1]].quantity}</td>
+                                            <td>${item.list_products[number[0]].current_quantity}<br>
+                                            ${item.list_products[number[1]].current_quantity}</td></tr>
+                                        `
+                        }else{
+                            html_history += `
+                                            <td>${item.list_products[number[0]].quantity}</td>
+                                            <td>${item.list_products[number[0]].current_quantity}</td></tr>
+                                        `
+                        }
+                    }else if(index_array < data.data.last_history.length -1 && item._id != data.data.last_history[index_array-1]._id  ){
+                        html_history += `<tr>
+                                <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
+                                <td>${item.serial}</td>
+                                <td>${convertTypetoString(item.type)}</td>`
+                        let number = []
+                        item.list_products.forEach((element,index) => {
+                            if(element.product == data.data.product) number.push(index)
+                        })
+                        if(number.length > 1){
+                            html_history += `
+                                            <td>${item.list_products[number[0]].quantity}<br>
+                                            ${item.list_products[number[1]].quantity}</td>
+                                            <td>${item.list_products[number[0]].current_quantity}<br>
+                                            ${item.list_products[number[1]].current_quantity}</td></tr>
+                                        `
+                        }else{
+                            html_history += `
+                                            <td>${item.list_products[number[0]].quantity}</td>
+                                            <td>${item.list_products[number[0]].current_quantity}</td></tr>
+                                        `
+                        }
+                    }else if(index_array == data.data.last_history.length-1 && item._id != data.data.last_history[index_array-1]._id){
+                        html_history += `<tr>
+                                <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
+                                <td>${item.serial}</td>
+                                <td>${convertTypetoString(item.type)}</td>`
+                        let number = []
+                        item.list_products.forEach((element,index) => {
+                            if(element.product == data.data.product) number.push(index)
+                        })
+                        if(number.length > 1){
+                            html_history += `
+                                            <td>${item.list_products[number[0]].quantity}<br>
+                                            ${item.list_products[number[1]].quantity}</td>
+                                            <td>${item.list_products[number[0]].current_quantity}<br>
+                                            ${item.list_products[number[1]].current_quantity}</td></tr>
+                                        `
+                        }else{
+                            html_history += `
+                                            <td>${item.list_products[number[0]].quantity}</td>
+                                            <td>${item.list_products[number[0]].current_quantity}</td></tr>
+                                        `
+                        }
+                    } 
                 })
                 html_history += `</tbody>
 								</table>

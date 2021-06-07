@@ -45,19 +45,19 @@ class Common {
 		return new Promise(async (resolve, reject)=>{
 			let company;
             switch(chartCode) {
-				case 'NH':
+				case 'NH': // nhập hàng
 					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_HH:1}},{new: true});
 					resolve('HHNH_'+Number(company.serial_HH));
 					break; 
-				case 'XH':
+				case 'XH': // xuất hàng
 					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_HH:1}},{new: true});
 					resolve('HHXH_'+Number(company.serial_HH));
 					break;
-				case 'HDCT':
+				case 'HDCT': // chi tiền
 					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_HD:1}},{new: true});
 					resolve('HDCT_'+Number(company.serial_HD));
 					break; 
-				case 'HDTT':
+				case 'HDTT': // thu tiền
 					company = await Company.findOneAndUpdate({_id: id},{$inc:{serial_HD:1}},{new: true});
 					resolve('HDTT_'+Number(company.serial_HD));
 					break; 
@@ -86,23 +86,23 @@ class Common {
 		return new Promise(async (resolve, reject)=>{
 			let store;
             switch(chartCode) {
-				case 'NH':
+				case 'NH': // nhập hàng
 					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_HH:1}},{new: true});
 					resolve('HHNH_'+Number(store.serial_HH));
 					break; 
-				case 'XH':
+				case 'XH': // xuất hàng
 					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_HH:1}},{new: true});
 					resolve('HHXH_'+Number(store.serial_HH));
 					break; 
-				case 'HDCT':
+				case 'HDCT': //chi tiền
 					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_HD:1}},{new: true});
 					resolve('HDCT_'+Number(store.serial_HD));
 					break; 
-				case 'HDTT':
+				case 'HDTT': // thu tiền
 					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_HD:1}},{new: true});
 					resolve('HDTT_'+Number(store.serial_HD));
 					break;
-				case 'BH':
+				case 'BH': // bán hàng
 					store = await Store.findOneAndUpdate({_id: id},{$inc:{serial_BH:1}},{new: true});
 					resolve('HDBH_'+Number(store.serial_BH));
 					break;

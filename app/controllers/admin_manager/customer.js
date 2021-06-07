@@ -64,7 +64,7 @@ class Admin_customer extends Controller{
 	static async edit_data(req, res){
 		try{
 			let customer = await Customer.findOne({company: req.session.user.company._id, _id: req.body.id});
-			let history_sell = await Invoice_sell.find({company: req.session.user.company._id, customer:req.body.id}).sort({createdAt: -1}).limit(20).populate({
+			let history_sell = await Invoice_sell.find({company: req.session.user.company._id, customer:req.body.id, isActive: true}).sort({createdAt: -1}).limit(20).populate({
 				path: 'list_item.id',
 				populate: { path: 'Product_services'},
 				select:'name number_code'

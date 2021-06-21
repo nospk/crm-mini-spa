@@ -67,6 +67,7 @@ function get_data(paging_num, type){
 		start_time: start_time,
 		end_time: end_time,
         type_payment: type,
+        search_find_type: $("#search_find_type").val(),
         paging_num:paging_num,
         _csrf: $('#_csrf').val()
     }

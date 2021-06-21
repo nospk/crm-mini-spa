@@ -15,7 +15,7 @@ class Admin_cash_book extends Controller{
     }
 	static async get_data(req, res){
         try{
-			let {search_find_store, search_find_selection, type_payment}=req.body
+			let {search_find_store, search_find_selection, search_find_type, type_payment}=req.body
 			let start_time = req.body.start_time.split("/")
 			let end_time = req.body.end_time.split("/")
 			let match = {
@@ -40,6 +40,11 @@ class Admin_cash_book extends Controller{
 				match.$and.push({ type_payment: type_payment})
 				match_current_fund.$and.push({ type_payment: type_payment})
 				match_begin_fund.$and.push({ type_payment: type_payment})
+			}
+			if(search_find_type){
+				match.$and.push({ type: search_find_type})
+				match_current_fund.$and.push({ type: search_find_type})
+				match_begin_fund.$and.push({ type: search_find_type})
 			}
 			//set default variables
 			let pageSize = 10

@@ -59,14 +59,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </div>
               </div>
               <div class="col-12 mt-auto ">
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      <i class="far fa-calendar-alt"></i>
-                    </span>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                      </span>
+                    </div>
+                    <input type="text" class="form-control float-right" id="reservation">
                   </div>
-                  <input type="text" class="form-control float-right" id="reservation">
-                </div>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Loại</span>
+                    </div>
+                    <select class="form-control" id="search_find_type">
+                      <option value=""> Tất cả </option>
+                      <option value="income"> Thu </option>
+                      <option value="outcome"> Chi </option>
+                    </select>
+                  </div>
               </div>
               <div class="col-12 mt-auto ">
                 <button type="button" style="margin-left: 10px" class="btn btn-primary float-right"

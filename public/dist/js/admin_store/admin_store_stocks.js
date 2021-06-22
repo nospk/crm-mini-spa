@@ -154,7 +154,10 @@ function show_history_stocks(id) {
 										</thead>
 										<tbody>`;
                 data.data.last_history.forEach((item, index_array) => {
+                    let charPlusOrMinus = '';
                     if(index_array == 0 ){
+                        if(item.type == "sell") charPlusOrMinus = '-';
+                        else if(item.type == "import") charPlusOrMinus = '+';
                         html_history += `<tr>
 								<td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
 								<td>${item.serial}</td>
@@ -165,18 +168,20 @@ function show_history_stocks(id) {
                         })
                         if(number.length > 1){
                             html_history += `
-                                            <td>${item.list_products[number[0]].quantity}<br>
-                                            ${item.list_products[number[1]].quantity}</td>
+                                            <td>${charPlusOrMinus + item.list_products[number[0]].quantity}<br>
+                                            ${charPlusOrMinus + item.list_products[number[1]].quantity}</td>
                                             <td>${item.list_products[number[0]].current_quantity}<br>
                                             ${item.list_products[number[1]].current_quantity}</td></tr>
                                         `
                         }else{
                             html_history += `
-                                            <td>${item.list_products[number[0]].quantity}</td>
+                                            <td>${charPlusOrMinus + item.list_products[number[0]].quantity}</td>
                                             <td>${item.list_products[number[0]].current_quantity}</td></tr>
                                         `
                         }
                     }else if(index_array < data.data.last_history.length -1 && item._id != data.data.last_history[index_array-1]._id  ){
+                        if(item.type == "sell") charPlusOrMinus = '-';
+                        else if(item.type == "import") charPlusOrMinus = '+';
                         html_history += `<tr>
                                 <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
                                 <td>${item.serial}</td>
@@ -187,18 +192,20 @@ function show_history_stocks(id) {
                         })
                         if(number.length > 1){
                             html_history += `
-                                            <td>${item.list_products[number[0]].quantity}<br>
-                                            ${item.list_products[number[1]].quantity}</td>
+                                            <td>${charPlusOrMinus + item.list_products[number[0]].quantity}<br>
+                                            ${charPlusOrMinus + item.list_products[number[1]].quantity}</td>
                                             <td>${item.list_products[number[0]].current_quantity}<br>
                                             ${item.list_products[number[1]].current_quantity}</td></tr>
                                         `
                         }else{
                             html_history += `
-                                            <td>${item.list_products[number[0]].quantity}</td>
+                                            <td>${charPlusOrMinus + item.list_products[number[0]].quantity}</td>
                                             <td>${item.list_products[number[0]].current_quantity}</td></tr>
                                         `
                         }
                     }else if(index_array == data.data.last_history.length-1 && item._id != data.data.last_history[index_array-1]._id){
+                        if(item.type == "sell") charPlusOrMinus = '-';
+                        else if(item.type == "import") charPlusOrMinus = '+';
                         html_history += `<tr>
                                 <td>${new Date(item.createdAt).toLocaleString("vi-VN")}</td>
                                 <td>${item.serial}</td>
@@ -209,14 +216,14 @@ function show_history_stocks(id) {
                         })
                         if(number.length > 1){
                             html_history += `
-                                            <td>${item.list_products[number[0]].quantity}<br>
-                                            ${item.list_products[number[1]].quantity}</td>
+                                            <td>${charPlusOrMinus + item.list_products[number[0]].quantity}<br>
+                                            ${charPlusOrMinus + item.list_products[number[1]].quantity}</td>
                                             <td>${item.list_products[number[0]].current_quantity}<br>
                                             ${item.list_products[number[1]].current_quantity}</td></tr>
                                         `
                         }else{
                             html_history += `
-                                            <td>${item.list_products[number[0]].quantity}</td>
+                                            <td>${charPlusOrMinus + item.list_products[number[0]].quantity}</td>
                                             <td>${item.list_products[number[0]].current_quantity}</td></tr>
                                         `
                         }

@@ -17,6 +17,7 @@ const Invoice_sell_Schema = mongoose.Schema({
         quantity: {type: Number, required: true},
 		type: {type:String, required:true},
         price:{type:Number, required: true},
+        cost_price:{type:Number, required: true},
         price_sale: {type:Number},
 		_id: false
     }],
@@ -25,6 +26,7 @@ const Invoice_sell_Schema = mongoose.Schema({
         quantity: {type: Number, required: true},
 		type: {type:String, required:true},
         price:{type:Number, required: true},
+        cost_price:{type:Number, required: true},
         price_sale: {type:Number},
 		_id: false
     }]],

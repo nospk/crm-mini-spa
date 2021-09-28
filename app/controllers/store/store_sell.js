@@ -563,6 +563,7 @@ class Store_sell extends Controller{
 						id: list_item[i].id, 
 						quantity: list_item[i].sell_quantity,
 						type: list_item[i].type,
+						cost_price: list_item[i].cost_price,
 						price: list_item[i].price,
 						price_sale: Number(check_price) != Number(list_item[i].price) ? check_price : undefined,
 					})

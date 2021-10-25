@@ -257,6 +257,13 @@ function activeFull() {
                 "parent_id": "7",
                 "css_class": "nav-icon far fa-circle",
             },
+            {
+                "id": "8",
+                "name": "Báo cáo Cửa Hàng",
+                "url": "/admin_store_report",
+                "parent_id": "7",
+                "css_class": "nav-icon far fa-circle",
+            },
 			{
                 "id": "10",
                 "name": "Quản Lý",

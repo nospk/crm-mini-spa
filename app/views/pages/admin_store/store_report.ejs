@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html lang="vi">
+<head>
+  <%- include ('../../partials/head') %>
+  <title>Báo cáo cửa hàng</title>
+  <style>
+  .callout {
+	  padding: 10px;
+	  margin: 10px 0;
+	  border: 1px solid #eee;
+	  border-left-width: 5px;
+	  border-radius: 3px;
+  }
+  .callout-primary {
+	  border-left-color: #007BFF;
+  }
+  .input-group{
+	  margin: 10px 0;
+  }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini sidebar-collapse">
+<div class="wrapper">
+  <%- include ('../../partials/header') %>
+  <%- include ('../../partials/menu') %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+	<!-- Content Header (Page header) -->
+    <section class="content-header">
+
+    </section>
+    <!-- /.content-header -->
+	
+	<!-- Main content -->
+    <section class="content">
+		<div class="container-fluid">
+			<!-- Small boxes (Stat box) -->
+			<div class="card">
+                <div class="card-header border-0">
+                  <div class="d-flex justify-content-between">
+                    <h3 class="card-title">Bán hàng</h3>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <!-- /.d-flex -->
+  
+                  <div class="position-relative mb-4"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                    <canvas id="sales-chart" height="250" style="display: block; height: 200px; width: 578px;" width="722" class="chartjs-render-monitor"></canvas>
+                  </div>
+  
+                  <div class="d-flex flex-row justify-content-end">
+                    <span class="mr-2">
+                      <i class="fas fa-square text-primary"></i> Doanh Thu: <span id="revenue"></span>
+                    </span>
+  
+                    <span>
+                      <i class="fas fa-square text-gray"></i> Lợi Nhuận: <span id="profit"></span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+		</div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <input type="hidden" id="_csrf" value="<%=csrfToken %>" />
+  <%- include ('../../partials/footer') %>
+  <script src="/dist/js/admin_store/admin_store_report.js"></script>
+  <script src="/assets/plugins/chart.js/Chart.min.js"></script>
+</body>
+</html>

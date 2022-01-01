@@ -13,7 +13,9 @@ class Admin_store_report extends Controller {
         try {
             let now = new Date();
             let start_month = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0);
-            let end_month = new Date(now.getFullYear(), Number(now.getMonth()) + 1, 1, 0, 0, 0);
+            let end_month = new Date(now.getFullYear(), Number(now.getMonth()) + 1, 0, 0, 0, 0);
+            let start_month_ago = new Date(now.getFullYear(), now.getMonth() -1, 1, 0, 0, 0);
+            let end_month_ago = new Date(now.getFullYear(), Number(now.getMonth()), 0, 0, 0, 0);
             let gettotalAmount = await Invoice_sell.aggregate([
                 { $match: { company: mongoose.Types.ObjectId(req.session.user.company._id), isActive: true, store: mongoose.Types.ObjectId(req.session.store_id), createdAt: { $gte: start_month, $lt: end_month } } },
                 {
@@ -33,7 +35,30 @@ class Admin_store_report extends Controller {
                     }
                 }
             ])
-            Admin_store_report.sendData(res, { gettotalAmount, gettotalCostPrice });
+            let gettotalAmountLastMonth = await Invoice_sell.aggregate([
+                { $match: { company: mongoose.Types.ObjectId(req.session.user.company._id), isActive: true, store: mongoose.Types.ObjectId(req.session.store_id), createdAt: { $gte: start_month_ago, $lt: end_month_ago } } },
+                {
+                    $group: {
+                        _id: null,
+                        money: { $sum: "$payment" },
+                    }
+                }
+            ])
+            let gettotalCostPriceLastMonth = await Invoice_sell.aggregate([
+                { $match: { company: mongoose.Types.ObjectId(req.session.user.company._id), isActive: true, store: mongoose.Types.ObjectId(req.session.store_id), createdAt: { $gte: start_month_ago, $lt: end_month_ago } } },
+                { $unwind: "$list_item" },
+                {
+                    $group: {
+                        _id: null,
+                        money: { $sum: "$list_item.cost_price" },
+                    }
+                }
+            ])
+            gettotalAmount = gettotalAmount.length > 0 ? gettotalAmount[0].money : 0;
+            gettotalCostPrice = gettotalCostPrice.length > 0 ? gettotalCostPrice[0].money : 0;
+            gettotalAmountLastMonth = gettotalAmountLastMonth.length > 0 ? gettotalAmountLastMonth[0].money : 0;
+            gettotalCostPriceLastMonth = gettotalCostPriceLastMonth.length > 0 ? gettotalCostPriceLastMonth[0].money : 0;
+            Admin_store_report.sendData(res, { gettotalAmount, gettotalCostPrice, gettotalAmountLastMonth, gettotalCostPriceLastMonth });
         } catch (err) {
             console.log(err.message)
             Admin_store_report.sendError(res, err, err.message);

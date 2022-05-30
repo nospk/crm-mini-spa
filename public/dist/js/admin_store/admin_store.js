@@ -7,7 +7,7 @@ function render_data(data){
 	data.forEach(item =>{
 		html+=`
 				<div class="card">
-				  <img class="card-img-top" src="${item.image_store}" alt="Hình cửa hàng">
+				  <img class="card-img-top" style="cursor: pointer;" onClick="active_store('${item._id}'); return false;" src="${item.image_store}" alt="Hình cửa hàng">
 				  <div class="card-body">
 					<h4 class="card-title"><strong>${item.name}</strong></h5>
 					<p class="card-text">Địa chỉ: ${item.address}</p>

@@ -12,8 +12,9 @@ function get_data() {
         data: data,
         success: function (data) {
             if (data.status == 1) {
-                drawCanvas_now(data.data.gettotalAmount, data.data.gettotalCostPrice);
-                drawCanvas_lastmonth(data.data.gettotalAmountLastMonth, data.data.gettotalCostPriceLastMonth);
+                drawCanvas_now(data.data.gettotalAmount, data.data.gettotalCostPrice, data.data.newCustomers[0]);
+                drawCanvas_lastmonth(data.data.gettotalAmountLastMonth, data.data.gettotalCostPriceLastMonth, data.data.newCustomersLastMonth[0]);
+                drawTopSell(data.data.topSell, data.data.totalSell)
             } else {
                 Swal.fire({
                     title: data.error,
@@ -32,7 +33,27 @@ function get_data() {
         }
     })
 }
-function drawCanvas_now(revenue = revenue || 0, totalCostPrice = totalCostPrice || 0) {
+function drawTopSell(data, totalSell) {
+
+    let html = `<p class="text-center bg-danger">
+                    <strong>Top dịch vụ - sản phẩm </strong>
+                </p>
+    `
+    data.forEach(item => {
+        html += `
+                <div class="progress-group">
+                    ${item.product_service[0].name}
+                    <span class="float-right"><b>${item.total}</b>/${totalSell}</span>
+                    <div class="progress progress-sm">
+                      <div class="progress-bar bg-primary" style="width: ${Math.round(item.total/totalSell*100)}%"></div>
+                    </div>
+                </div>
+        `
+    });
+    $('#topSell').html(html)
+}
+function drawCanvas_now(revenue = revenue || 0, totalCostPrice = totalCostPrice || 0, newCustomers) {
+
     let profit = revenue - totalCostPrice
     $('#revenue').text(convert_vnd(revenue))
     $('#profit').text(convert_vnd(profit))
@@ -103,10 +124,12 @@ function drawCanvas_now(revenue = revenue || 0, totalCostPrice = totalCostPrice 
             }
         }
     })
-
-
+    let newCustomerPercent = Number(newCustomers.money) / Number(revenue) * 100
+    $('#new_customer').html(newCustomers.customers)
+    $('#new_customer_payment').html(newCustomers.money.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.') + ' <sup style="font-size: 20px">VND</sup>')
+    $('#new_customer_sell_percent').html(Math.round(newCustomerPercent) + ' <sup style="font-size: 20px">%</sup>')
 }
-function drawCanvas_lastmonth(revenue = revenue || 0, totalCostPrice = totalCostPrice || 0) {
+function drawCanvas_lastmonth(revenue = revenue || 0, totalCostPrice = totalCostPrice || 0, newCustomers) {
     let profit = revenue - totalCostPrice
     $('#revenue_lastmonth').text(convert_vnd(revenue))
     $('#profit_lastmonth').text(convert_vnd(profit))
@@ -122,7 +145,7 @@ function drawCanvas_lastmonth(revenue = revenue || 0, totalCostPrice = totalCost
     var salesChart = new Chart($salesChart, {
         type: 'bar',
         data: {
-            labels: ['Tháng Này'],
+            labels: ['Tháng Trước'],
             datasets: [
                 {
                     backgroundColor: '#007bff',
@@ -177,6 +200,9 @@ function drawCanvas_lastmonth(revenue = revenue || 0, totalCostPrice = totalCost
             }
         }
     })
-
+    let newCustomerPercent = Number(newCustomers.money) / Number(revenue) * 100
+    $('#new_customer_lastmonth').html(newCustomers.customers)
+    $('#new_customer_payment_lastmonth').html(newCustomers.money.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.') + ' <sup style="font-size: 20px">VND</sup>')
+    $('#new_customer_sell_percent_lastmonth').html(Math.round(newCustomerPercent) + ' <sup style="font-size: 20px">%</sup>')
 
 }

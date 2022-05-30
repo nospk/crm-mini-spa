@@ -44,10 +44,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <section class="content">
             <div class="container-fluid">
               <!-- Small boxes (Stat box) -->
-              <div class="card">
+              <div class="card card-primary">
                 <div class="card-header border-0">
-                  <div class="d-flex justify-content-between">
-                    <h3 class="card-title">Bán Hàng Tháng Này</h3>
+                  <h3 class="card-title">Bán Hàng Tháng Này</h3>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                      <i class="fas fa-minus"></i>
+                    </button>
                   </div>
                 </div>
                 <div class="card-body">
@@ -75,15 +78,66 @@ scratch. This page gets rid of all links and provides the needed markup only.
                       <i class="fas fa-square text-gray"></i> Lợi Nhuận: <span id="profit"></span>
                     </span>
                   </div>
+
+                  <div class="row">
+                    <div class="col-lg-4 col-6">
+                      <!-- small box -->
+                      <div class="small-box bg-info">
+                        <div class="inner">
+                          <h3 id="new_customer">0</h3>
+
+                          <p>Khách hàng mới</p>
+                        </div>
+                        <div class="icon">
+                          <i class="ion ion-person-add"></i>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div class="col-lg-4 col-6">
+                      <!-- small box -->
+                      <div class="small-box bg-success">
+                        <div class="inner">
+                          <h3 id="new_customer_payment">0<sup style="font-size: 20px">VND</sup></h3>
+
+                          <p>Số tiền mua</p>
+                        </div>
+                        <div class="icon">
+                          <i class="ion ion-bag"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-6">
+                      <!-- small box -->
+                      <div class="small-box bg-warning">
+                        <div class="inner">
+                          <h3 id="new_customer_sell_percent">0<sup style="font-size: 20px">%</sup></h3>
+
+                          <p>Chiếm tỉ lệ</p>
+                        </div>
+                        <div class="icon">
+                          <i class="ion ion-person-add"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-12" id="topSell">
+
+
+
+                  </div>
                 </div>
-
-
               </div><!-- /.container-fluid -->
-              <div class="card">
+              <div class="card card-info">
 
                 <div class="card-header border-0">
-                  <div class="d-flex justify-content-between">
-                    <h3 class="card-title">Bán Hàng Tháng Trước</h3>
+                  <h3 class="card-title">Bán Hàng Tháng Trước</h3>
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                      <i class="fas fa-minus"></i>
+                    </button>
                   </div>
                 </div>
                 <div class="card-body">
@@ -111,6 +165,50 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <span>
                       <i class="fas fa-square text-gray"></i> Lợi Nhuận: <span id="profit_lastmonth"></span>
                     </span>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-4 col-6">
+                      <!-- small box -->
+                      <div class="small-box bg-info">
+                        <div class="inner">
+                          <h3 id="new_customer_lastmonth">0</h3>
+
+                          <p>Khách hàng mới</p>
+                        </div>
+                        <div class="icon">
+                          <i class="ion ion-person-add"></i>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div class="col-lg-4 col-6">
+                      <!-- small box -->
+                      <div class="small-box bg-success">
+                        <div class="inner">
+                          <h3 id="new_customer_payment_lastmonth">0<sup style="font-size: 20px">VND</sup></h3>
+
+                          <p>Số tiền mua</p>
+                        </div>
+                        <div class="icon">
+                          <i class="ion ion-bag"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-4 col-6">
+                      <!-- small box -->
+                      <div class="small-box bg-warning">
+                        <div class="inner">
+                          <h3 id="new_customer_sell_percent_lastmonth">0<sup style="font-size: 20px">%</sup></h3>
+
+                          <p>Chiếm tỉ lệ</p>
+                        </div>
+                        <div class="icon">
+                          <i class="ion ion-person-add"></i>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

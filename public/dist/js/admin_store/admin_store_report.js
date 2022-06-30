@@ -12,8 +12,8 @@ function get_data() {
         data: data,
         success: function (data) {
             if (data.status == 1) {
-                drawCanvas_now(data.data.gettotalAmount, data.data.gettotalCostPrice, data.data.newCustomers[0]);
-                drawCanvas_lastmonth(data.data.gettotalAmountLastMonth, data.data.gettotalCostPriceLastMonth, data.data.newCustomersLastMonth[0]);
+                drawCanvas_now(data.data.gettotalAmount, data.data.gettotalCostPrice, data.data.newCustomers[0], data.data.oldCustomers.length);
+                drawCanvas_lastmonth(data.data.gettotalAmountLastMonth, data.data.gettotalCostPriceLastMonth, data.data.newCustomersLastMonth[0], data.data.oldCustomersLastMonth.length);
                 drawTopSell(data.data.topSell, data.data.totalSell)
             } else {
                 Swal.fire({
@@ -52,7 +52,7 @@ function drawTopSell(data, totalSell) {
     });
     $('#topSell').html(html)
 }
-function drawCanvas_now(revenue = revenue || 0, totalCostPrice = totalCostPrice || 0, newCustomers) {
+function drawCanvas_now(revenue = revenue || 0, totalCostPrice = totalCostPrice || 0, newCustomers, oldCustomers) {
 
     let profit = revenue - totalCostPrice
     $('#revenue').text(convert_vnd(revenue))
@@ -125,11 +125,12 @@ function drawCanvas_now(revenue = revenue || 0, totalCostPrice = totalCostPrice 
         }
     })
     let newCustomerPercent = Number(newCustomers?newCustomers.money:0) / Number(revenue) * 100
+    $('#old_customer').html(oldCustomers?oldCustomers:0)
     $('#new_customer').html(newCustomers?newCustomers.customers:0)
     $('#new_customer_payment').html((newCustomers?newCustomers.money:0).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.') + ' <sup style="font-size: 20px">VND</sup>')
     $('#new_customer_sell_percent').html(Math.round(newCustomerPercent) + ' <sup style="font-size: 20px">%</sup>')
 }
-function drawCanvas_lastmonth(revenue = revenue || 0, totalCostPrice = totalCostPrice || 0, newCustomers) {
+function drawCanvas_lastmonth(revenue = revenue || 0, totalCostPrice = totalCostPrice || 0, newCustomers, oldCustomers) {
     let profit = revenue - totalCostPrice
     $('#revenue_lastmonth').text(convert_vnd(revenue))
     $('#profit_lastmonth').text(convert_vnd(profit))
@@ -201,6 +202,7 @@ function drawCanvas_lastmonth(revenue = revenue || 0, totalCostPrice = totalCost
         }
     })
     let newCustomerPercent = Number(newCustomers?newCustomers.money:0) / Number(revenue) * 100
+    $('#old_customer_lastmonth').html(oldCustomers?oldCustomers:0)
     $('#new_customer_lastmonth').html(newCustomers?newCustomers.customers:0)
     $('#new_customer_payment_lastmonth').html((newCustomers?newCustomers.money:0).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.') + ' <sup style="font-size: 20px">VND</sup>')
     $('#new_customer_sell_percent_lastmonth').html(Math.round(newCustomerPercent) + ' <sup style="font-size: 20px">%</sup>')

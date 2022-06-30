@@ -66,6 +66,14 @@ class Admin_store_report extends Controller {
                     }
                 }
             ]);
+            let oldCustomers = await Invoice_sell.aggregate([
+                { $match: { company: mongoose.Types.ObjectId(req.session.user.company._id), isActive: true, store: mongoose.Types.ObjectId(req.session.store_id), createdAt: { $gte: start_month, $lt: end_month } } },
+                {
+                    $group: {
+                        _id: "$customer",
+                    }
+                }
+            ])
             let newCustomersLastMonth = await Customer.aggregate([
                 { $match: { company: mongoose.Types.ObjectId(req.session.user.company._id), isActive: true, createdAt: { $gte: start_month_ago, $lt: end_month_ago } } },
                 {
@@ -76,6 +84,14 @@ class Admin_store_report extends Controller {
                     }
                 }
             ]);
+            let oldCustomersLastMonth = await Invoice_sell.aggregate([
+                { $match: { company: mongoose.Types.ObjectId(req.session.user.company._id), isActive: true, store: mongoose.Types.ObjectId(req.session.store_id), createdAt: { $gte: start_month_ago, $lt: end_month_ago } } },
+                {
+                    $group: {
+                        _id: "$customer",
+                    }
+                }
+            ])
             let topSell = await Invoice_sell.aggregate([
                 { $match: { company: mongoose.Types.ObjectId(req.session.user.company._id), isActive: true, store: mongoose.Types.ObjectId(req.session.store_id), createdAt: { $gte: start_month, $lt: end_month } } },
                 { $unwind: "$list_item" },
@@ -95,7 +111,7 @@ class Admin_store_report extends Controller {
             gettotalCostPrice = gettotalCostPrice.length > 0 ? gettotalCostPrice[0].money : 0;
             gettotalAmountLastMonth = gettotalAmountLastMonth.length > 0 ? gettotalAmountLastMonth[0].money : 0;
             gettotalCostPriceLastMonth = gettotalCostPriceLastMonth.length > 0 ? gettotalCostPriceLastMonth[0].money : 0;
-            Admin_store_report.sendData(res, { gettotalAmount, gettotalCostPrice, gettotalAmountLastMonth, gettotalCostPriceLastMonth, newCustomers, newCustomersLastMonth, topSell, totalSell});
+            Admin_store_report.sendData(res, { gettotalAmount, gettotalCostPrice, gettotalAmountLastMonth, gettotalCostPriceLastMonth, newCustomers, newCustomersLastMonth, oldCustomers, oldCustomersLastMonth, topSell, totalSell});
         } catch (err) {
             console.log(err.message)
             Admin_store_report.sendError(res, err, err.message);

@@ -15,6 +15,8 @@ function get_data() {
                 drawCanvas_now(data.data.gettotalAmount, data.data.gettotalCostPrice, data.data.newCustomers[0], data.data.oldCustomers.length);
                 drawCanvas_lastmonth(data.data.gettotalAmountLastMonth, data.data.gettotalCostPriceLastMonth, data.data.newCustomersLastMonth[0], data.data.oldCustomersLastMonth.length);
                 drawTopSell(data.data.topSell, data.data.totalSell)
+                drawServiceThisMonth( data.data.servicesMonth)
+                drawServiceLastMonth( data.data.servicesLastMonth)
             } else {
                 Swal.fire({
                     title: data.error,
@@ -51,6 +53,50 @@ function drawTopSell(data, totalSell) {
         `
     });
     $('#topSell').html(html)
+}
+function drawServiceThisMonth(data) {
+    let totalService = 0;
+    data.forEach(item => {
+        totalService += item.total
+    })
+    let html = `<p class="text-center bg-danger">
+                    <strong>Dịch vụ trong tháng</strong>
+                </p>
+    `
+    data.forEach(item => {
+        html += `
+                <div class="progress-group">
+                    ${item.product_service[0].name}
+                    <span class="float-right"><b>${item.total}</b>/${totalService}</span>
+                    <div class="progress progress-sm">
+                      <div class="progress-bar bg-primary" style="width: ${Math.round(item.total/totalService*100)}%"></div>
+                    </div>
+                </div>
+        `
+    });
+    $('#logServiceMonth').html(html)
+}
+function drawServiceLastMonth(data) {
+    let totalService = 0;
+    data.forEach(item => {
+        totalService += item.total
+    })
+    let html = `<p class="text-center bg-danger">
+                    <strong>Dịch vụ trong tháng</strong>
+                </p>
+    `
+    data.forEach(item => {
+        html += `
+                <div class="progress-group">
+                    ${item.product_service[0].name}
+                    <span class="float-right"><b>${item.total}</b>/${totalService}</span>
+                    <div class="progress progress-sm">
+                      <div class="progress-bar bg-primary" style="width: ${Math.round(item.total/totalService*100)}%"></div>
+                    </div>
+                </div>
+        `
+    });
+    $('#logServiceLastMonth').html(html)
 }
 function drawCanvas_now(revenue = revenue || 0, totalCostPrice = totalCostPrice || 0, newCustomers, oldCustomers) {
 

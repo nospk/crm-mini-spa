@@ -2,6 +2,7 @@ const Controller = require('../../../core/controller');
 const Store = require('../../models/store');
 const Common = require("../../../core/common");
 const Invoice_sell = require('../../models/invoice_sell');
+const Log_services = require('../../models/log_service');
 const Customer = require('../../models/customer');
 const mongoose = require('mongoose');
 class Admin_store_report extends Controller {
@@ -106,12 +107,36 @@ class Admin_store_report extends Controller {
                 {$lookup: {from: 'product_services', localField: '_id', foreignField:'_id', as: 'product_service'}}
 
             ])
+            let servicesMonth = await Log_services.aggregate([
+                { $match: { company: mongoose.Types.ObjectId(req.session.user.company._id), isActive: true, type:'service', store: mongoose.Types.ObjectId(req.session.store_id), createdAt: { $gte: start_month, $lt: end_month } } },
+                {
+                    $group: {
+                        _id: "$service",
+                        total: { $sum: 1 },
+                    }
+                },
+                {$sort: {total: -1}},
+                {$lookup: {from: 'product_services', localField: '_id', foreignField:'_id', as: 'product_service'}}
+
+            ])
+            let servicesLastMonth = await Log_services.aggregate([
+                { $match: { company: mongoose.Types.ObjectId(req.session.user.company._id), isActive: true, type:'service', store: mongoose.Types.ObjectId(req.session.store_id), createdAt: { $gte: start_month_ago, $lt: end_month_ago } } },
+                {
+                    $group: {
+                        _id: "$service",
+                        total: { $sum: 1 },
+                    }
+                },
+                {$sort: {total: -1}},
+                {$lookup: {from: 'product_services', localField: '_id', foreignField:'_id', as: 'product_service'}}
+
+            ])
             let totalSell = gettotalAmount[0].totalsell
             gettotalAmount = gettotalAmount.length > 0 ? gettotalAmount[0].money : 0;
             gettotalCostPrice = gettotalCostPrice.length > 0 ? gettotalCostPrice[0].money : 0;
             gettotalAmountLastMonth = gettotalAmountLastMonth.length > 0 ? gettotalAmountLastMonth[0].money : 0;
             gettotalCostPriceLastMonth = gettotalCostPriceLastMonth.length > 0 ? gettotalCostPriceLastMonth[0].money : 0;
-            Admin_store_report.sendData(res, { gettotalAmount, gettotalCostPrice, gettotalAmountLastMonth, gettotalCostPriceLastMonth, newCustomers, newCustomersLastMonth, oldCustomers, oldCustomersLastMonth, topSell, totalSell});
+            Admin_store_report.sendData(res, { gettotalAmount, gettotalCostPrice, gettotalAmountLastMonth, gettotalCostPriceLastMonth, newCustomers, newCustomersLastMonth, oldCustomers, oldCustomersLastMonth, topSell, totalSell, servicesMonth, servicesLastMonth});
         } catch (err) {
             console.log(err.message)
             Admin_store_report.sendError(res, err, err.message);

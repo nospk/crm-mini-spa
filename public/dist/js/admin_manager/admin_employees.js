@@ -220,15 +220,57 @@ function edit_data(id){
         data: {id: id, _csrf: $('#_csrf').val()},
         success: function(data){
 			if(data.status == 1){
-				$('#edit_data #edit_name').val(data.data.name);
-				$('#edit_data #edit_gener').val(data.data.gener);
-				$('#edit_data #edit_select_store').val(data.data.store);
-				$('#edit_data #edit_birthday').val(data.data.birthday);
-				$('#edit_data #edit_identity_number').val(data.data.identity_number);
-				$('#edit_data #edit_number_code').val(data.data.number_code);
-				$('#edit_data #edit_address').val(data.data.address);
-				$('#edit_data #edit_id').val(data.data._id);
+				$('#edit_data #edit_name').val(data.data.employee.name);
+				$('#edit_data #edit_gener').val(data.data.employee.gener);
+				$('#edit_data #edit_select_store').val(data.data.employee.store);
+				$('#edit_data #edit_birthday').val(data.data.employee.birthday);
+				$('#edit_data #edit_identity_number').val(data.data.employee.identity_number);
+				$('#edit_data #edit_number_code').val(data.data.employee.number_code);
+				$('#edit_data #edit_address').val(data.data.employee.address);
+				$('#edit_data #edit_id').val(data.data.employee._id);
 				$('#edit_data').modal('show');
+				let html_report_sell_month = "";
+				data.data.report_sell_month.forEach(item => {
+					html_report_sell_month += `<li class="list-group-item"><span>Bán hàng</span><span class="float-right">${convert_vnd(item.money_sell)}</span></li>`
+				})
+				$('#report_sell_month').html(html_report_sell_month)
+				let html_report_service_month = "";
+				data.data.report_service_month.forEach(item => {
+					let hair_removel_price = item.hair_removel_in_month.reduce((price, currValue) =>{
+						return price += currValue.service_price
+					},0)
+					let minutes_service = item.service_in_month.reduce((minutes, currValue) =>{
+						return minutes += currValue.times_service
+					},0)
+					//console.log(hair_removel_price)
+					html_report_service_month += `<li class="list-group-item"><span>Dịch vụ</span>
+											<br>Số lần dịch vụ<span class="float-right">${item.service_in_month.length}</span>
+											<br>Số phút dịch vụ <span class="float-right">${minutes_service}</span>
+											<br>Số tiền triệt lông <span class="float-right">${convert_vnd(hair_removel_price)}</span>
+					</li>`
+				})
+				$('#report_service_month').html(html_report_service_month)
+				let html_report_sell_last_month = "";
+				data.data.report_sell_last_month.forEach(item => {
+					html_report_sell_last_month += `<li class="list-group-item"><span>Bán hàng</span><span class="float-right">${convert_vnd(item.money_sell)}</span></li>`
+				})
+				$('#report_sell_last_month').html(html_report_sell_last_month)
+				let html_report_service_last_month = "";
+				data.data.report_service_last_month.forEach(item => {
+					let hair_removel_price = item.hair_removel_in_month.reduce((price, currValue) =>{
+						return price += currValue.service_price
+					},0)
+					let minutes_service = item.service_in_month.reduce((minutes, currValue) =>{
+						return minutes += currValue.times_service
+					},0)
+					//console.log(hair_removel_price)
+					html_report_service_last_month += `<li class="list-group-item"><span>Dịch vụ</span>
+											<br>Số lần dịch vụ<span class="float-right">${item.service_in_month.length}</span>
+											<br>Số phút dịch vụ <span class="float-right">${minutes_service}</span>
+											<br>Số tiền triệt lông <span class="float-right">${convert_vnd(hair_removel_price)}</span>
+					</li>`
+				})
+				$('#report_service_last_month').html(html_report_service_last_month)
             }
 		}
 	})

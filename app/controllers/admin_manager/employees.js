@@ -3,6 +3,8 @@ const Employees = require('../../models/employees');
 const mongoose = require('mongoose');
 const Store = require('../../models/store');
 const Common = require("../../../core/common");
+const Log_service = require('../../models/log_service');
+const Invoice_sell = require('../../models/invoice_sell');
 class Admin_employees extends Controller{
     static show(req, res){
         Admin_employees.setLocalValue(req,res);
@@ -71,8 +73,163 @@ class Admin_employees extends Controller{
 	}
 	static async edit_data(req, res){
 		try{
-			let data = await Employees.findOne({company: req.session.user.company._id, _id: req.body.id});
-			Admin_employees.sendData(res, data);
+			let now = new Date();
+			let start_month = new Date(now.getFullYear(),now.getMonth(),1,0,0,0);
+			let end_month = new Date(now.getFullYear(),Number(now.getMonth())+1,1,0,0,0);
+			let start_month_ago = new Date(now.getFullYear(), now.getMonth() -1, 1, 0, 0, 0);
+            let end_month_ago = new Date(now.getFullYear(), Number(now.getMonth()), 1, 0, 0, 0);
+			let employee = await Employees.findOne({company: req.session.user.company._id, _id: req.body.id});
+			let report_service_month = await Employees.aggregate([
+				{ $match: {company: mongoose.Types.ObjectId(req.session.user.company._id), store: mongoose.Types.ObjectId(req.session.store_id),_id: mongoose.Types.ObjectId(req.body.id), isActive: true}},
+				{ $lookup:
+					 {
+					   from: Log_service.collection.name,
+					   let: { "pid" : "$_id", "start_month":start_month,"end_month":end_month},
+					   pipeline: [
+							{ $match:
+								 { $expr:
+									{ $and:
+									   [
+										 { $eq: [ "$employees",  "$$pid" ] },
+										 { $eq: [ "$type",  "service" ] },
+										 { $eq: [ "$isActive",  true ] },
+										 { $gte:[ "$createdAt", "$$start_month"]},
+										 { $lt: [ "$createdAt", "$$end_month"]},
+									   ]
+									}
+								 }	
+							  }
+						],
+						as: "service_in_month"
+					 }
+				},
+				{ $lookup:
+					{
+					  from: Log_service.collection.name,
+					  let: { "pid" : "$_id", "start_month":start_month,"end_month":end_month},
+					  pipeline: [
+						   { $match:
+								{ $expr:
+								   { $and:
+									  [
+										{ $eq: [ "$employees",  "$$pid" ] },
+										{ $eq: [ "$type",  "hair_removel" ] },
+										{ $eq: [ "$isActive",  true ] },
+										{ $gte:[ "$createdAt", "$$start_month"]},
+										{ $lt: [ "$createdAt", "$$end_month"]},
+									  ]
+								   }
+								}	
+							 }
+					   ],
+					   as: "hair_removel_in_month"
+					}
+			   	},
+
+			])
+
+			let report_sell_month = await Employees.aggregate([
+				{ $match: {company: mongoose.Types.ObjectId(req.session.user.company._id), _id: mongoose.Types.ObjectId(req.body.id)}},
+				{ $lookup:
+					 {
+					   from: Invoice_sell.collection.name,
+					   let: { "pid" : "$_id", "start_month":start_month,"end_month":end_month},
+					   pipeline: [
+							{ $match:
+								 { $expr:
+									{ $and:
+									   [
+										 { $eq: [ "$employees",  "$$pid" ] },
+										 { $eq: [ "$isActive",  true ] },
+										 { $gte:[ "$createdAt", "$$start_month"]},
+										 { $lt: [ "$createdAt", "$$end_month"]},
+									   ]
+									}
+								 }	
+							  }
+						],
+						as: "sell_in_month"
+					 }
+				},
+				{ $unwind:"$sell_in_month"},
+				{ $group : {_id:"$_id", name:{ "$first":"$name"}, money_sell:{$sum:"$sell_in_month.payment"}}}
+			])
+			let report_service_last_month = await Employees.aggregate([
+				{ $match: {company: mongoose.Types.ObjectId(req.session.user.company._id), store: mongoose.Types.ObjectId(req.session.store_id),_id: mongoose.Types.ObjectId(req.body.id), isActive: true}},
+				{ $lookup:
+					 {
+					   from: Log_service.collection.name,
+					   let: { "pid" : "$_id", "start_month":start_month_ago,"end_month":end_month_ago},
+					   pipeline: [
+							{ $match:
+								 { $expr:
+									{ $and:
+									   [
+										 { $eq: [ "$employees",  "$$pid" ] },
+										 { $eq: [ "$type",  "service" ] },
+										 { $eq: [ "$isActive",  true ] },
+										 { $gte:[ "$createdAt", "$$start_month"]},
+										 { $lt: [ "$createdAt", "$$end_month"]},
+									   ]
+									}
+								 }	
+							  }
+						],
+						as: "service_in_month"
+					 }
+				},
+				{ $lookup:
+					{
+					  from: Log_service.collection.name,
+					  let: { "pid" : "$_id", "start_month":start_month_ago,"end_month":end_month_ago},
+					  pipeline: [
+						   { $match:
+								{ $expr:
+								   { $and:
+									  [
+										{ $eq: [ "$employees",  "$$pid" ] },
+										{ $eq: [ "$type",  "hair_removel" ] },
+										{ $eq: [ "$isActive",  true ] },
+										{ $gte:[ "$createdAt", "$$start_month"]},
+										{ $lt: [ "$createdAt", "$$end_month"]},
+									  ]
+								   }
+								}	
+							 }
+					   ],
+					   as: "hair_removel_in_month"
+					}
+			   	},
+
+			])
+
+			let report_sell_last_month = await Employees.aggregate([
+				{ $match: {company: mongoose.Types.ObjectId(req.session.user.company._id), _id: mongoose.Types.ObjectId(req.body.id)}},
+				{ $lookup:
+					 {
+					   from: Invoice_sell.collection.name,
+					   let: { "pid" : "$_id", "start_month":start_month_ago,"end_month":end_month_ago},
+					   pipeline: [
+							{ $match:
+								 { $expr:
+									{ $and:
+									   [
+										 { $eq: [ "$employees",  "$$pid" ] },
+										 { $eq: [ "$isActive",  true ] },
+										 { $gte:[ "$createdAt", "$$start_month"]},
+										 { $lt: [ "$createdAt", "$$end_month"]},
+									   ]
+									}
+								 }	
+							  }
+						],
+						as: "sell_in_month"
+					 }
+				},
+				{ $unwind:"$sell_in_month"},
+				{ $group : {_id:"$_id", name:{ "$first":"$name"}, money_sell:{$sum:"$sell_in_month.payment"}}}
+			])
+			Admin_employees.sendData(res, {employee, report_service_month, report_sell_month, report_service_last_month, report_sell_last_month});
 		}catch(err){
 			console.log(err.message)
 			Admin_employees.sendError(res, err, err.message);

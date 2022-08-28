@@ -213,7 +213,7 @@ class Store_sell extends Controller{
 	static async get_customer(req, res){
 		try{
 			let customer = await Customer.findOne({company: req.session.store.company, _id: req.body.id});
-			let history_sell = await Invoice_sell.find({company: req.session.store.company, customer:req.body.id}).sort({createdAt: -1}).limit(20).populate({
+			let history_sell = await Invoice_sell.find({company: req.session.store.company, customer:req.body.id, isActive: true}).sort({createdAt: -1}).limit(20).populate({
 				path: 'list_item.id',
 				populate: { path: 'Product_services'},
 				select:'name number_code'

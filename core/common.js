@@ -1,7 +1,7 @@
 const Company = require('../app/models/company');
 const Store = require('../app/models/store');
 const bcrypt = require('bcrypt-nodejs');
-const convert_vnd_sting =function(){var t=["Không","Một","Hai","Ba","Bốn","Năm","Sáu","Bảy","Tám","Chín"],r=function(r,n){var o="",a=Math.floor(r/10),e=r%10;return a>1?(o=" "+t[a]+" Mươi",1==e&&(o+=" Mốt")):1==a?(o=" Mười",1==e&&(o+=" Một")):n&&e>0&&(o=" Lẻ"),5==e&&a>=1?o+=" Lăm":4==e&&a>=1?o+=" Tư":(e>1||1==e&&0==a)&&(o+=" "+t[e]),o},n=function(n,o){var a="",e=Math.floor(n/100),n=n%100;return o||e>0?(a=" "+t[e]+" Trăm",a+=r(n,!0)):a=r(n,!1),a},o=function(t,r){var o="",a=Math.floor(t/1e6),t=t%1e6;a>0&&(o=n(a,r)+" Triệu",r=!0);var e=Math.floor(t/1e3),t=t%1e3;return e>0&&(o+=n(e,r)+" Ngàn",r=!0),t>0&&(o+=n(t,r)),o};return{doc:function(r){if(0==r)return t[0];var n="",a="";do ty=r%1e9,r=Math.floor(r/1e9),n=r>0?o(ty,!0)+a+n:o(ty,!1)+a+n,a=" Tỷ";while(r>0);return n.trim()}}}();
+const convert_vnd_string =function(){var t=["Không","Một","Hai","Ba","Bốn","Năm","Sáu","Bảy","Tám","Chín"],r=function(r,n){var o="",a=Math.floor(r/10),e=r%10;return a>1?(o=" "+t[a]+" Mươi",1==e&&(o+=" Mốt")):1==a?(o=" Mười",1==e&&(o+=" Một")):n&&e>0&&(o=" Lẻ"),5==e&&a>=1?o+=" Lăm":4==e&&a>=1?o+=" Tư":(e>1||1==e&&0==a)&&(o+=" "+t[e]),o},n=function(n,o){var a="",e=Math.floor(n/100),n=n%100;return o||e>0?(a=" "+t[e]+" Trăm",a+=r(n,!0)):a=r(n,!1),a},o=function(t,r){var o="",a=Math.floor(t/1e6),t=t%1e6;a>0&&(o=n(a,r)+" Triệu",r=!0);var e=Math.floor(t/1e3),t=t%1e3;return e>0&&(o+=n(e,r)+" Ngàn",r=!0),t>0&&(o+=n(t,r)),o};return{doc:function(r){if(0==r)return t[0];var n="",a="";do ty=r%1e9,r=Math.floor(r/1e9),n=r>0?o(ty,!0)+a+n:o(ty,!1)+a+n,a=" Tỷ";while(r>0);return n.trim()}}}();
 class Common {
 	static notEmpty(string){
 		if(string !== null && string !== '') 
@@ -264,7 +264,7 @@ class Common {
 								<td style="font-size:11px;text-align:right">${String(payment_back).replace(/(.)(?=(\d{3})+$)/g,'$1,') + ' ₫'}</td>
 							</tr>
 							<tr>
-								<td colspan="2" style="font-size:11px; font-style:italic; text-align:left"><em>${convert_vnd_sting.doc(payment)}</em></td>
+								<td colspan="2" style="font-size:11px; font-style:italic; text-align:left"><em>${convert_vnd_string.doc(payment)}</em></td>
 							</tr>
 					</tbody></table>`
 				/* if(service != false){

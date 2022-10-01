@@ -131,7 +131,7 @@ class Admin_store_report extends Controller {
                 {$lookup: {from: 'product_services', localField: '_id', foreignField:'_id', as: 'product_service'}}
 
             ])
-            let totalSell = gettotalAmount[0].totalsell
+            let totalSell = gettotalAmount.length > 0 ? gettotalAmount[0].totalsell : 0;
             gettotalAmount = gettotalAmount.length > 0 ? gettotalAmount[0].money : 0;
             gettotalCostPrice = gettotalCostPrice.length > 0 ? gettotalCostPrice[0].money : 0;
             gettotalAmountLastMonth = gettotalAmountLastMonth.length > 0 ? gettotalAmountLastMonth[0].money : 0;

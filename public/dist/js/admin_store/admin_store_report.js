@@ -170,7 +170,8 @@ function drawCanvas_now(revenue = revenue || 0, totalCostPrice = totalCostPrice 
             }
         }
     })
-    let newCustomerPercent = Number(newCustomers?newCustomers.money:0) / Number(revenue) * 100
+
+    let newCustomerPercent = newCustomers != undefined ? Number(newCustomers.money) / Number(revenue) * 100 : 0
     $('#old_customer').html(oldCustomers?oldCustomers:0)
     $('#new_customer').html(newCustomers?newCustomers.customers:0)
     $('#new_customer_payment').html((newCustomers?newCustomers.money:0).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.') + ' <sup style="font-size: 20px">VND</sup>')
@@ -247,7 +248,7 @@ function drawCanvas_lastmonth(revenue = revenue || 0, totalCostPrice = totalCost
             }
         }
     })
-    let newCustomerPercent = Number(newCustomers?newCustomers.money:0) / Number(revenue) * 100
+    let newCustomerPercent = newCustomers != undefined ? Number(newCustomers.money) / Number(revenue) * 100 : 0
     $('#old_customer_lastmonth').html(oldCustomers?oldCustomers:0)
     $('#new_customer_lastmonth').html(newCustomers?newCustomers.customers:0)
     $('#new_customer_payment_lastmonth').html((newCustomers?newCustomers.money:0).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.') + ' <sup style="font-size: 20px">VND</sup>')

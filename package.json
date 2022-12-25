@@ -26,7 +26,7 @@
   "homepage": "https://github.com/nospk/crm-mini-spa#readme",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.1",
     "connect-flash": "^0.1.1",
     "connect-loki": "^1.1.0",
     "cookie-parser": "^1.4.5",

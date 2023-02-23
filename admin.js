@@ -17,9 +17,7 @@ const csrf = require('csurf');
 const LokiStore = require('connect-loki')(session);
 const options = {
     useNewUrlParser: true,
-    useCreateIndex: true,
     autoIndex: true,
-    useFindAndModify: false,
     useUnifiedTopology: true
 }
 /*************************** Main *******************************/

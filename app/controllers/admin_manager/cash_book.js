@@ -58,7 +58,6 @@ class Admin_cash_book extends Controller{
 				path: 'store',
 				select: 'name'
 			});
-			console.log(data)
 			let current_fund = await Cash_book.aggregate([
 				{ $match: match_current_fund},
 				{ $group : {

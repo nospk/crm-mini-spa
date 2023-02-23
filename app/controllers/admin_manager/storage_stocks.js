@@ -37,15 +37,12 @@ class Admin_store_stocks extends Controller{
 			let pageCount = Math.ceil(pages/pageSize)
 			let data = await Invoice_product_storage.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
 				path: 'supplier',
-				populate: { path: 'Suppliers'},
 				select: 'name'
 			}).populate({
 				path: 'list_products.product',
-				populate: { path: 'Product_services' },
 				select: 'number_code name'
 			}).populate({
 				path: 'payment',
-				populate: { path: 'Cash_book' },
 				select: 'money'
 			});
 			Admin_store_stocks.sendData(res, {data, pageCount, currentPage});

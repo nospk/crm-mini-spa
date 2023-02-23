@@ -70,14 +70,11 @@ class Store_sell extends Controller{
         try{
 			let data = await Invoice_sell.findOne({company : req.session.store.company, _id: req.params.id, isActive: true}).populate({
 				path: 'customer',
-				populate: { path: 'Customer'},
 				select: 'name'
 			}).populate({
 				path: 'list_item.id',
-				populate: { path: 'Product_services'},
 			}).populate({
 				path: 'bill',
-				populate: { path: 'Cash_book'},
 				select:'type_payment money'
 			}).lean()
 			for (let i = 0; i < data.list_item.length; i++){
@@ -120,24 +117,19 @@ class Store_sell extends Controller{
 			let pageCount = Math.ceil(pages/pageSize)
 			let data = await Invoice_sell.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
 				path: 'customer',
-				populate: { path: 'Customer'},
 				select: 'name'
 			}).populate({
 				path: 'employees',
-				populate: { path: 'Employees'},
 				select: 'name'
 			}).populate({
 				path: 'list_item.id',
-				populate: { path: 'Product_services'},
 				select:'name number_code'
 			})
 			.populate({
 				path: 'list_item_edit.id',
-				populate : {path: 'Product_services'},
 				select:'name number_code'
 			}).populate({
 				path: 'bill',
-				populate: { path: 'Cash_book'},
 				select:'type_payment money money_edit'
 			})
 			Store_sell.sendData(res, {data, pageCount, currentPage});
@@ -166,7 +158,6 @@ class Store_sell extends Controller{
 				select: 'product_of_sell',
 			}).populate({
 				path: 'combo.id',
-				populate: { path: 'Product_services' },
 			});
 			if(find.type == "product" && find.stocks_in_store[0].product_of_sell == 0){
 				return Store_sell.sendError(res, "Sản phẩm hết hàng", "Vui lòng chọn sản phẩm khác hoặc thêm sản phẩm"); 
@@ -215,29 +206,23 @@ class Store_sell extends Controller{
 			let customer = await Customer.findOne({company: req.session.store.company, _id: req.body.id});
 			let history_sell = await Invoice_sell.find({company: req.session.store.company, customer:req.body.id, isActive: true}).sort({createdAt: -1}).limit(20).populate({
 				path: 'list_item.id',
-				populate: { path: 'Product_services'},
 				select:'name number_code'
 			}).populate({
 				path: 'employees',
-				populate: { path: 'Employees'},
 				select:'name'
 			}).populate({
 				path: 'discount',
-				populate: { path: 'Discount'},
 				select:'number_code'
 			});
 			let service = await Invoice_service.find({company: req.session.store.company, customer:req.body.id, isActive: true}).sort({createdAt: 1}).populate({
 				path: 'service',
-				populate: { path: 'Product_services'},
 				select:'name number_code'
 			})
 			let log_service = await Log_service.find({company: req.session.store.company, customer:req.body.id, isActive: true}).sort({createdAt: -1}).populate({
 				path: 'service',
-				populate: { path: 'Product_services'},
 				select:'name number_code'
 			}).populate({
 				path: 'employees',
-				populate: { path: 'Employees'},
 				select:'name'
 			})
 			Store_sell.sendData(res, {customer, history_sell, service, log_service});
@@ -539,7 +524,6 @@ class Store_sell extends Controller{
 					select: 'product_of_sell',
 				}).populate({
 					path: 'combo.id',
-					populate: { path: 'Product_services' },
 				});
 				if(!check_product_service){
 					return Store_sell.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] không tồn tại`, "Vui lòng chọn lại");
@@ -782,7 +766,6 @@ class Store_sell extends Controller{
 			//check can edit bill
 			let check_bill = await Invoice_sell.findOne({company :req.session.store.company,store:req.session.store._id,_id:req.body.id}).populate({
 				path: 'bill',
-				populate: { path: 'Cash_book'},
 				select:'type_payment money serial money_edit'
 			})
 			if(check_bill.isCanBeEdit === false){
@@ -811,7 +794,6 @@ class Store_sell extends Controller{
 					select: 'product_of_sell',
 				}).populate({
 					path: 'combo.id',
-					populate: { path: 'Product_services' },
 				});
 				if(!check_product_service){
 					return Store_sell.sendError(res, `Lỗi sản phẩm [${list_item[i].name}] không tồn tại`, "Vui lòng chọn lại");
@@ -912,7 +894,6 @@ class Store_sell extends Controller{
 				if(check_bill.list_item[i].type == 'combo'){
 					let check_product = await Product_service.findOne({company :req.session.store.company, isSell: true, _id:check_bill.list_item[i].id}).populate({
 						path: 'combo.id',
-						populate: { path: 'Product_services' },
 					});
 					for (let j = 0; j < check_product.combo.length; j++){
 						if(check_product.combo[j].id.type == 'product'){
@@ -1106,7 +1087,6 @@ class Store_sell extends Controller{
 		try{
 			let check_bill = await Invoice_sell.findOne({company :req.session.store.company,store:req.session.store._id,_id:req.body.id}).populate({
 				path: 'customer',
-				populate: { path: 'Customer' },
 			});
 			let list_product = [];
 			for(let i = 0; i < check_bill.list_item.length; i++ ){
@@ -1119,7 +1099,6 @@ class Store_sell extends Controller{
 				if(check_bill.list_item[i].type == 'combo'){
 					let check_product = await Product_service.findOne({company :req.session.store.company, _id:check_bill.list_item[i].id}).populate({
 						path: 'combo.id',
-						populate: { path: 'Product_services' },
 					});
 					for (let j = 0; j < check_product.combo.length; j++){
 						if(check_product.combo[j].id.type == 'product'){

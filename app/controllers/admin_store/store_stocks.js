@@ -37,7 +37,6 @@ class Admin_store_stocks extends Controller{
 			let pageCount = Math.ceil(pages/pageSize)
 			let data = await Product_service.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
 				path: 'stocks_in_store',
-				populate: { path: 'Store_stocks' },
 				match: { store_id: req.session.store_id },
 				select: 'quantity product_of_sell product_of_service product_of_undefined'
 			});
@@ -64,7 +63,6 @@ class Admin_store_stocks extends Controller{
 		try{
 			let store = await Store_stocks.findOne({company: req.session.user.company._id, store_id: req.session.store_id, _id: req.params.id}).populate({
 				path: 'last_history',
-				populate: { path: 'Invoice_product_store' },
 			})
 			Admin_store_stocks.sendData(res, store);
 		}catch(err){
@@ -109,7 +107,6 @@ class Admin_store_stocks extends Controller{
 		try{
 			let store = await Store_stocks.find({company: req.session.user.company._id, store_id: req.session.store_id, quantity:{$gt: 0}}).sort({createdAt: -1}).populate({
 				path: 'product',
-				populate: { path: 'Product_services' },
 				select: 'name number_code'
 			});
 			Admin_store_stocks.sendData(res, store);
@@ -122,7 +119,6 @@ class Admin_store_stocks extends Controller{
 		try{
 			let store = await Store_stocks.find({company: req.session.user.company._id, store_id: req.session.store_id, product_of_undefined:{$gt: 0}}).sort({createdAt: -1}).populate({
 				path: 'product',
-				populate: { path: 'Product_services' },
 				select: 'name number_code'
 			});
 			Admin_store_stocks.sendData(res, store);

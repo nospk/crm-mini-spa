@@ -56,9 +56,9 @@ class Admin_cash_book extends Controller{
 			let pageCount = Math.ceil(pages/pageSize)
 			let data = await Cash_book.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
 				path: 'store',
-				populate: { path: 'Stores' },
 				select: 'name'
 			});
+			console.log(data)
 			let current_fund = await Cash_book.aggregate([
 				{ $match: match_current_fund},
 				{ $group : {

@@ -17,7 +17,6 @@ class Admin_transfer_stocks extends Controller{
         try{
 			let products = await Product_service.find({company: req.session.user.company._id, type: "product", isActive: true}).populate({
 				path: 'stocks_in_storage',
-				populate: { path: 'Storage_stocks' },
 				select: 'quantity'
 			});
 			let stores = await Store.find({company: req.session.user.company._id, isActive: true});
@@ -43,11 +42,9 @@ class Admin_transfer_stocks extends Controller{
 			let pageCount = Math.ceil(pages/pageSize)
 			let data = await Invoice_product_storage.find(match).sort({createdAt: -1}).skip((pageSize * currentPage) - pageSize).limit(pageSize).populate({
 				path: 'list_products.product',
-				populate: { path: 'Product_services' },
 				select: 'number_code name'
 			}).populate({
 				path: 'store',
-				populate: { path: 'Stores' },
 				select: 'name'
 			});
 			Admin_transfer_stocks.sendData(res, {data, pageCount, currentPage});

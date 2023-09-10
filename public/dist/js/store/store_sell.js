@@ -1037,6 +1037,55 @@ function lock_manager(){
 		}
 	})
 }
+function update_customer(){
+	let data = {
+        name: $('#edit_customer #edit_name').val().trim(),
+        birthday: $('#edit_customer #edit_birthday').val().trim(),
+        address: $('#edit_customer #edit_address').val().trim(),
+        phone: $('#edit_customer #edit_phone').val().trim(),
+        gener:  $('#edit_customer #edit_gener').val(),
+        note: $('#edit_customer #edit_note').val().trim(),
+		id: $('#edit_customer #edit_id').val(),
+        _csrf: $('#_csrf').val()
+    }
+    $.ajax({
+        url:'/update_customer',
+        method:'put',
+        data: data,
+        success: function(data){
+            if(data.status == 1){
+                Swal.fire({
+                    title: "Thao tác thành công",
+                    text: data.message,
+                    icon: "info",
+                    showConfirmButton: false,
+                    timer: 3000
+                }).then((result)=>{
+					get_customer($('#edit_customer #edit_id').val())
+					$('#customer').text($('#edit_customer #edit_name').val());
+                })
+                .catch(timer => {
+					get_customer($('#edit_customer #edit_id').val())
+					$('#customer').text($('#edit_customer #edit_name').val());
+                });    
+            }else{
+                Swal.fire({
+                    title: data.error,
+                    text: data.message,
+                    icon: "error",
+                    showConfirmButton: false,    
+                    timer: 3000
+                }).then((result)=>{
+                    // cho vào để ko báo lỗi uncaught
+                })
+                .catch(timer => {
+                    // cho vào để ko báo lỗi uncaught
+                }); 
+                
+            }
+        }
+    })
+}
 function get_customer(id){
 	$.ajax({
 		url:'/get_customer',

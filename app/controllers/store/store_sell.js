@@ -201,6 +201,32 @@ class Store_sell extends Controller{
 			Store_sell.sendError(res, err, err.message);
 		}
 	}
+	static async update_customer(req,res){
+		try{
+			let find = await Customer.findOne({company: req.session.store.company, _id: req.body.id});
+			if(find){
+				let check = await Customer.findOne({company: req.session.store.company, phone:req.body.phone});
+				if(check && find.phone != req.body.phone){
+					return Store_sell.sendError(res, "Số điện thoại đã có người dùng", "Vui lòng xem lại thông tin đã nhập");
+				}else{
+					find.name = req.body.name;
+					find.query_name = await Common.removeVietnameseTones(req.body.name);
+					find.birthday = req.body.birthday;
+					find.gener = req.body.gener;
+					find.address = req.body.address;
+					find.phone = req.body.phone;
+					find.note = req.body.note;
+					await find.save();
+					Store_sell.sendMessage(res, "Đã thay đổi thành công");
+				}
+			}else{
+				Store_sell.sendError(res, "Không tìm thấy sản phẩm", "Vui lòng thử lại");
+			}
+		}catch(err){
+			console.log(err.message)
+			Store_sell.sendError(res, err, err.message);
+		}
+	}
 	static async get_customer(req, res){
 		try{
 			let customer = await Customer.findOne({company: req.session.store.company, _id: req.body.id});

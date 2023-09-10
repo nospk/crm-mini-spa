@@ -12,6 +12,7 @@ module.exports = function (app) {
 	app.post("/create_customer", store.loggedIn, store.create_customer)
 	app.post("/get_price_book", store.loggedIn, store.get_price_book)
 	app.post("/get_customer", store.loggedIn, store.get_customer)
+	app.put("/update_customer", store.loggedIn, store.update_customer)
 	app.post("/use_service", store.loggedIn, store.use_service)
 	app.post("/check_password_manager", store.loggedIn, store.check_password_manager)
 	app.post("/report", store.loggedIn, store.report)

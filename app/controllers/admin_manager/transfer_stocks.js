@@ -19,6 +19,9 @@ class Admin_transfer_stocks extends Controller{
 				path: 'stocks_in_storage',
 				select: 'quantity'
 			});
+			products = products.filter(item=>{
+				return item.stocks_in_storage.quantity > 0
+			})
 			let stores = await Store.find({company: req.session.user.company._id, isActive: true});
 			Admin_transfer_stocks.sendData(res, {products, stores});
 		}catch(err){
